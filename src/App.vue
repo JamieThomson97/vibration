@@ -1,29 +1,84 @@
 <template>
-  <div id="app">
-    <div id="nav">
-      <router-link to="/">Home</router-link> |
-      <router-link to="/about">About</router-link>
-    </div>
-    <router-view/>
-  </div>
+  <v-app>
+    <Nav />
+    <v-content>
+      <router-view></router-view>
+    </v-content>
+  </v-app>
 </template>
 
-<style lang="scss">
-#app {
-  font-family: 'Avenir', Helvetica, Arial, sans-serif;
-  -webkit-font-smoothing: antialiased;
-  -moz-osx-font-smoothing: grayscale;
-  text-align: center;
-  color: #2c3e50;
-}
-#nav {
-  padding: 30px;
-  a {
-    font-weight: bold;
-    color: #2c3e50;
-    &.router-link-exact-active {
-      color: #42b983;
+<script>
+
+
+import '@/components/firebaseConfig.js'
+import Nav from '@/components/Nav.vue'
+
+import firebase from 'firebase'
+
+
+export default {
+  name: 'App',
+  components: {
+    Nav,    
+  },
+  
+  data () {
+    return {
+      
+      drawer: true,
+      items: [
+        { title: 'Home', icon: 'dashboard' },
+        { title: 'About', icon: 'question_answer' }
+      ],
+      mini: false,
+      right: null
+            
     }
+  },
+
+  computed:{
+    userID(){
+      return this.$store.getters.user
+    }
+  },
+
+  methods:{
+    
+    logOutUser(){
+      this.$store.dispatch('logUserOut')
+    },
+
+    signInCheck(){       
+      if(firebase.auth().currentUser){
+        console.log("In")
+        this.signedIn = true
+      }else{
+        this.signedIn = false
+        console.log("Out")
+      }
+    },
+
+    
+    
+  },
+
+  created: function(){    
+    firebase.auth().onAuthStateChanged(function(user) {
+      if (user) {
+        console.log("User signed in -- from created function")
+        console.log(user.uid)
+      }else{
+        console.log("not signed in -- from created function")
+      }
+    });
   }
+
+     
 }
+</script>
+
+<style>
+
+
+
 </style>
