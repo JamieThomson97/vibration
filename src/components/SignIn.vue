@@ -19,7 +19,7 @@
             </v-layout>
             <v-fade-transition>
                 <v-layout v-if="!trueshowLogin" row>   
-                        <v-text-field outline type="password" class="form-control" placeholder="confirm password"></v-text-field>
+                        <v-text-field outline type="text" v-model="name" class="form-control" placeholder="What is your name?"></v-text-field>
                 </v-layout>
             </v-fade-transition>
             <v-layout row>             
@@ -34,6 +34,8 @@
 
 <script>
 
+// import firebase from 'firestore'
+
   export default {
 
       name: 'register',
@@ -42,6 +44,7 @@
         return{
             email:"",
             password:"",
+            name:"",
             trueshowLogin: true,
             
         }
@@ -59,10 +62,11 @@
 
         signInUser(){
             this.$store.dispatch('signUserIn', {email: this.email, password: this.password})
+            
         },
 
         registerUser(){
-            this.$store.dispatch('signUserUp', {email: this.email, password: this.password})
+            this.$store.dispatch('signUserUp', {email: this.email, password: this.password, name: this.name})
         },
     },
 

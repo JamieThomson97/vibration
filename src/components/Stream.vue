@@ -1,23 +1,14 @@
 <template>
     <v-app>
-        <div class="streamWrapper">
+        <div class="">
             <v-container class="my-5">
-                <div class='entry'>
-                    <v-card class="flat mt-2 pa-3" v-for='mix in mixStream' v-bind:key='mix.id'>
-                        <v-layout class="row">    
-                            
-                                <v-img class='artwork' :aspect-ratio="1/1" contain max-height='70px' max-width='70px' :src="mix.artworkURL">
-                                    <div class=" title caption grey--text">{{mix.Title}}</div>
-                                </v-img>
-                            
-                            
-                                <div class="caption grey--text">{{mix.Artist}}</div>
-                            
-                            
-                                <div class="caption grey--text">{{mix.readabaleDate}}</div>
-                            
-                        </v-layout>
-                    </v-card>
+                <div class="streamWrapper">
+                    <div class="flat tile entry" v-for='mix in stream' v-bind:key='mix.id'>
+                        <v-img class='artwork' :aspect-ratio="1/1" contain height='100%' width='100%' :src="mix.artworkURL"></v-img>
+                        <div class="title caption grey--text">{{mix.title}}</div>
+                        <div class="artist  grey--text">{{mix.artist}}</div>
+                        <div class="length  grey--text">{{mix.dateRecorded}}</div>
+                    </div>
                 </div>
             </v-container>
         </div>
@@ -26,7 +17,7 @@
 
 <script>
 
-import firebase from 'firebase'
+//import firebase from 'firebase'
 
 export default {
 
@@ -34,66 +25,103 @@ export default {
 
     data(){
         return {
-            mixStream: [],
             i: 0,
         }
     },
 
+    props: [
+        "pagePart",
+    ],
+
     created(){
+    },
 
-    firebase.firestore().collection('mixes').onSnapshot((response) => {
-      const changes = response.docChanges()
-      changes.forEach(change => {
-          
-          if(change.type === 'added'){
-            console.log(change.doc.data().artworkURL)
-            const d = new Date(change.doc.data().dateRecorded.seconds*1000);
-            const n = d.toLocaleDateString('en-GB', { timeZone: 'UTC' });
-              this.mixStream.push({
-                  ...change.doc.data(),
-                  id: change.doc.id,
-                  readabaleDate: n
-              })
-          }
-      })
-    })
-    console.log("Stream Created")
-    
-  },
-
-  computed:{
-     
+    computed:{
+        stream(){
+            if(this.pagePart == "timeline"){
+                return this.$store.getters.Stream_Timeline
+             }else if(this.pagePart == "history"){
+                return this.$store.getters.Stream_History
+            }else if(this.pagePart == "listenLater"){
+                return this.$store.getters.Stream_ListenLater
+            }else{
+                return "null"
+            }
+        }  
+        
     },
 
     methods: {
-      
+        
     },
 
 }
 </script>
 
 <style>
+
     .streamWrapper{
-      display:grid;
-      grid-template-rows: repeat(1fr, 4);
-      grid-template-columns: repeat(1fr, 3);
-      grid-gap:2em;
-      justify-items:stretch;
-      align-items:stretch;
-      
+
+        height: 100%;
+        display: grid;
+        grid-template-rows: repeat(3, 1fr);
+        grid-template-columns: repeat(auto-fit, minmax(
+            180px, 1fr
+        ));
+         grid-gap:2rem;    
     }
 
     .entry{
-        display: flex;
+        display: grid;
+    }
+
+    .entry:nth-child(3n+1) {
+        
+        grid-row: auto;
+        
+    }
+    .entry:nth-child(3n+2) {
+        
+        grid-row: auto;
+
+    }
+    .entry:nth-child(3n+3) {
+     
+        grid-row: auto;     
+    }    
+
+    .tile{
+        background-color: black;
+        display: grid;
+        grid-template-columns: 1fr 1fr;
+        grid-template-rows: 1fr 1fr 1fr 1fr;
+        max-height: 150px;
     }
 
     .artwork{
-        border: 1px solid salmon;
+        grid-column: 1/2;
+        grid-row: 1/5
     }
 
+    .artist{
+        grid-column: 2/3;
+        grid-row: 2/3
+    }
+    
     .title{
-        background-color: rgb(83, 152, 172);
+        grid-column: 2/3;
+        grid-row: 1/2
     }
 
+    .date{
+        grid-column: 2/3;
+        grid-row: 3/4
+    }
+
+    .length{
+        grid-column: 2/3;
+        grid-row: 4/5;
+    }
+    
 
 </style>

@@ -44,7 +44,7 @@ export default {
         return{
             drawer:true,
             items: [
-            { title: 'Home', icon: 'dashboard', route: '/home' },
+            { title: 'Home', icon: 'dashboard', route: '/' },
             { title: 'About', icon: 'question_answer', route: '/about' }
             ],
             mini:true,
