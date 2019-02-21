@@ -1,19 +1,14 @@
 <template>
-    <v-app>
-        <div class="">
-            <v-container class="my-5">
-                <div class="streamWrapper">
-                    <div class="flat tile entry" v-for='mix in stream' v-bind:key='mix.id'>
-                        <v-img class='artwork' :aspect-ratio="1/1" contain height='100%' width='100%' :src="mix.artworkURL"></v-img>
-                        <div class="title caption grey--text">{{mix.title}}</div>
-                        <div class="artist  grey--text">{{mix.artist}}</div>
-                        <div class="length  grey--text">{{mix.dateRecorded}}</div>
-                    </div>
-                </div>
-            </v-container>
+    <div class="streamWrapper">
+        <div class="nothing" v-if='stream.length==0'>{{message}}</div>
+        <div class="flat tile entry" v-for='mix in stream' v-bind:key='mix.id'>
+            <v-img class='artwork' :aspect-ratio="1/1" contain height='100%' width='100%' :src="mix.artworkURL"></v-img>
+            <div class="title caption grey--text">{{mix.title}}</div>
+            <div class="artist  grey--text">{{mix.artist}}</div>
+            <div class="length  grey--text">{{mix.dateRecorded}}</div>
         </div>
-    </v-app>
-</template>
+    </div>
+ </template>
 
 <script>
 
@@ -47,7 +42,19 @@ export default {
             }else{
                 return "null"
             }
-        }  
+        },
+
+        message(){
+            if(this.pagePart == "timeline"){
+                return "Follow some artists to populate your stream"
+             }else if(this.pagePart == "history"){
+                return "This area will populate after you have listened to some mixes"
+            }else if(this.pagePart == "listenLater"){
+                return "Add some mixes to 'Listen Later', and they will appear here for easy access"
+            }else{
+                return "null"
+            }
+        }
         
     },
 
@@ -61,14 +68,13 @@ export default {
 <style>
 
     .streamWrapper{
-
-        height: 100%;
         display: grid;
+        height: 10px;
         grid-template-rows: repeat(3, 1fr);
         grid-template-columns: repeat(auto-fit, minmax(
             180px, 1fr
         ));
-         grid-gap:2rem;    
+         grid-gap:0.5rem;    
     }
 
     .entry{

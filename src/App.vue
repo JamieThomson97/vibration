@@ -37,8 +37,8 @@ export default {
   },
 
   computed:{
-    userID(){
-      return this.$store.getters.user
+    uID(){
+      return this.$store.getters.user.uID
     }
   },
 
@@ -65,11 +65,11 @@ export default {
   created: function(){    
     firebase.auth().onAuthStateChanged(function(user) {
       if (user) {
-       // console.log("User signed in -- from created function")
-       // console.log(user.uid)
+      //  console.log("User signed in -- from created function")
+      //  console.log(user.uid)
       }else{
         
-       // console.log("not signed in -- from created function")
+      // console.log("not signed in -- from created function")
       }
     });
   }

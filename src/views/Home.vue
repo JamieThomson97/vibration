@@ -1,22 +1,25 @@
 <template>
 
-  <v-app>
-    <div class="wrapper">
-      <div class="box stream">
-        <div>
-          <Stream pagePart="timeline"/>
-        </div>
+  
+  <div class="wrapper">
+    <div class="box stream">
+      <div>
+        <div>Timeline</div>
+        <Stream pagePart="timeline"/>
       </div>
-      <div class="box history">
-        <Stream pagePart="history"/>
-      </div>
-      <div class="box recommended">
-        <Stream pagePart="listenLater"/>
-      </div>
-      <div class="box right">Something on the Right (maybe list of playlists)</div>
-      <div class="box player">Player</div>
     </div>
-  </v-app>
+    <div class="box listened">
+      <div>History</div>
+      <Stream pagePart="history"/>
+    </div>
+    <div class="box recommended">
+      <div>Listen Later</div>
+      <Stream pagePart="listenLater"/>
+    </div>
+    <div class="box right">Something on the Right (maybe list of playlists)</div>
+    <div class="box player">Player</div>
+  </div>
+  
 
 </template>
 
@@ -51,13 +54,12 @@ export default {
     pagePart: {
       type: String,
       required: false,
-      default: "test"
+      
     }
   },
 
   methods: {
 
-    
     pullID(type) {
       const passon = type
       const ref = firebase.firestore().collection('users').doc(`${this.$store.getters.user.id}`).collection(type)
@@ -118,7 +120,7 @@ export default {
           }  
 
         })
-    }
+    },
   },
 
   data() {
@@ -135,15 +137,15 @@ export default {
 
   created: function () {
 
-    if (this.$store.getters.mixLoaded == false) {
+    // if (this.$store.getters.mixLoaded == false) {
       //retreive timeline, and save it in state
       console.log("loading mixes")
       this.pullID("timeline")
       this.pullID("listenLater")
       this.pullID("history")
-      }else{
+      //}else{
         console.log("already loaded")
-      }
+      //}
       
   }
 
@@ -153,55 +155,54 @@ export default {
 </script>
 
 <style>
+
     .wrapper{
-
-      display:grid;
-      grid-template-columns: 3fr 4fr 3fr;
+      display: grid;
+      grid-template-columns: 2.5fr 3.5fr 3fr;
       grid-template-rows: repeat(12, 1fr);
-      grid-gap:1rem;
-      
-      min-height: 100%;
-      max-height: 100%
+      grid-gap: 1em;
+      height: 100%
     }
-
+    
     .stream{
-      /*align-self:start;*/
       
       grid-column:2/3;
-      grid-row:2/5;
+      grid-row: 2/10;
       border:1px solid #333;
+      
       
     }
 
-    .history{
-      /*align-self:end;*/
+    .listened{      
       margin-left: 1rem;
       grid-column:1/2;
-      grid-row:3/4;
+      grid-row:4/6;
       border:1px solid #333;
     }
 
     .recommended{
-      /*justify-self:end;*/
       margin-left: 1rem;
       grid-column:1/2;
-      grid-row:4/5;
+      grid-row: 7/9;      
       border:1px solid #333;
     }
 
     .right{
-      margin-left: 1rem;
+      
       margin-right: 1rem;
       grid-column:3/4;
-      grid-row:2/4;
+      grid-row :4/7;
+      
       border:1px solid #333;
     }
 
     .player{
+      
       margin  : 1rem;
       grid-column:1/-1;
-      grid-row:6/7;
+      grid-row: 11/13;
       border:1px solid #333;
+      
     }
   </style>
 
