@@ -2,52 +2,60 @@ import Vue from 'vue'
 import Vuex from 'vuex'
 import * as firebase from 'firebase'
 import VuexPersistence from 'vuex-persist'
+import router from './router'
 //import * as _ from 'underscore'
 
 Vue.use(Vuex)
 
 const vuexLocal = new VuexPersistence({
   storage: window.localStorage,
-  reducer: (state) => ({
-    user: state.user,
-
-  })
-})
-
-const vuexSession = new VuexPersistence({
-  storage: window.sessionStorage,
-  reducer: (/*state*/) => ({
-   
-  })
+  reducer: (state) => ({customer: state.customer})
 })
 
 export default new Vuex.Store({
 
   plugins: [
     vuexLocal.plugin,
-    vuexSession.plugin
   ],
 
-  state: {
     appTitle: 'Vibration',
-    user: null,
-    error: null,
-    loading: false,
-    drawer:true,
-    right: true,
-    mini:true,
-    ID_Timeline: {},
-    Stream_Timeline: {},
-    ID_ListenLater: {},
-    Stream_ListenLater: {},
-    ID_History: {},
-    Stream_History: {},
-    mixLoaded: false,
+    state: {
+      customer:{
+          uID: null,
+          name: null,
+          profileURL: null,
+          followersCount: null,
+          followingCount: null,
+          mixes: {},
+          IDs: {
+            timeline: {},
+            listenLater: {},
+            history: {},
+          },
+          Streams: {
+            timeline: {},
+            listenLater: {},
+            history: {},
+        },
+      },
+      user: null,
+      error: null,
+      loading: false,
+      drawer:true,
+      right: true,
+      mini:true,
+      ID_Timeline: {},
+      Stream_Timeline: {},
+      ID_ListenLater: {},
+      Stream_ListenLater: {},
+      ID_History: {},
+      Stream_History: {},
+      mixLoaded: false,
   },
 
   mutations: {
-    setUser (state, payload) {
-      state.user = payload
+    setuID (state, payload) {
+      state.customer.uID = payload
     },
     setError (state, payload) {
       state.error = payload
@@ -55,8 +63,8 @@ export default new Vuex.Store({
     setLoading (state, payload) {
       state.loading = payload
     },
-    setID (state, payload) {
-      
+
+    setmID (state, payload) {
       if(payload.type=="timeline"){
         state.ID_Timeline = payload.array
       }else if(payload.type=="listenLater"){
@@ -76,6 +84,42 @@ export default new Vuex.Store({
     },
     setMixLoaded(state){
       state.mixLoaded = true
+    },
+    setName(state , payload){
+      state.customer.name = payload
+    },
+    setProfileURL(state , payload){
+      state.customer.profileURL = payload
+    },
+    setFollowersCounts(state , payload){
+      state.customer.followersCount = payload
+    },
+    setFollowingCount(state , payload){
+      state.customer.followingCount = payload
+    },
+
+    setNullUser(state){
+      state.customer = {
+        uID: null,
+        name: null,
+        profileURL: null,
+        followersCount: null,
+        followingCount: null,
+        IDs: {
+          timeline: {},
+          listenLater: {},
+          history: {},
+        },
+        Streams: {
+          timeline: {},
+          listenLater: {},
+          history: {},
+        }
+      }
+    },
+
+    setCustomerMixes(state , payload){
+      state.customer.mixes = payload
     },
   },
 
@@ -99,11 +143,7 @@ export default new Vuex.Store({
             
             console.log(error)
           })
-          
-          const newUser = {
-            id: user.user.uid,
-          }
-          commit('setUser', newUser)
+          commit('setuID', user.user.uid)
           // localStorage.setItem('auth', newUser.ID)
         }).catch((error) => {
           console.log(error)
@@ -113,13 +153,19 @@ export default new Vuex.Store({
     signUserIn({ commit }, payload) {
       firebase.auth().signInWithEmailAndPassword(payload.email, payload.password)
         .then((user) => {
-            
-          console.log(user)
-          const newUser = {
-            id: user.user.uid,
-          }
-          commit('setUser', newUser)
-          // localStorage.setItem('auth', newUser.ID)
+          commit('setuID', user.user.uid)
+          console.log("getter     "+user.user.uid)
+            const ref = firebase.firestore().collection('users').doc(user.user.uid)            
+            ref.get().then((snapshot) => {
+                console.log(snapshot.data().mixes)
+                this.dispatch("actionSetUser", {
+                  name : snapshot.data().name,
+                  profileURL: snapshot.data().profileURL,  
+                  customerMixes: snapshot.data().mixes,
+                }).then(() => {
+                  router.push({ name: 'home'})
+                })
+            })
         }).catch((error) => {
           console.log(error)
         })
@@ -128,22 +174,17 @@ export default new Vuex.Store({
     logUserOut({ commit }) {
       firebase.auth().signOut()
         .then(() => {
-          
-          commit('setUser', null)
-          
+          commit('setNullUser')
+          router.push({ name: 'about'})
+          console.log("signed out")          
         }).catch((error) => {
           console.log(error)
         })
     },
 
-    setNullUser({commit}){
-      commit('setUser', null)
-      console.log("setting")
-    },
-
-    actionSetID({commit} , payload){
+    actionSetmID({commit} , payload){ 
       
-      commit(`setID`, payload)
+      commit(`setmID`, payload)
       
     },
     actionSetStream({commit} , payload){
@@ -153,13 +194,35 @@ export default new Vuex.Store({
     setActionMixLoaded({commit}){
       commit('setMixLoaded', true)
     },
+    
+
+    actionSetUser({commit} , payload){
+      if(payload.uID){
+        commit('setuID' , payload.uID)
+      }
+      if(payload.name){
+        commit('setName' , payload.name)
+      }
+      if(payload.profileURL){
+        commit('setProfileURL' , payload.profileURL)
+      }
+      if(payload.followersCount){
+        commit('setFollowersCount' , payload.followersCount)
+      }
+      if(payload.followingCount){
+        commit('setFollowingCount' , payload.followingCount)
+      }
+      if(payload.customerMixes){
+        commit('setCustomerMixes' , payload.customerMixes)
+      }
+    }
 
 
   },
 
   getters: {
-    user(state) {
-      return state.user
+    uID(state) {
+      return state.customer.uID
     },
     drawer(state) {
       return state.user
@@ -197,6 +260,15 @@ export default new Vuex.Store({
     mixLoaded(state) {
       return state.mixLoaded
     },
+    name(state){
+      return state.customer.name
+    },
+    profileURL(state){
+      return state.customer.profileURL
+    },
+    customerMixes(state){
+      return state.customer.mixes
+    }
   },
 
 })

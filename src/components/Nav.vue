@@ -3,14 +3,14 @@
       <v-navigation-drawer permanent drawer="true" right app :temporary="hover && mini" slot-scope="{ hover }" :mini-variant="mini && !hover">
         <v-toolbar flat class="transparent">
             <v-list>
-                <v-list-tile avatar v-if="user">
-                <v-list-tile-avatar>
-                    <img src="https://randomuser.me/api/portraits/men/85.jpg">
-                </v-list-tile-avatar>
+                <v-list-tile router to="/user" avatar v-if="uID">
+                    <v-list-tile-avatar>
+                        <img :src=profileURL>
+                    </v-list-tile-avatar>
 
-                <v-list-tile-content>
-                    <v-list-tile-title>{{user.id}}</v-list-tile-title>
-                </v-list-tile-content>
+                    <v-list-tile-content>
+                        <v-list-tile-title>{{name}}</v-list-tile-title>
+                    </v-list-tile-content>
                 </v-list-tile>
             </v-list>
         </v-toolbar>
@@ -33,19 +33,37 @@
                 <v-list-tile-title>{{ item.title }}</v-list-tile-title>
                 </v-list-tile-content>
             </v-list-tile>
+            <v-list-tile
+                key="Log Out"
+                @click.stop="hover = !hover"
+                @click.exact="signOutUser"
+            >
+                <v-list-tile-action>
+                <v-icon>check_box_outline_blank</v-icon>
+                </v-list-tile-action>
+
+                <v-list-tile-content> 
+                <v-list-tile-title>Log Out</v-list-tile-title>
+                </v-list-tile-content>
+            </v-list-tile>
             </v-list>
         </v-navigation-drawer>
    </v-hover>
 </template>
 
 <script>
+
+
+
+import { mapGetters } from 'vuex'
+
 export default {
     data (){
         return{
             drawer:true,
             items: [
             { title: 'Home', icon: 'dashboard', route: '/' },
-            { title: 'About', icon: 'question_answer', route: '/about' }
+            { title: 'About', icon: 'question_answer', route: '/about' },
             ],
             mini:true,
             
@@ -55,12 +73,26 @@ export default {
 
     computed: {
 
-        user(){
-            return this.$store.getters.user
-        },
-        storageUser(){
-            return JSON.parse(localStorage.getItem('vuex')).user
+        ...mapGetters([
+            'uID',
+            'name',
+            'profileURL',
+            // ...
+        ]),
+
+        storageuID(){
+            return JSON.parse(localStorage.getItem('vuex')).uID
         }
+    },
+
+    methods:{
+        signOutUser(){
+          this.$store.dispatch('logUserOut')
+        },
+    },
+
+    created(){
+        console.log(this.uID)
     }
 }
 </script>

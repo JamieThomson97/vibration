@@ -8,7 +8,7 @@
             <v-card-text> Why Vibby</v-card-text>
             <v-btn  @click="show = !show" success>Login</v-btn>
             <v-btn  @click="tester" success>gCloud</v-btn>
-            <v-btn  @click="signInUser" success>Log Out</v-btn>
+            <v-btn  @click="signOutUser" success>Log Out</v-btn>
             <v-btn  @click="createStream" success>Create Stream</v-btn>
             <v-btn  @click="getTimeline" success>Get Timeline</v-btn>
             <v-btn  @click="onSnapshotTest" success>Snapshot Test</v-btn>
@@ -114,10 +114,6 @@ components: {
       Axios.get('https://us-central1-vibration-401b4.cloudfunctions.net/tester').then((response) => {
         console.log(response.data)
       })
-    },
-
-    signInUser(){
-      this.$store.dispatch('logUserOut')
     },
 
     idk(){

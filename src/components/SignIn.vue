@@ -27,6 +27,7 @@
             </v-layout>
             <v-layout row>
                 <v-btn type=submit v-if="!trueshowLogin" class="btn">Register</v-btn>
+                <!-- <v-btn @click="retrieveInfo" class="btn">Retrieve Info</v-btn> -->
             </v-layout>    
         </form>
     </v-container>
@@ -34,7 +35,7 @@
 
 <script>
 
-// import firebase from 'firestore'
+import firebase from 'firebase'
 
   export default {
 
@@ -61,14 +62,25 @@
         },
 
         signInUser(){
-            this.$store.dispatch('signUserIn', {email: this.email, password: this.password})
+            this.$store.dispatch('signUserIn', {email: this.email, password: this.password}).then(() => {
+            })
             
         },
 
         registerUser(){
             this.$store.dispatch('signUserUp', {email: this.email, password: this.password, name: this.name})
         },
+    
+        retrieveUserInfo(){
+            console.log("getter     "+this.$store.getters.uID)
+            const ref = firebase.firestore().collection('users').doc(this.$store.getters.uID)            
+            ref.get().then((snapshot) => {
+                console.log("snapshot  "+snapshot.data())
+                this.$store.dispatch("actionSetUser", { name:snapshot.data().name, profileURL:snapshot.data().profileURL})
+            })
+        },
     },
+
 
     computed: {   
         

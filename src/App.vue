@@ -38,7 +38,7 @@ export default {
 
   computed:{
     uID(){
-      return this.$store.getters.user.uID
+      return this.$store.getters.uID
     }
   },
 

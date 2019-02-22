@@ -29,6 +29,7 @@ export default {
     ],
 
     created(){
+        console.log(this.stream)
     },
 
     computed:{
@@ -39,7 +40,10 @@ export default {
                 return this.$store.getters.Stream_History
             }else if(this.pagePart == "listenLater"){
                 return this.$store.getters.Stream_ListenLater
-            }else{
+            }else if(this.pagePart == "customerMixes"){
+                return this.$store.getters.Stream_CustomerMixes
+            }
+            else{
                 return "null"
             }
         },
