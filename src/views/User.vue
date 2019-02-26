@@ -2,13 +2,13 @@
     <div class="userWrapper">
         <div class="image">
         <div>
-            <v-img :src=profileURL></v-img>
+            <!-- <v-img :src=profileURL></v-img> -->
             
         </div>
         </div>
         <div class="mixes">
             <div>
-                <Stream :pagePart="customerMixes"></Stream>
+                <Stream pagePart="customerMixes"></Stream>
             </div>
         </div>
         <div class="currentInfo">
@@ -23,7 +23,7 @@
 
 <script>
 
-import createStreamMixin from '../mixins/createStreamMixin'
+import createPlaylistMixin from '../mixins/createPlaylistMixin'
 import { mapGetters } from 'vuex'
 import Stream from '@/components/Stream.vue'
 
@@ -36,22 +36,24 @@ export default {
     computed: {
         ...mapGetters([
             'profileURL'
-        ])
+        ]),
+
+        // stream(){
+        //     return this.pullID("mixes")
+        // }
+        
     },
 
     mixins: [
-        createStreamMixin
+        createPlaylistMixin
     ],
 
     created: function () {
-
-    // if (this.$store.getters.mixLoaded == false) {
-      //retreive timeline, and save it in state
-      console.log("loading mixes")
-      this.pullID("mixes")
-      //}else{
-        console.log("already loaded")
-      //}
+        console.log("start")
+        var mIDs = this.pullID("mixes")
+        console.log(mIDs)
+        console.log(this.pullMixes("mixes", [mIDs]))
+        console.log("end")
       
   },
     

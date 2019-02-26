@@ -44,8 +44,7 @@ export default {
             }
             
             for (const mID in mixIDs) {
-              const currentMix = mixIDs[mID]
-              
+              const currentMix = mixIDs[mID]              
               const promise = firebase.firestore().doc(`mixes/${currentMix}`).get()
               promises.push(promise)
             }

@@ -40,10 +40,7 @@ export default {
                 return this.$store.getters.Stream_History
             }else if(this.pagePart == "listenLater"){
                 return this.$store.getters.Stream_ListenLater
-            }else if(this.pagePart == "customerMixes"){
-                return this.$store.getters.Stream_CustomerMixes
-            }
-            else{
+            }else{
                 return "null"
             }
         },
