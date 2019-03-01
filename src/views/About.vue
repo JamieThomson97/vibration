@@ -116,6 +116,10 @@ components: {
       })
     },
 
+    signOutUser(){
+          this.$store.dispatch('logUserOut')
+        },
+
     idk(){
       const callFunction = firebase.functions().httpsCallable('tester')
       callFunction({check: "check"}).then((response) => {

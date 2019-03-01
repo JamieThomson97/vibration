@@ -1,7 +1,7 @@
 <template>
     <div class="streamWrapper">
-        <div class="nothing" v-if='stream.length==0'>{{message}}</div>
-        <div class="flat tile entry" v-for='mix in stream' v-bind:key='mix.id'>
+        <div class="nothing" v-if="!stream">Something</div>
+        <div class="flat tile entry" v-for='mix in stream.stream' v-bind:key='mix.id'>
             <v-img class='artwork' :aspect-ratio="1/1" contain height='100%' width='100%' :src="mix.artworkURL"></v-img>
             <div class="title caption grey--text">{{mix.title}}</div>
             <div class="artist  grey--text">{{mix.artist}}</div>
@@ -29,20 +29,12 @@ export default {
     ],
 
     created(){
-        console.log(this.stream)
+        // console.log(this.stream)
     },
 
     computed:{
         stream(){
-            if(this.pagePart == "timeline"){
-                return this.$store.getters.Stream_Timeline
-             }else if(this.pagePart == "history"){
-                return this.$store.getters.Stream_History
-            }else if(this.pagePart == "listenLater"){
-                return this.$store.getters.Stream_ListenLater
-            }else{
-                return "null"
-            }
+            return this.$store.getters.playlist(this.pagePart)          
         },
 
         message(){
@@ -102,7 +94,7 @@ export default {
         display: grid;
         grid-template-columns: 1fr 1fr;
         grid-template-rows: 1fr 1fr 1fr 1fr;
-        max-height: 150px;
+        max-height: 80px;
     }
 
     .artwork{
