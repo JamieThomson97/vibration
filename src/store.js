@@ -171,9 +171,7 @@ export default new Vuex.Store({
       commit(`setmID`, payload)
 
     },
-    actionSetStream({
-      commit
-    }, payload) {
+    actionSetStream({ commit }, payload) {
 
       commit('setStream', payload)
     },

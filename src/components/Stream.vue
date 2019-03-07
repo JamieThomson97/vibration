@@ -1,18 +1,20 @@
 <template>
     <div class="streamWrapper">
         <div class="nothing" v-if="!stream">Something</div>
-        <div class="flat tile entry" v-for='mix in stream.stream' v-bind:key='mix.id'>
+        <div class="flat tile entry" v-for='mix in stream.stream' v-bind:key='mix.mID'>
             <v-img class='artwork' :aspect-ratio="1/1" contain height='100%' width='100%' :src="mix.artworkURL"></v-img>
             <div class="title caption grey--text">{{mix.title}}</div>
             <div class="artist  grey--text">{{mix.artist}}</div>
-            <div class="length  grey--text">{{mix.dateRecorded}}</div>
+            <div class="length  grey--text">{{name}}</div>
+            <v-btn v-if="mix.artist == name" @click="deleteMix(mix.mID)">Delete</v-btn>
         </div>
     </div>
  </template>
 
 <script>
 
-//import firebase from 'firebase'
+import firebase from 'firebase'
+import { mapGetters } from 'vuex'
 
 export default {
 
@@ -29,10 +31,19 @@ export default {
     ],
 
     created(){
-        // console.log(this.stream)
+        console.log(this.stream)
     },
 
     computed:{
+
+
+        ...mapGetters([
+            'uID',
+            'name',
+            'profileURL',
+            // ...
+        ]),
+    
         stream(){
             return this.$store.getters.playlist(this.pagePart)          
         },
@@ -52,6 +63,17 @@ export default {
     },
 
     methods: {
+
+        deleteMix(ID){
+            console.log(ID)
+            var deleteMix = firebase.functions().httpsCallable('deleteMix')
+            deleteMix({mID : ID , uID : this.uID}).then((response) => {
+                console.log(response) 
+                //Delete Locally
+            }).catch((error) => {
+                console.log(error)
+            })
+        }
         
     },
 

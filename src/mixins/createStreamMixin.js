@@ -32,7 +32,7 @@ export default {
             const promises = []
             var mixIDs = []
             
-            if(type=="timeline"){        
+            if(type=="timeline"){         
               mixIDs = this.$store.getters.ID_Timeline
             }else if(type=="listenLater"){
               mixIDs = this.$store.getters.ID_ListenLater
@@ -52,6 +52,8 @@ export default {
       
                 mixes.forEach(mix => {
                   const data = mix.data()
+                  console.log('data')
+                  console.log(data)
                   results.push(data)
                 })
                 
