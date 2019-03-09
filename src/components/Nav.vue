@@ -64,6 +64,7 @@ export default {
             items: [
             { title: 'Home', icon: 'dashboard', route: '/' },
             { title: 'About', icon: 'question_answer', route: '/about' },
+            { title: 'Add a Mix', icon: 'question_answer', route: '/addMix' },
             ],
             mini:true,
             
