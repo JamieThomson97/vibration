@@ -3,10 +3,10 @@ import firebase from 'firebase'
 export default {
   methods: {
 
-    pullID(playlistName) {
+    pullID(subCollectionName) {
       return new Promise(resolve => {
         //Ref references the playlist that this stream component is loading (e.g. timeline, history, or user created playlist, this does not query the database
-        const ref = firebase.firestore().collection('users').doc(`${this.$store.getters.uID}`).collection(playlistName)
+        const ref = firebase.firestore().collection('users').doc(`${this.$store.getters.uID}`).collection(subCollectionName)
         var mIDs = []
         //Actually queries the database, but only returns the 12 most recent entries
         ref.orderBy("dateRecorded", "asc").limit(12).get().then((snapshot) => {
@@ -23,7 +23,7 @@ export default {
       })
     },
 
-    pullMixes(mixIDs) {
+    pullMixes(mixIDs) { 
       return new Promise(resolve => {
         
         const results = []

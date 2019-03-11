@@ -10,7 +10,7 @@
             <v-btn  @click="tester" success>gCloud</v-btn>
             <v-btn  @click="signOutUser" success>Log Out</v-btn>
             <v-btn  @click="createStream" success>Create Stream</v-btn>
-            <v-btn  @click="getTimeline" success>Get Timeline</v-btn>
+            <v-btn  @click="testFunction" success>test function</v-btn>
             <v-btn  @click="onSnapshotTest" success>Snapshot Test</v-btn>
           </v-card>
         </v-flex>
@@ -127,6 +127,42 @@ components: {
       }).catch((error) => {
         console.log(error)
       }) 
+    },
+
+    testFunction(){
+      // //Today I learnt that it's impossible to query part of a document, you have to take the whole thing
+      // //So I need to decide what to put in subcollections  === need to separately query for even if I've already queries the parent document
+      // // and what I put on the document === will be returned every time I query the document
+      // var followers = []
+      // const firestore = firebase.firestore()
+      
+      // const user = firestore.collection('users').doc('dpgTmumbFLaw4shaKBLJfymiZCv1').collection('followers')
+      // user.get().then((response) => {
+      //   const timeline = response.docs
+      //     for (var entry = 0; entry < timeline.length; entry++) {
+           
+      //       const item = timeline[entry].id
+            
+      //       followers.push(item)
+      //     }
+      // }).catch((error) => {
+      //   console.log(error)
+      // })
+      // //We now have an array of follower mIDs, that need the mID deleted from their 'timeline' sub collection
+      // console.log(followers)
+
+      //Function for testing cloud functionality before implementing 
+      const callFunction = firebase.functions().httpsCallable('pullID')
+      callFunction().then((response) => {
+        const stream = response.data
+        console.log(stream)
+      }).catch((error) => {
+        console.log(error)
+      })
+      
+
+      
+
     },
 
     //Returns all of the data for each mix found in the timeline of mIDs, which can be mounted and displayed

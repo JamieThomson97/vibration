@@ -20,7 +20,7 @@ export default {
 
 
 
-    data(){
+    data(){    
         return {
             i: 0,
         }
@@ -67,9 +67,12 @@ export default {
         deleteMix(ID){
             console.log(ID)
             var deleteMix = firebase.functions().httpsCallable('deleteMix')
+            //Delete from user's 'mixes' collection
             deleteMix({mID : ID , uID : this.uID}).then((response) => {
                 console.log(response) 
+                //Delete from every followers 'timeline'
                 //Delete Locally
+
             }).catch((error) => {
                 console.log(error)
             })
