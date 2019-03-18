@@ -21,7 +21,6 @@ export default {
         return{
             fields: [
                  { name : 'Title' , input: '' },
-                 { name : 'Date Recorded' , input: '' },
                  { name : 'Other Contributors' , input: '' },
                  { name : 'Tracklist' , input: '' },
                  { name: 'Series' , input: ''}
@@ -34,9 +33,8 @@ export default {
             for ( var i in this.fields) {
                 console.log(this.fields[i].input)
             }
-
             var callFunction = firebase.functions().httpsCallable('addMix');
-            callFunction({title : this.fields[0].input , dateRecorded : this.fields[1].input , tracklist : this.fields[3].input , series : this.fields[4].input}).then(function(result) {
+            callFunction({title : this.fields[0].input , tracklist : this.fields[2].input , series : this.fields[3].input}).then(function(result) {
                 console.log(result)
             });
 

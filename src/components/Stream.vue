@@ -1,12 +1,16 @@
 <template>
     <div class="streamWrapper">
         <div class="nothing" v-if="!stream">Something</div>
-        <div class="flat tile entry" v-for='mix in stream.stream' v-bind:key='mix.mID'>
-            <v-img class='artwork' :aspect-ratio="1/1" contain height='100%' width='100%' :src="mix.artworkURL"></v-img>
-            <div class="title caption grey--text">{{mix.title}}</div>
-            <div class="artist  grey--text">{{mix.artist}}</div>
-            <div class="length  grey--text">{{name}}</div>
-            <v-btn v-if="mix.artist == name" @click="deleteMix(mix.mID)">Delete</v-btn>
+        <!-- <div class="flat tile entry" v-for='x in streamLength' :key='Object.keys(stream)[x-1]'>
+            
+            <div class="title caption grey--text">{{Object.keys(stream)[x-1]}}</div>
+            <div class="title caption grey--text">{{stream[Object.keys(stream)[x-1]].title}}</div>
+        </div>         -->
+         <div class="flat tile entry" v-for='x in streamLength' :key='Object.keys(stream)[x-1]'>
+            <v-img class='artwork' :aspect-ratio="1/1" contain height='100%' width='100%' :src="stream[Object.keys(stream)[x-1]].artworkURL"></v-img>
+            <div class="artist caption grey--text">{{stream[Object.keys(stream)[x-1]].title}}</div>
+            <div class="title caption grey--text">{{stream[Object.keys(stream)[x-1]].producer}}</div>
+            <v-btn v-if="pagePart == 'mixes'" @click="deleteMix(Object.keys(stream)[x-1])">Delete</v-btn>
         </div>
     </div>
  </template>
@@ -31,7 +35,9 @@ export default {
     ],
 
     created(){
+        console.log('stream')
         console.log(this.stream)
+        
     },
 
     computed:{
@@ -45,7 +51,11 @@ export default {
         ]),
     
         stream(){
-            return this.$store.getters.playlist(this.pagePart)          
+            return this.$store.getters.playlists(this.pagePart)
+        },
+
+        streamLength(){            
+            return Object.keys(this.$store.getters.playlists(this.pagePart)).length;
         },
 
         message(){
@@ -70,6 +80,7 @@ export default {
             deleteMix({mID : ID , uID : this.uID}).then((response) => {
                 console.log(response) 
                 //Delete Locally
+                this.$store.dispatch('actionDeleteMix', {'pName' : this.pagePart , 'mID' : ID} )
             }).catch((error) => {
                 console.log(error)
             })

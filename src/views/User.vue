@@ -31,6 +31,21 @@ import Stream from '@/components/Stream.vue'
 
 export default {
 
+
+    beforeRouteEnter(to, from, next) {
+    if (!localStorage.getItem('vuex')) {
+      console.log("doesnt exist")
+      next('/about')
+    } else {
+      if ((JSON.parse(localStorage.getItem('vuex')).customer.uID) == null) {
+        next('/about')
+        console.log("property is NULL")
+      } else {
+        next()
+      }
+    }
+},
+
     components: {
         Stream,
     },
@@ -60,6 +75,7 @@ export default {
 
     created: function () {
 
+
         let that = this
 
         async function create() {
@@ -67,20 +83,21 @@ export default {
             var mixIDs = []
             var objects = []
             for (let comp in that.streamComponents) {
-                if (!that.$store.getters.playlist(that.streamComponents[comp])) {
+                if (!that.$store.getters.playlists[that.streamComponents[comp]]) {
                     objects[comp] = {}
-                    console.log(comp)
                     mixIDs[comp] = await that.pullID(that.streamComponents[comp])
-                    if (mixIDs[comp].length > 0) {
+                    //console.log(Object.keys(mixIDs[comp]).length+'  comp')
+                    if (Object.keys(mixIDs[comp]).length > 0) {
                         console.log("in if")
-                        var stream = await that.pullMixes(mixIDs[comp])
-                        objects[comp].mIDS = mixIDs[comp]
-                        objects[comp].stream = stream
-                        objects[comp].name = that.streamComponents[comp]
-                        console.log(that.streamComponents[comp])
-                        console.log(objects[comp])
+                        // var stream = await that.pullMixes(mixIDs[comp])
+                        // objects[comp].mIDS = mixIDs[comp]
+                        // objects[comp].stream = stream
+                        // mixIDs[comp].name = that.streamComponents[comp]
+                        // console.log(that.streamComponents[comp])
+                        // console.log(objects[comp])
                         await that.$store.commit("setPlaylist", {
-                            object: objects[comp]
+                            object: mixIDs[comp],
+                            name : that.streamComponents[comp]
                         })
                     } else {
                         console.log("No mixes found")
@@ -90,6 +107,9 @@ export default {
         }
 
         create()
+        
+
+    //   this.getSubCollectionbyDate('mixes', 12)
 
 
     },

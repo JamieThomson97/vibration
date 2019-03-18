@@ -37,9 +37,9 @@ export default new Vuex.Store({
       profileURL: null,
       followersCount: null,
       followingCount: null,
-      playlists: [
+      playlists: {
 
-      ],
+      },
     },
     user: null,
     error: null,
@@ -53,7 +53,8 @@ export default new Vuex.Store({
   mutations: {
 
     setPlaylist(state, payload) {
-      state.customer.playlists.push(payload.object)
+      console.log(payload.name)
+      state.customer.playlists[payload.name] = payload.object
     },
 
     setuID(state, payload) {
@@ -88,11 +89,21 @@ export default new Vuex.Store({
         profileURL: null,
         followersCount: null,
         followingCount: null,
-        playlists: [
-
-        ],
+        playlists: {},
       }
     },
+
+    deletePlaylist(state, payload) {
+    },
+
+    deleteMix(state, payload){
+      console.log(payload.pName)
+      console.log('mid')
+      console.log(payload.mID)
+      Vue.delete(state.customer.playlists[payload.pName], payload.mID)      
+    },
+
+
   },
 
   actions: {
@@ -129,15 +140,14 @@ export default new Vuex.Store({
     }, payload) {
       firebase.auth().signInWithEmailAndPassword(payload.email, payload.password)
         .then((user) => {
-          commit('setuID', user.user.uid)
+          commit('setuID', user.user.uid) 
           console.log("getter     " + user.user.uid)
           const ref = firebase.firestore().collection('users').doc(user.user.uid)
           ref.get().then((snapshot) => {
-            console.log(snapshot.data().mixes)
+            
             this.dispatch("actionSetUser", {
               name: snapshot.data().name,
               profileURL: snapshot.data().profileURL,
-              customerMixes: snapshot.data().mixes,
             }).then(() => {
               router.push({
                 name: 'home'
@@ -162,6 +172,11 @@ export default new Vuex.Store({
         }).catch((error) => {
           console.log(error)
         })
+    },
+
+    actionDeleteMix({commit}, payload){
+     // this.dispatch(`customer.playlists.${payload.pName}.stream.${payload.mID}/delete`)
+     commit('deleteMix', payload)
     },
 
     actionSetmID({
@@ -243,7 +258,7 @@ export default new Vuex.Store({
       return state.Stream_History
     },
     mixLoaded(state) {
-      return state.mixLoaded
+      return state.mixLoaded  
     },
     name(state) {
       return state.customer.name
@@ -254,9 +269,8 @@ export default new Vuex.Store({
     customerMixes(state) {
       return state.customer.mixes
     },
-    playlist: (state) => (pName) => {
-      //console.log(findObjectByKey(state.customer.playlists, 'name', pName))
-      return (findObjectByKey(state.customer.playlists, 'name', pName))
+    playlists: (state) => (pName) => {
+      return (state.customer.playlists[pName])//+'.'+pName.stream)
     }
   },
 
