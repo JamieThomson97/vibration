@@ -67,7 +67,7 @@ export default {
   data() {
     return {
       expand: false,
-      streamComponents: ['timeline' , 'history']
+      streamComponents: ['timeline' , 'history', 'listenLater']
     }
   },
 
@@ -82,39 +82,7 @@ export default {
   },
 
   created: function () {
-      
-      let that = this
-
-      async function create() {
-
-        var mixIDs = []
-        var objects = []
-        for(let comp in that.streamComponents){
-            if(!that.$store.getters.playlist(that.streamComponents[comp])){
-            objects[comp] = {}
-            console.log(comp)
-            mixIDs[comp] = await that.pullID(that.streamComponents[comp])
-            if(mixIDs[comp].length > 0){
-              console.log("in if")
-              var stream = await that.pullMixes(mixIDs[comp])
-              objects[comp].mIDS =  mixIDs[comp]
-              objects[comp].stream =  stream
-              objects[comp].name =  that.streamComponents[comp]
-              console.log(that.streamComponents[comp])
-              // console.log(mIDs)
-              // console.log(stream)
-              console.log(objects[comp])
-              await that.$store.commit("setPlaylist", {object: objects[comp]})
-            }else{
-              console.log("No mixes found")
-            }
-          }
-        }
-      }
-
-      create()
-      
-      
+    this.createStream(this.streamComponents)
   },
 
 

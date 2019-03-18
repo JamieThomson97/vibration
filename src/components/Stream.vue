@@ -1,11 +1,6 @@
 <template>
     <div class="streamWrapper">
         <div class="nothing" v-if="!stream">Something</div>
-        <!-- <div class="flat tile entry" v-for='x in streamLength' :key='Object.keys(stream)[x-1]'>
-            
-            <div class="title caption grey--text">{{Object.keys(stream)[x-1]}}</div>
-            <div class="title caption grey--text">{{stream[Object.keys(stream)[x-1]].title}}</div>
-        </div>         -->
          <div class="flat tile entry" v-for='x in streamLength' :key='Object.keys(stream)[x-1]'>
             <v-img class='artwork' :aspect-ratio="1/1" contain height='100%' width='100%' :src="stream[Object.keys(stream)[x-1]].artworkURL"></v-img>
             <div class="artist caption grey--text">{{stream[Object.keys(stream)[x-1]].title}}</div>
@@ -41,8 +36,6 @@ export default {
     },
 
     computed:{
-
-
         ...mapGetters([
             'uID',
             'name',
@@ -51,11 +44,19 @@ export default {
         ]),
     
         stream(){
-            return this.$store.getters.playlists(this.pagePart)
+            if(this.$store.getters.playlists(this.pagePart)){
+                return this.$store.getters.playlists(this.pagePart)
+            }else{
+                return false
+            }
         },
 
-        streamLength(){            
-            return Object.keys(this.$store.getters.playlists(this.pagePart)).length;
+        streamLength(){
+            if(this.$store.getters.playlists(this.pagePart)){
+                return Object.keys(this.$store.getters.playlists(this.pagePart)).length;
+            }else{
+                return 0
+            }          
         },
 
         message(){
@@ -69,6 +70,9 @@ export default {
                 return "null"
             }
         }
+    },
+
+    watch:{
         
     },
 

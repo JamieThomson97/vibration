@@ -14,14 +14,14 @@ const vuexLocal = new VuexPersistence({
   })
 })
 
-function findObjectByKey(array, key, value) {
-  for (var i = 0; i < array.length; i++) {
-    if (array[i][key] === value) {
-      return array[i];
-    }
-  }
-  return false;
-}
+// function findObjectByKey(array, key, value) {
+//   for (var i = 0; i < array.length; i++) {
+//     if (array[i][key] === value) {
+//       return array[i];
+//     }
+//   }
+//   return false;
+// }
 
 export default new Vuex.Store({
 
@@ -37,9 +37,7 @@ export default new Vuex.Store({
       profileURL: null,
       followersCount: null,
       followingCount: null,
-      playlists: {
-
-      },
+      playlists: { },
     },
     user: null,
     error: null,
@@ -53,8 +51,7 @@ export default new Vuex.Store({
   mutations: {
 
     setPlaylist(state, payload) {
-      console.log(payload.name)
-      state.customer.playlists[payload.name] = payload.object
+      Vue.set(state.customer.playlists, payload.name , payload.object)
     },
 
     setuID(state, payload) {
@@ -93,8 +90,8 @@ export default new Vuex.Store({
       }
     },
 
-    deletePlaylist(state, payload) {
-    },
+    // deletePlaylist(state, payload) {
+    // },
 
     deleteMix(state, payload){
       console.log(payload.pName)

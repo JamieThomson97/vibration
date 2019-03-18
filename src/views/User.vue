@@ -8,7 +8,7 @@
         </div>
         <div class="mixes">
             <div>
-                <Stream pagePart="mixes"></Stream>
+                <Stream pagePart='mixes'></Stream>
             </div>
         </div>
         <div class="currentInfo">
@@ -60,11 +60,6 @@ export default {
         ...mapGetters([
             'profileURL'
         ]),
-
-        // stream(){
-        //     return this.pullID("mixes")
-        // }
-
     },
 
     mixins: [
@@ -74,45 +69,8 @@ export default {
 
 
     created: function () {
-
-
-        let that = this
-
-        async function create() {
-
-            var mixIDs = []
-            var objects = []
-            for (let comp in that.streamComponents) {
-                if (!that.$store.getters.playlists[that.streamComponents[comp]]) {
-                    objects[comp] = {}
-                    mixIDs[comp] = await that.pullID(that.streamComponents[comp])
-                    //console.log(Object.keys(mixIDs[comp]).length+'  comp')
-                    if (Object.keys(mixIDs[comp]).length > 0) {
-                        console.log("in if")
-                        // var stream = await that.pullMixes(mixIDs[comp])
-                        // objects[comp].mIDS = mixIDs[comp]
-                        // objects[comp].stream = stream
-                        // mixIDs[comp].name = that.streamComponents[comp]
-                        // console.log(that.streamComponents[comp])
-                        // console.log(objects[comp])
-                        await that.$store.commit("setPlaylist", {
-                            object: mixIDs[comp],
-                            name : that.streamComponents[comp]
-                        })
-                    } else {
-                        console.log("No mixes found")
-                    }
-                }
-            }
-        }
-
-        create()
-        
-
-    //   this.getSubCollectionbyDate('mixes', 12)
-
-
-    },
+        this.createStream(this.streamComponents)
+        },
 
 } 
 </script>
