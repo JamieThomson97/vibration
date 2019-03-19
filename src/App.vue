@@ -3,7 +3,9 @@
     <Nav />
     <v-content>
       <router-view></router-view>
+      <Player />
     </v-content>
+    
   </v-app>
 </template>
 
@@ -12,6 +14,7 @@
 
 import '@/components/firebaseConfig.js'
 import Nav from '@/components/Nav.vue'
+import Player from '@/components/Player.vue'
 
 import firebase from 'firebase'
 
@@ -19,7 +22,8 @@ import firebase from 'firebase'
 export default {
   name: 'App',
   components: {
-    Nav,    
+    Nav, 
+    Player,   
   },
   
   data () {

@@ -50,11 +50,13 @@ export default {
     },
 
     async createStream(streamComponents) {
-
+      
       var mixIDs = []
       var objects = []
       for (let comp in streamComponents) {
+        
         if (!this.$store.getters.playlists[streamComponents[comp]]) {
+          console.log('in iff')
           objects[comp] = {}
           mixIDs[comp] = await this.pullID(streamComponents[comp])
           

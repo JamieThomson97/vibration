@@ -17,7 +17,7 @@
       <Stream pagePart="listenLater"/>
     </div>
     <div class="box right">Something on the Right (maybe list of playlists)</div>
-    <div class="box player">Player</div>
+    
   </div>
   
 
@@ -97,7 +97,7 @@ export default {
       grid-template-columns: 2.5fr 3.5fr 3fr;
       grid-template-rows: repeat(12, 1fr);
       grid-gap: 1em;
-      height: 100%
+      
     }
     
     .stream{

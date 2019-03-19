@@ -1,13 +1,12 @@
 <template>
   <v-app>
-    <v-container fluid class="aboutDiv">
+    <div fluid class="aboutDiv">
       <v-layout fill-height="true" row>
         <v-flex xs12>
           
           <v-card height=95vh flat color="rgb(255, 0, 0, 0.0)">
             <v-card-text> Why Vibby</v-card-text>
             <v-btn  @click="show = !show" success>Login</v-btn>
-            <v-btn  @click="tester" success>gCloud</v-btn>
             <v-btn  @click="signOutUser" success>Log Out</v-btn>
             <v-btn  @click="createStream" success>Create Stream</v-btn>
             <v-btn  @click="getTimeline" success>Get Timeline</v-btn>
@@ -22,7 +21,7 @@
           </v-flex>
         </v-slide-x-transition>
       </v-layout>
-    </v-container>
+    </div>
   </v-app>
 </template>
 
@@ -30,13 +29,6 @@
 <script>
 
 import 'intersection-observer'
-//import Scrollama from 'vue-scrollama'
-//import Scroll from '@/components/Scroll.vue'
-
-
-
-import Axios from 'axios'
-
 //import Register from '../components/Register.vue'
 import SignIn from '../components/SignIn.vue'
 import * as firebase from 'firebase'
@@ -110,24 +102,10 @@ components: {
 
   methods:{
 
-    tester(){
-      Axios.get('https://us-central1-vibration-401b4.cloudfunctions.net/tester').then((response) => {
-        console.log(response.data)
-      })
-    },
-
-    signOutUser(){
+   signOutUser(){
           this.$store.dispatch('logUserOut')
         },
 
-    idk(){
-      const callFunction = firebase.functions().httpsCallable('tester')
-      callFunction({check: "check"}).then((response) => {
-        console.log(response)
-      }).catch((error) => {
-        console.log(error)
-      }) 
-    },
 
     //Returns all of the data for each mix found in the timeline of mIDs, which can be mounted and displayed
 
@@ -208,7 +186,7 @@ components: {
 
 .aboutDiv{
   background-color: #f7b9b9e0;
-  height: 100vh;
+  height: 30%;
   width: 100vw;
   
 }

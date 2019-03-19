@@ -2,8 +2,8 @@
     <div class="userWrapper">
         <div class="image">
             <div>
-              
-              Profile Name
+              Name of profile currently on 
+              {{profileName}}
                 
             </div>
         </div>
@@ -16,11 +16,10 @@
             <div>Information</div>
         </div>
         <div class="follow">
-            <v-btn @click:='follow'>Follow</v-btn>
-            <v-btn @click:='unFollow'>Follow</v-btn>
-            <v-btn >Un-Follow</v-btn>
-            <v-span>Following Count : {{followingCount}} </v-span>
-            <v-span>Follower Count : {{followerCount}} </v-span>   
+            <v-btn @click='follow(profileName ,uID , name, true)'>Follow</v-btn>
+            <v-btn @click='follow(profileName ,uID , name, false)'>Un-Follow</v-btn>
+            <span>Following Count : {{followingCount}} </span>
+            <span>Follower Count : {{followerCount}} </span>   
             {{uID}}         
         </div>
         <div class="userPlayer">User Player</div>
@@ -31,7 +30,9 @@
 
 <script>
 
+    import firebase from 'firebase'
     import createPlaylistMixin from '../mixins/createPlaylistMixin'
+    
 import {
     mapGetters
 } from 'vuex'
@@ -60,18 +61,22 @@ export default {
 
     data() {
         return {
-            streamComponents: ['mixes']
+            streamComponents: ['mixes'],
+            profileName: 'Test Producer',
+            profileuID: null,
+            followingCount: 0,
+            followerCount: 0,
         }
     },
 
     computed: {
         ...mapGetters([
             'profileURL',
-            'followingCount',
-            'followerCount',
             'uID',
+            'name',
         ]),
     },
+
 
     mixins: [
         createPlaylistMixin
@@ -81,17 +86,37 @@ export default {
 
     created: function () {
         this.createStream(this.streamComponents)
-        },
+        firebase.firestore().collection('users').where('name', '==', this.profileName).onSnapshot(response => {
+            this.profileuID = response.docs[0].id
+            console.log(response.docs[0].data())
+            this.followingCount = response.docs[0].data().followingCount
+            this.followerCount = response.docs[0].data().followerCount
+            console.log(this.followerCount)
+        })
+
+        
+    },
     
     methods:{
 
-        follow(uID){
-
-        }
+        follow(followingName, followeruID, followerName, follow){
+            const callFunctions = firebase.functions().httpsCallable('followUser')
+            
+            callFunctions({
+                'followingName' : followingName,
+                'followeruID' : followeruID,
+                'followerName' : followerName,
+                'follow' : follow
+                }).then(response => {
+                    console.log(response)
+                })
+                
+        }, 
+        
 
     }
+}
 
-} 
 </script>
 
 <style>
