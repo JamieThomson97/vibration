@@ -1,16 +1,14 @@
 <template>
-  <div class="playerWrapper">
-      hello
-       <!-- v-if="!!playerCurrentTrack"> -->
+  <div class="playerWrapper" v-if="!!playerCurrentTrack">
     <div class="trackDetails">
       <img :src="playerCurrentTrack.artwork_url" alt="">
       <div class="titleWrapper">
         <router-link class="title" :to="`/tracks/${playerCurrentTrack.id}`">
           {{playerCurrentTrack.title}}
         </router-link>
-        <router-link class="user" :to="`/users/${playerCurrentTrack.user.id}`">
-          {{playerCurrentTrack.user.username}}
-        </router-link>
+          <!-- <router-link class="user" :to="`/users/${playerCurrentTrack.user.id}`">
+            {{playerCurrentTrack.user.username}}
+          </router-link> -->
       </div>
     </div>
     <div class="mainButtons">
@@ -78,6 +76,7 @@ export default {
       }
     },
     playerCurrentTrack(nextCurrentTrack, prevCurrentTrack) {
+      console.log(nextCurrentTrack, prevCurrentTrack)
       if (nextCurrentTrack && !_.isEqual(nextCurrentTrack, prevCurrentTrack)) {
         if (this.player) {
           this.player.pause();

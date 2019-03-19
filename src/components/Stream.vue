@@ -1,7 +1,11 @@
 <template>
     <div class="streamWrapper">
         <div class="nothing" v-if="!stream">Something</div>
-         <div class="flat tile entry" v-for='x in streamLength' :key='Object.keys(stream)[x-1]'>
+         <div class="flat tile entry" 
+         @click="handleClickTrack(stream[Object.keys(stream)[x-1]])"
+         v-for='x in streamLength'
+          :key='Object.keys(stream)[x-1]'
+          >
             <v-img class='artwork' :aspect-ratio="1/1" contain height='100%' width='100%' :src="stream[Object.keys(stream)[x-1]].artworkURL"></v-img>
             <div class="artist caption grey--text">{{stream[Object.keys(stream)[x-1]].title}}</div>
             <div class="title caption grey--text">{{stream[Object.keys(stream)[x-1]].producer}}</div>
@@ -12,8 +16,12 @@
 
 <script>
 
+import { mapGetters } from 'vuex';
 import firebase from 'firebase'
-import { mapGetters } from 'vuex'
+
+// import { Howl } from 'howler';
+// import _ from 'lodash';
+// import secondsToTime from '@/utils/secondsToTime';
 
 export default {
 
@@ -36,12 +44,14 @@ export default {
     },
 
     computed:{
-        ...mapGetters([
-            'uID',
-            'name',
-            'profileURL',
+        ...mapGetters({
+            uID : 'uID',
+            name : 'name',
+            profileURL : 'profileURL',
+            playerCurrentTrack : 'playerCurrentTrack',
+            
             // ...
-        ]),
+        }),
     
         stream(){
             if(this.$store.getters.playlists(this.pagePart)){
@@ -88,7 +98,16 @@ export default {
             }).catch((error) => {
                 console.log(error)
             })
-        }
+        },
+
+        handleClickTrack(trackData) {
+            console.log(trackData)
+            if (this.playerCurrentTrack && this.playerCurrentTrack.title === trackData.title) {
+                this.$store.dispatch('setPlayerCurrentTrack', null);
+            } else {
+                this.$store.dispatch('setPlayerCurrentTrack', trackData);
+            }
+        },
         
     },
 

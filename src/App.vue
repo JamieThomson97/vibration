@@ -1,10 +1,10 @@
 <template>
   <v-app>
     <Nav />
-    <v-content>
-      <router-view></router-view>
-      <Player />
-    </v-content>
+    
+    <router-view></router-view>
+    <Player />
+    
     
   </v-app>
 </template>
