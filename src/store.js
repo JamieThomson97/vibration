@@ -35,8 +35,8 @@ export default new Vuex.Store({
       uID: null,
       name: null,
       profileURL: null,
-      followersCount: null,
-      followingCount: null,
+      followerCount: 0,
+      followingCount: 0,
       playlists: { },
     },
     user: null,
@@ -80,6 +80,8 @@ export default new Vuex.Store({
     },
 
     setNullUser(state) {
+      // console.log('in')
+      // Vue.delete(state, 'customer')
       state.customer = {
         uID: null,
         name: null,
@@ -88,6 +90,18 @@ export default new Vuex.Store({
         followingCount: null,
         playlists: {},
       }
+    },
+
+    setUser(state, payload) {
+      var user = {}
+      user.customer = payload.user
+      user.customer.uID = payload.uID
+      user.customer.playlists = {} 
+      user.customer.followerCount = 0
+      user.customer.followingCount = 0
+      console.log(user.customer)
+      Vue.set(state, 'customer', user.customer)
+      //Vue.set( )
     },
 
     // deletePlaylist(state, payload) {
@@ -112,10 +126,8 @@ export default new Vuex.Store({
         .then((user) => {
           firebase.firestore().collection('users').doc(user.user.uid).set({
             name: payload.name,
-            mixes: [],
-            timeline: [],
-            history: [],
-            listenLater: [],
+            followingCount: 0,
+            followersCount: 0,
             following: [],
             followers: [],
             playlists: {}
@@ -126,7 +138,6 @@ export default new Vuex.Store({
             console.log(error)
           })
           commit('setuID', user.user.uid)
-          // localStorage.setItem('auth', newUser.ID)
         }).catch((error) => {
           console.log(error)
         })
@@ -137,14 +148,13 @@ export default new Vuex.Store({
     }, payload) {
       firebase.auth().signInWithEmailAndPassword(payload.email, payload.password)
         .then((user) => {
-          commit('setuID', user.user.uid) 
-          console.log("getter     " + user.user.uid)
+          const uID = user.user.uid
           const ref = firebase.firestore().collection('users').doc(user.user.uid)
           ref.get().then((snapshot) => {
-            
             this.dispatch("actionSetUser", {
-              name: snapshot.data().name,
-              profileURL: snapshot.data().profileURL,
+              
+              user : snapshot.data(),
+              uID : uID
             }).then(() => {
               router.push({
                 name: 'home'
@@ -197,21 +207,8 @@ export default new Vuex.Store({
     actionSetUser({
       commit
     }, payload) {
-      if (payload.uID) {
-        commit('setuID', payload.uID)
-      }
-      if (payload.name) {
-        commit('setName', payload.name)
-      }
-      if (payload.profileURL) {
-        commit('setProfileURL', payload.profileURL)
-      }
-      if (payload.followersCount) {
-        commit('setFollowersCount', payload.followersCount)
-      }
-      if (payload.followingCount) {
-        commit('setFollowingCount', payload.followingCount)
-      }
+      console.log(payload.user)
+      commit('setUser', { user : payload.user , uID : payload.uID })
     }
 
 
@@ -268,7 +265,13 @@ export default new Vuex.Store({
     },
     playlists: (state) => (pName) => {
       return (state.customer.playlists[pName])//+'.'+pName.stream)
-    }
+    }, 
+    followingCount(state){
+      return state.customer.followingCount
+    },
+    followerCount(state){
+      return state.customer.followerCount
+    },
   },
 
 })

@@ -2,7 +2,8 @@
     <div class="userWrapper">
         <div class="image">
             <div>
-                <!-- <v-img :src=profileURL></v-img> -->
+              
+              Profile Name
                 
             </div>
         </div>
@@ -14,7 +15,14 @@
         <div class="currentInfo">
             <div>Information</div>
         </div>
-        <div class="follow">Follow/Unfollow btn + no. of followers etc...</div>
+        <div class="follow">
+            <v-btn @click:='follow'>Follow</v-btn>
+            <v-btn @click:='unFollow'>Follow</v-btn>
+            <v-btn >Un-Follow</v-btn>
+            <v-span>Following Count : {{followingCount}} </v-span>
+            <v-span>Follower Count : {{followerCount}} </v-span>   
+            {{uID}}         
+        </div>
         <div class="userPlayer">User Player</div>
     </div>
         
@@ -58,7 +66,10 @@ export default {
 
     computed: {
         ...mapGetters([
-            'profileURL'
+            'profileURL',
+            'followingCount',
+            'followerCount',
+            'uID',
         ]),
     },
 
@@ -71,6 +82,14 @@ export default {
     created: function () {
         this.createStream(this.streamComponents)
         },
+    
+    methods:{
+
+        follow(uID){
+
+        }
+
+    }
 
 } 
 </script>
