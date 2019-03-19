@@ -3,10 +3,9 @@ import Vuex from 'vuex'
 import * as firebase from 'firebase'
 import VuexPersistence from 'vuex-persist'
 import router from './router'
-import player from './store/modules/player';
+// import * as _ from 'underscore'
 
-Vue.use(Vuex);
-
+Vue.use(Vuex)
 
 const vuexLocal = new VuexPersistence({
   storage: window.localStorage,
@@ -30,11 +29,6 @@ export default new Vuex.Store({
     vuexLocal.plugin,
   ],
 
-  modules: {
-  
-    player,
-  },
-
   appTitle: 'Vibration',
   state: {
     customer: {
@@ -52,16 +46,6 @@ export default new Vuex.Store({
     right: true,
     mini: true,
     mixLoaded: false,
-
-    player: {
-      isPlay: false,
-      playerCurrentTime: 0,
-      playerDuration: 0,
-      playerTracks: [],
-      playerCurrentTrack: null,
-      playerSeeking: false,
-    }
-
   },
 
   mutations: {
@@ -143,7 +127,7 @@ export default new Vuex.Store({
           firebase.firestore().collection('users').doc(user.user.uid).set({
             name: payload.name,
             followingCount: 0,
-            followerCount: 0,
+            followersCount: 0,
             following: [],
             followers: [],
             playlists: {}
@@ -158,9 +142,10 @@ export default new Vuex.Store({
           console.log(error)
         })
     },
-    // eslint-disable-next-line 
-    signUserIn({ commit } , payload) {
-      console.log(payload.email, payload.password)
+
+    signUserIn({
+      commit
+    }, payload) {
       firebase.auth().signInWithEmailAndPassword(payload.email, payload.password)
         .then((user) => {
           const uID = user.user.uid
@@ -248,24 +233,6 @@ export default new Vuex.Store({
     stream(state) {
       return state.stream
     },
-    ID_Timeline(state) {
-      return state.ID_Timeline
-    },
-    Stream_Timeline(state) {
-      return state.Stream_Timeline
-    },
-    ID_ListenLater(state) {
-      return state.ID_ListenLater
-    },
-    Stream_ListenLater(state) {
-      return state.Stream_ListenLater
-    },
-    ID_History(state) {
-      return state.ID_History
-    },
-    Stream_History(state) {
-      return state.Stream_History
-    },
     mixLoaded(state) {
       return state.mixLoaded  
     },
@@ -287,7 +254,6 @@ export default new Vuex.Store({
     followerCount(state){
       return state.customer.followerCount
     },
-  
   },
 
 })

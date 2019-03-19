@@ -2,7 +2,7 @@
     <div class="streamWrapper">
         <div class="nothing" v-if="!stream">Something</div>
          <div class="flat tile entry" 
-         @click="handleClickTrack(stream[Object.keys(stream)[x-1]])"
+         @click="handleClickTrack(stream[Object.keys(stream)[x-1]], Object.keys(stream)[x-1])"
          v-for='x in streamLength'
           :key='Object.keys(stream)[x-1]'
           >
@@ -100,12 +100,19 @@ export default {
             })
         },
 
-        handleClickTrack(trackData) {
+        handleClickTrack(trackData, trackID) {
             console.log(trackData)
             if (this.playerCurrentTrack && this.playerCurrentTrack.title === trackData.title) {
                 this.$store.dispatch('setPlayerCurrentTrack', null);
             } else {
                 this.$store.dispatch('setPlayerCurrentTrack', trackData);
+                // var passTracks = this.stream    
+                // console.log('pass tracks 1')
+                // console.log(this.stream)
+                // delete passTracks[trackID]
+                // console.log('pass tracks 2')
+                // console.log(passTracks)
+                this.$store.dispatch('setPlayerTracks', this.stream)
             }
         },
         

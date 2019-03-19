@@ -76,6 +76,7 @@ export default {
       }
     },
     playerCurrentTrack(nextCurrentTrack, prevCurrentTrack) {
+      console.log('track clicked')
       console.log(nextCurrentTrack, prevCurrentTrack)
       if (nextCurrentTrack && !_.isEqual(nextCurrentTrack, prevCurrentTrack)) {
         if (this.player) {
@@ -86,8 +87,9 @@ export default {
           this.player = null;
         }
         setTimeout(() => {
+          console.log('in howl')
           this.player = new Howl({
-            src: `${nextCurrentTrack.stream_url}?client_id=${process.env.SOUNDCLOUD_CLIENT_ID}`,
+            src: nextCurrentTrack.streamURL,
             html5: true,
             volume: 1.0,
           });
@@ -135,19 +137,25 @@ export default {
     },
     handleChangeTrack(direction) {
       const self = this;
-      const currentTrackID = this.playerCurrentTrack.id;
-      this.playerTracks.forEach((track, index) => {
-        if (currentTrackID === track.id) {
+      const currentTrackTitle = this.playerCurrentTrack.title
+      Object.values(this.playerTracks).forEach((track, index) => {
+        console.log(currentTrackTitle+'    '+track.title)
+        if (currentTrackTitle === track.title) {
+          console.log('inif')
           let nextIndex = 0;
           if (direction === 'next') {
+            console.log('in seconds if')
             nextIndex = index + 1;
-            if (nextIndex < self.playerTracks.length) {
-              this.$store.dispatch('setPlayerCurrentTrack', self.playerTracks[nextIndex]);
+            if (nextIndex < Object.values(self.playerTracks).length) {
+              console.log(Object.values(self.playerTracks)[0])
+              console.log(Object.values(self.playerTracks)[1])
+              console.log(Object.values(self.playerTracks))
+              this.$store.dispatch('setPlayerCurrentTrack', Object.values(self.playerTracks)[nextIndex]);
             }
           } else if (direction === 'previous') {
             nextIndex = index - 1;
             if (nextIndex >= 0) {
-              this.$store.dispatch('setPlayerCurrentTrack', self.playerTracks[nextIndex]);
+              this.$store.dispatch('setPlayerCurrentTrack', Object.values(self.playerTracks)[nextIndex]);
             }
           }
         }
@@ -180,7 +188,7 @@ export default {
     bottom: 0;
     left: 0;
     width: 100%;
-    height: 85vh;
+    height: 30  vh;
     background: #fff;
     display: flex;
     z-index: 99999;
