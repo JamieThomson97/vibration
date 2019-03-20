@@ -2,14 +2,13 @@
     <div class="userWrapper">
         <div class="image">
             <div>
-              Name of profile currently on 
-              {{profileName}}
-                
+              
+              {{clickedUser.name}}
             </div>
         </div>
         <div class="mixes">
             <div>
-                <Stream pagePart='mixes'></Stream>
+                <Stream pagePart='clickedUser.mixes'></Stream>
             </div>
         </div>
         <div class="currentInfo">
@@ -18,8 +17,8 @@
         <div class="follow">
             <v-btn @click='follow(profileName ,uID , name, true)'>Follow</v-btn>
             <v-btn @click='follow(profileName ,uID , name, false)'>Un-Follow</v-btn>
-            <span>Following Count : {{followingCount}} </span>
-            <span>Follower Count : {{followerCount}} </span>   
+            <span>Following Count : {{clickedUser.followingCount}} </span>
+            <span>Follower Count : {{clickedUser.followerCount}} </span>   
             {{uID}}         
         </div>
         <div class="userPlayer">User Player</div>
@@ -55,6 +54,14 @@ export default {
     }
 },
 
+    mounted() {
+    const { params: { id } } = this.$route
+    this.$store.dispatch('getUserProfile', id)    
+    this.createClickedStream(id)
+    // this.$store.dispatch('getUserFollowings', name);
+    // this.$store.dispatch('getUserTracks', name);
+  },
+
     components: {
         Stream,
     },
@@ -74,6 +81,8 @@ export default {
             'profileURL',
             'uID',
             'name',
+            'clickeduID',
+            'clickedUser',
         ]),
     },
 
@@ -85,13 +94,13 @@ export default {
 
 
     created: function () {
-        this.createStream(this.streamComponents)
+        //this.createStream(this.streamComponents)
         firebase.firestore().collection('users').where('name', '==', this.profileName).onSnapshot(response => {
             this.profileuID = response.docs[0].id
-            console.log(response.docs[0].data())
+            //console.log(response.docs[0].data())
             this.followingCount = response.docs[0].data().followingCount
             this.followerCount = response.docs[0].data().followerCount
-            console.log(this.followerCount)
+            //console.log(this.followerCount)
         })
 
         

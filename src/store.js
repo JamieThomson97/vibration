@@ -3,6 +3,8 @@ import Vuex from 'vuex'
 import * as firebase from 'firebase'
 import VuexPersistence from 'vuex-persist'
 import router from './router'
+import player from './store/modules/player';
+import user from './store/modules/user';
 // import * as _ from 'underscore'
 
 Vue.use(Vuex)
@@ -14,20 +16,17 @@ const vuexLocal = new VuexPersistence({
   })
 })
 
-// function findObjectByKey(array, key, value) {
-//   for (var i = 0; i < array.length; i++) {
-//     if (array[i][key] === value) {
-//       return array[i];
-//     }
-//   }
-//   return false;
-// }
 
 export default new Vuex.Store({
 
   plugins: [
     vuexLocal.plugin,
   ],
+
+  modules: {
+    player,
+    user,
+  },
 
   appTitle: 'Vibration',
   state: {
@@ -39,6 +38,7 @@ export default new Vuex.Store({
       followingCount: 0,
       playlists: { },
     },
+    clickedUser: {  },
     user: null,
     error: null,
     loading: false,
@@ -52,6 +52,16 @@ export default new Vuex.Store({
 
     setPlaylist(state, payload) {
       Vue.set(state.customer.playlists, payload.name , payload.object)
+    },
+
+    setClickedPlaylist(state, payload) {
+      Vue.set(state.clickedUser, 'mixes' , payload.object)
+    },
+
+    GET_USER_PROFILE_SUCCESS: (state, data) => {
+      console.log(data)
+      state.getClickedProfileLoading = false;
+      state.clickedUser = data;
     },
 
     setuID(state, payload) {
@@ -143,7 +153,7 @@ export default new Vuex.Store({
         })
     },
 
-    signUserIn({
+    signUserIn({// eslint-disable-next-line
       commit
     }, payload) {
       firebase.auth().signInWithEmailAndPassword(payload.email, payload.password)
@@ -182,7 +192,6 @@ export default new Vuex.Store({
     },
 
     actionDeleteMix({commit}, payload){
-     // this.dispatch(`customer.playlists.${payload.pName}.stream.${payload.mID}/delete`)
      commit('deleteMix', payload)
     },
 
@@ -215,6 +224,15 @@ export default new Vuex.Store({
   },
 
   getters: {
+
+    clickedUser(state) {
+      return state.clickedUser
+    },
+
+    clickeduID(state) {
+      return state.clickedUser.uID
+    },
+    
     uID(state) {
       return state.customer.uID
     },
@@ -245,6 +263,9 @@ export default new Vuex.Store({
     customerMixes(state) {
       return state.customer.mixes
     },
+
+    //you were thinking of ways to get the clickeUser.mixes object into the template
+
     playlists: (state) => (pName) => {
       return (state.customer.playlists[pName])//+'.'+pName.stream)
     }, 

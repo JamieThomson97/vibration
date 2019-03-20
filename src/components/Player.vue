@@ -6,9 +6,9 @@
         <router-link class="title" :to="`/tracks/${playerCurrentTrack.id}`">
           {{playerCurrentTrack.title}}
         </router-link>
-          <!-- <router-link class="user" :to="`/users/${playerCurrentTrack.user.id}`">
-            {{playerCurrentTrack.user.username}}
-          </router-link> -->
+        <v-btn class="user" :to="`/users/${playerCurrentTrack.uID}`">
+          {{playerCurrentTrack.producer}}
+        </v-btn>
       </div>
     </div>
     <div class="mainButtons">
@@ -73,8 +73,26 @@ export default {
       if (nextPlayerCurrentTime !== prevPlayerCurrentTime && this.playerSeeking) {
         this.player.seek(nextPlayerCurrentTime);
         this.$store.dispatch('setPlayerSeeking', false);
+      } //If the next second is the final second of the song
+      if (nextPlayerCurrentTime == this.playerDuration) {
+        //If there are other tracks queued, play the next
+        const self = this;
+        const currentTrackTitle = this.playerCurrentTrack.title
+        Object.values(this.playerTracks).forEach((track, index) => {
+          console.log(currentTrackTitle + '    ' + track.title)
+          if (currentTrackTitle === track.title) {
+            let nextIndex = 0;
+            nextIndex = index + 1;
+            if (nextIndex < Object.values(self.playerTracks).length) {
+              this.$store.dispatch('setPlayerCurrentTrack', Object.values(self.playerTracks)[nextIndex]);
+            }else{
+              console.log('end of queue')
+            }
+          }
+        });
       }
     },
+
     playerCurrentTrack(nextCurrentTrack, prevCurrentTrack) {
       console.log('track clicked')
       console.log(nextCurrentTrack, prevCurrentTrack)
@@ -139,18 +157,14 @@ export default {
       const self = this;
       const currentTrackTitle = this.playerCurrentTrack.title
       Object.values(this.playerTracks).forEach((track, index) => {
-        console.log(currentTrackTitle+'    '+track.title)
         if (currentTrackTitle === track.title) {
-          console.log('inif')
           let nextIndex = 0;
           if (direction === 'next') {
-            console.log('in seconds if')
             nextIndex = index + 1;
             if (nextIndex < Object.values(self.playerTracks).length) {
-              console.log(Object.values(self.playerTracks)[0])
-              console.log(Object.values(self.playerTracks)[1])
-              console.log(Object.values(self.playerTracks))
               this.$store.dispatch('setPlayerCurrentTrack', Object.values(self.playerTracks)[nextIndex]);
+            }else{
+              console.log('end of quque')
             }
           } else if (direction === 'previous') {
             nextIndex = index - 1;
@@ -178,6 +192,7 @@ export default {
       this.player.seek(currentTime);
     },
     secondsToTime,
+
   },
 };
 </script>

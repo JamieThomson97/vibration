@@ -21,20 +21,20 @@ export default {
             const item = timeline[entry].data()
             mIDs[timeline[entry].id] = item
           }
-          resolve (mIDs)
+          resolve(mIDs)
         })
       })
     },
 
-    getSubCollectionbyDate(subCollection, amount){
+    getSubCollectionbyDate(subCollection, amount) {
 
       var results = []
-      const uID = this.$store.getters.uID      
+      const uID = this.$store.getters.uID
       const query = database.collection('users').doc(uID).collection(subCollection).orderBy("dateUploaded", "DESC").limit(amount)
 
       return query.get().then((snapshot) => {
         const documents = snapshot.docs
-        for (var entry = 0; entry < documents.length; entry++){
+        for (var entry = 0; entry < documents.length; entry++) {
           
           // Adds the document to an array, that will be passed into the next function --- *** currently working on, is not yet designed correctly, may cause errors ***
           // Must ensure that when new mix is added, the cloud function creates the entries elsewhere using the SAME DOCUMENT ID, otherwise this will fail
@@ -71,7 +71,46 @@ export default {
           }
         }
       }
-    }
+    },
+
+    getClickedMixes(uID) {
+      return new Promise(resolve => {
+        //Ref references the playlist that this stream component is loading (e.g. timeline, history, or user created playlist, this does not query the database
+        const ref = firebase.firestore().collection('users').doc(uID).collection('mixes')
+        var mIDs = {}
+        //Actually queries the database, but only returns the 12 most recent entries
+        ref.orderBy("dateUploaded", "asc").limit(12).get().then((snapshot) => {
+          const timeline = snapshot.docs
+          for (var entry = 0; entry < timeline.length; entry++) {
+            // Adds the document to an array, that will be passed into the next function --- *** currently working on, is not yet designed correctly, may cause errors ***
+            // Must ensure that when new mix is added, the cloud function creates the entries elsewhere using the SAME DOCUMENT ID, otherwise this will fail
+            const item = timeline[entry].data()
+            mIDs[timeline[entry].id] = item
+          }
+          resolve(mIDs)
+        })
+      })
+    },
+
+    async createClickedStream(uID) {
+      
+      var mixIDs = []
+      var objects = []
+      
+      objects['mixes'] = {}
+      mixIDs['mixes'] = await this.getClickedMixes(uID)
+          
+      if (Object.keys(mixIDs['mixes']).length > 0) {
+
+        await this.$store.commit("setClickedPlaylist", {
+          object: mixIDs['mixes']
+        })
+      } else {
+        console.log("No mixes found")
+      }
+    },
+
+    
 
   }
 }

@@ -19,6 +19,7 @@
 //Or calc when it is downloaded from howler
 
 import * as firebase from 'firebase'
+import { mapGetters } from 'vuex'
 
 export default {
 
@@ -33,13 +34,23 @@ export default {
         }
     },
 
+    computed: {
+
+        ...mapGetters([
+            'uID',
+            'name',
+            'profileURL',
+            // ...
+        ]),
+      },
+
     methods: {
         addMix(){
             for ( var i in this.fields) {
                 console.log(this.fields[i].input)
             }
             var callFunction = firebase.functions().httpsCallable('addMix');
-            callFunction({title : this.fields[0].input , tracklist : this.fields[2].input , series : this.fields[3].input}).then(function(result) {
+              callFunction({title : this.fields[0].input , tracklist : this.fields[2].input , series : this.fields[3].input , producer : this.name}).then(function(result) {
                 console.log(result)
             });
 

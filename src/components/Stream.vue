@@ -39,7 +39,6 @@ export default {
 
     created(){
         console.log('stream')
-        console.log(this.stream)
         
     },
 
@@ -99,19 +98,13 @@ export default {
                 console.log(error)
             })
         },
-
+// eslint-disable-next-line
         handleClickTrack(trackData, trackID) {
-            console.log(trackData)
+            
             if (this.playerCurrentTrack && this.playerCurrentTrack.title === trackData.title) {
                 this.$store.dispatch('setPlayerCurrentTrack', null);
             } else {
                 this.$store.dispatch('setPlayerCurrentTrack', trackData);
-                // var passTracks = this.stream    
-                // console.log('pass tracks 1')
-                // console.log(this.stream)
-                // delete passTracks[trackID]
-                // console.log('pass tracks 2')
-                // console.log(passTracks)
                 this.$store.dispatch('setPlayerTracks', this.stream)
             }
         },

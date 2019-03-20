@@ -29,7 +29,7 @@ export default new Router({
       component: Home_Template
     },
     {
-      path: '/user',
+      path: '/users/:id',
       name: 'User',
       component: User
     },
