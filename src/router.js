@@ -20,7 +20,8 @@ export default new Router({
     {
       path: '/about',
       name: 'about',
-      component: About
+      component: About,
+      alias: '/minge'
             
     },
     {
@@ -31,7 +32,8 @@ export default new Router({
     {
       path: '/users/:id',
       name: 'User',
-      component: User
+      component: User,
+      alias: 'users/:name'
     },
     {
       path: '/addMix',

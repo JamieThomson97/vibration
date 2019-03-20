@@ -5,16 +5,16 @@
     <div class="box stream">
       <div>
         <div>Timeline</div>
-        <Stream pagePart="timeline"/>
+        <Stream pagePart="timeline" passedUser = 'customer'/>
       </div>
     </div>
     <div class="box listened">
       <div>History</div>
-      <Stream pagePart="history"/>
+      <Stream pagePart="history"  passedUser = 'customer'/>
     </div>
     <div class="box recommended">
       <div>Listen Later</div>
-      <Stream pagePart="listenLater"/>
+      <Stream pagePart="listenLater"  passedUser = 'customer'/>
     </div>
     <div class="box right">Something on the Right (maybe list of playlists)</div>
     
@@ -56,7 +56,10 @@ export default {
     pagePart: {
       type: String,
       required: false,
-      
+    },
+    passedUser: {
+      type: String,
+      required: false,
     }
   },
 
@@ -83,6 +86,7 @@ export default {
 
   created: function () {
     this.createStream(this.streamComponents)
+    
   },
 
 

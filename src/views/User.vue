@@ -8,7 +8,7 @@
         </div>
         <div class="mixes">
             <div>
-                <Stream pagePart='clickedUser.mixes'></Stream>
+                <Stream pagePart='mixes' passedUser='clickedUser'></Stream>
             </div>
         </div>
         <div class="currentInfo">
@@ -18,8 +18,10 @@
             <v-btn @click='follow(profileName ,uID , name, true)'>Follow</v-btn>
             <v-btn @click='follow(profileName ,uID , name, false)'>Un-Follow</v-btn>
             <span>Following Count : {{clickedUser.followingCount}} </span>
-            <span>Follower Count : {{clickedUser.followerCount}} </span>   
-            {{uID}}         
+            <span>Follower Count : {{clickedUser.followerCount}} </span>
+            <div class="followers">
+                <followX XXX='followers'/>    
+            </div>       
         </div>
         <div class="userPlayer">User Player</div>
     </div>
@@ -35,7 +37,9 @@
 import {
     mapGetters
 } from 'vuex'
+
 import Stream from '@/components/Stream.vue'
+import followX from '@/components/followX.vue'
 
 export default {
 
@@ -55,15 +59,16 @@ export default {
 },
 
     mounted() {
+        
     const { params: { id } } = this.$route
     this.$store.dispatch('getUserProfile', id)    
     this.createClickedStream(id)
-    // this.$store.dispatch('getUserFollowings', name);
-    // this.$store.dispatch('getUserTracks', name);
+    this.$store.dispatch('getUserFollowX', { id : id , array : ['followers' , 'following']});
   },
 
     components: {
         Stream,
+        followX
     },
 
     data() {
@@ -94,6 +99,7 @@ export default {
 
 
     created: function () {
+        console.log('in created function')
         //this.createStream(this.streamComponents)
         firebase.firestore().collection('users').where('name', '==', this.profileName).onSnapshot(response => {
             this.profileuID = response.docs[0].id

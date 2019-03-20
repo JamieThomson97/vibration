@@ -9,7 +9,7 @@
             <v-img class='artwork' :aspect-ratio="1/1" contain height='100%' width='100%' :src="stream[Object.keys(stream)[x-1]].artworkURL"></v-img>
             <div class="artist caption grey--text">{{stream[Object.keys(stream)[x-1]].title}}</div>
             <div class="title caption grey--text">{{stream[Object.keys(stream)[x-1]].producer}}</div>
-            <v-btn v-if="pagePart == 'mixes'" @click="deleteMix(Object.keys(stream)[x-1])">Delete</v-btn>
+            <v-btn v-if="uID == stream[Object.keys(stream)[x-1]].uID" @click="deleteMix(Object.keys(stream)[x-1])">Delete</v-btn>
         </div>
     </div>
  </template>
@@ -35,10 +35,12 @@ export default {
 
     props: [
         "pagePart",
+        "passedUser"
     ],
 
     created(){
-        console.log('stream')
+            
+        console.log(this.passedUser)
         
     },
 
@@ -53,16 +55,16 @@ export default {
         }),
     
         stream(){
-            if(this.$store.getters.playlists(this.pagePart)){
-                return this.$store.getters.playlists(this.pagePart)
+            if(this.$store.getters.playlists(this.pagePart , this.passedUser)){
+                return this.$store.getters.playlists(this.pagePart , this.passedUser)
             }else{
                 return false
             }
         },
 
         streamLength(){
-            if(this.$store.getters.playlists(this.pagePart)){
-                return Object.keys(this.$store.getters.playlists(this.pagePart)).length;
+            if(this.$store.getters.playlists(this.pagePart , this.passedUser)){
+                return Object.keys(this.$store.getters.playlists(this.pagePart , this.passedUser)).length;
             }else{
                 return 0
             }          

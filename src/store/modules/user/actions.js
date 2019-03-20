@@ -1,7 +1,6 @@
 
 import * as firebase from 'firebase'
 const database = firebase.firestore()
-import store from '../../../store'
   
 export default {
 
@@ -16,11 +15,20 @@ export default {
       return profile
     })
   },
-  /*
-  getUserFollowings: (context, id) => {
-    
+  
+  getUserFollowX: (context, payload) => {
+    console.log('getuserfollowX')
+    const uID = payload.id
+    const array = payload.array
+    array.forEach(foll => {
+      var callFunction = firebase.functions().httpsCallable('getFollowX')
+      callFunction({ uID : uID , followX : foll}).then(response => {
+        console.log('httpsresposne')
+        console.log(response.data)
+        context.commit('setFollowX' , { response : response.data , follX : foll})
+      })
+    } ) 
   },
-  */
   
   getUserTracks: () => {
     console.log('getUserTracks')

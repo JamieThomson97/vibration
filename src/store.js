@@ -38,7 +38,9 @@ export default new Vuex.Store({
       followingCount: 0,
       playlists: { },
     },
-    clickedUser: {  },
+    clickedUser: { 
+      playlists: {},
+     },
     user: null,
     error: null,
     loading: false,
@@ -54,17 +56,28 @@ export default new Vuex.Store({
       Vue.set(state.customer.playlists, payload.name , payload.object)
     },
 
+    setFollowX: (state, payload) => {
+      console.log('setFollowX')
+      console.log(payload.response)
+      //state.clickedUser[payload.follX] = payload.response
+      Vue.set(state.clickedUser, payload.follX , payload.response)
+      // console.log(payload.follX)
+      // console.log(payload.response)
+      
+    },
+
     setClickedPlaylist(state, payload) {
-      Vue.set(state.clickedUser, 'mixes' , payload.object)
+      Vue.set(state.clickedUser.playlists, 'mixes' , payload.object)
     },
 
     GET_USER_PROFILE_SUCCESS: (state, data) => {
       console.log(data)
+      data['playlists'] = {}
       state.getClickedProfileLoading = false;
-      state.clickedUser = data;
+      Vue.set(state , 'clickedUser' , data)
     },
 
-    setuID(state, payload) {
+    setuID(state, payload) {  
       state.customer.uID = payload
     },
     setError(state, payload) {
@@ -225,6 +238,8 @@ export default new Vuex.Store({
 
   getters: {
 
+    
+
     clickedUser(state) {
       return state.clickedUser
     },
@@ -266,8 +281,9 @@ export default new Vuex.Store({
 
     //you were thinking of ways to get the clickeUser.mixes object into the template
 
-    playlists: (state) => (pName) => {
-      return (state.customer.playlists[pName])//+'.'+pName.stream)
+    playlists: (state) => (pName, passedUser) => {
+      console.log(passedUser, pName)
+      return (state[passedUser].playlists[pName])//+'.'+pName.stream)
     }, 
     followingCount(state){
       return state.customer.followingCount

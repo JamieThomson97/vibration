@@ -1,3 +1,5 @@
+//import Vue from 'vue'
+
 export default {
   GET_USER_PROFILE: (state) => {
     state.getUserProfileLoading = true;
@@ -29,5 +31,7 @@ export default {
     state.getUserTracksLoading = false;
     state.getUserTracksFail = data;
   },
+
+  
 };
 
