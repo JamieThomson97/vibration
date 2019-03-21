@@ -2,8 +2,7 @@
     <div class="userWrapper">
         <div class="image">
             <div>
-              
-              {{clickedUser.name}}
+             {{clickedUser.name}}
             </div>
         </div>
         <div class="mixes">
@@ -36,6 +35,8 @@
 
     import firebase from 'firebase'
     import createPlaylistMixin from '../mixins/createPlaylistMixin'
+    import userMixin from '../mixins/userMixin'
+
     
 import {
     mapGetters
@@ -47,35 +48,16 @@ import followX from '@/components/followX.vue'
 export default {
 
 
-    beforeRouteEnter(to, from, next) {
-    if (!localStorage.getItem('vuex')) {
-      console.log("doesnt exist")
-      next('/about')
-    } else {
-      if ((JSON.parse(localStorage.getItem('vuex')).customer.uID) == null) {
-        next('/about')
-        console.log("property is NULL")
-      } else {
-        next()
-      }
-    }
-},
 
     mounted() {
-        
-  },
+    
+    },
 
     components: {
         Stream,
         followX
     },
 
-    beforeRouteUpdate(to) {
-        const id = to.params.id
-        this.$store.dispatch('getUserProfile', id)    
-        this.createClickedStream(id)
-        this.$store.dispatch('getUserFollowX', { id : id , array : ['followers' , 'following']});
-    },
 
     data() {
         return {
@@ -89,11 +71,9 @@ export default {
 
     watch: {
         clickeduID: function(newValue) {
-            console.log('clickeduID')
-            console.log(newValue)
-            this.$store.dispatch('getUserProfile', newValue)    
-            this.createClickedStream(newValue)
-            this.$store.dispatch('getUserFollowX', { id : newValue , array : ['followers' , 'following']});
+        
+            this.fetchUserDetails(newValue)
+
         }
   },
 
@@ -103,29 +83,26 @@ export default {
             uID : 'uID',
             name : 'name',
             clickeduID : 'clickeduID',
-            clickedUser: 'clickedUser',
+            clickedUser : 'clickedUser',
         }),
     },
 
 
     mixins: [
-        createPlaylistMixin
+        createPlaylistMixin,
+        userMixin
     ],
 
 
 
     created: function () {
         
-       
-        firebase.firestore().collection('users').where('name', '==', this.profileName).onSnapshot(response => {
-            this.profileuID = response.docs[0].id
-            //console.log(response.docs[0].data())
-            this.followingCount = response.docs[0].data().followingCount
-            this.followerCount = response.docs[0].data().followerCount
-            //console.log(this.followerCount)
-        })
-
-        
+        const storage = JSON.parse(localStorage.getItem('vuex'))
+        console.log(storage)
+        if(storage.clickedUseruID){
+            console.log(storage.clickedUseruID)
+            this.fetchUserDetails(storage.clickedUseruID)
+        }
     },
     
     methods:{

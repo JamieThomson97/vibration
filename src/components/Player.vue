@@ -1,12 +1,12 @@
 <template>
   <div class="playerWrapper" v-if="!!playerCurrentTrack">
     <div class="trackDetails">
-      <img :src="playerCurrentTrack.artwork_url" alt="">
+      <img :src="playerCurrentTrack.artworkURL" alt="">
       <div class="titleWrapper">
-        <v-btn class="title" @click='setClickedmID(playerCurrentTrack.mID)' :to="`/users/${(playerCurrentTrack.producer).split(' ').join('_')}/mixes/${(playerCurrentTrack.title).split(' ').join('_')}`">
+        <v-btn align right class="title" @click='setClickedmID(playerCurrentTrack.mID)' :to="`/users/${(playerCurrentTrack.producer).split(' ').join('_')}/mixes/${(playerCurrentTrack.title).split(' ').join('_')}`">
           {{playerCurrentTrack.title}}
         </v-btn>
-        <v-btn class="user" @click='setClickeduID(playerCurrentTrack.uID)' :to="`/users/${(playerCurrentTrack.producer).split(' ').join('_')}`">
+        <v-btn align right  class="user" @click='setClickeduID(playerCurrentTrack.uID)' :to="`/users/${(playerCurrentTrack.producer).split(' ').join('_')}`">
           {{playerCurrentTrack.producer}}
         </v-btn>
       </div>
@@ -216,7 +216,7 @@ export default {
     bottom: 0;
     left: 0;
     width: 100%;
-    height: 30  vh;
+    height: 30vh;
     background: #fff;
     display: flex;
     z-index: 99999;
@@ -228,7 +228,8 @@ export default {
     position: absolute;
     left: 15px;
     top: 0;
-    height: 85px;
+    height: 85px;   
+    width: 400px;
     display: flex;
     align-items: center;
     justify-content: center;

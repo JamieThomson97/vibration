@@ -7,7 +7,7 @@ export default {
 
 
   getUserProfile: (context, uID) => {
-    console.log('getUserProfile')
+    console.log('in get user profile')
     database.collection('users').doc(uID).get().then(response => {
       const profile = response.data()
       profile['uID'] = uID

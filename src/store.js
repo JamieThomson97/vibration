@@ -14,8 +14,9 @@ const vuexLocal = new VuexPersistence({
   storage: window.localStorage,
   reducer: (state) => ({
     customer: state.customer,
-    //clickedMix: state.clickedMix,
-    clickedUser: state.clickeduser,
+    clickedMixID: state.clickedMix.mID,
+    clickedUseruID : state.clickedUseruID
+    //clickedUser: state.clickeduser,
     //trackData: state.trackData,
   })
 })
@@ -83,7 +84,7 @@ export default new Vuex.Store({
     },
 
     setClickeduID(state, payload) {
-      state.clickedUser.uID = payload
+      Vue.set(state, 'clickedUseruID' , payload)
     },
     setClickedmID(state, payload) {
       Vue.set(state.clickedMix , 'mID' , payload)
@@ -151,12 +152,20 @@ export default new Vuex.Store({
 
     setTrackData(state, trackData) {
       Vue.set(state, 'trackData', trackData)
+    },
+    
+    setLikers(state, likers){
+      Vue.set(state.trackData, 'likers', likers)
     }
 
 
   },
 
   actions: {
+
+    actionSetLikers({commit}, likers){
+      commit('setLikers' , likers)
+    },
 
     signUserUp({
       commit
@@ -276,7 +285,7 @@ export default new Vuex.Store({
     },
 
     clickeduID(state) {
-      return state.clickedUser.uID
+      return state.clickedUseruID
     },
     
     uID(state) {
@@ -309,8 +318,6 @@ export default new Vuex.Store({
     customerMixes(state) {
       return state.customer.mixes
     },
-
-    //you were thinking of ways to get the clickeUser.mixes object into the template
 
     playlists: (state) => (pName, passedUser) => {
       console.log(passedUser, pName)

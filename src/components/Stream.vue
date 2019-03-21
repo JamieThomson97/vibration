@@ -30,6 +30,7 @@ export default {
     data(){
         return {
             i: 0,
+            x: 0,
         }
     },
 

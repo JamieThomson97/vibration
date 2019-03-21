@@ -1,13 +1,33 @@
 <template>
     <div>
-        <div v-if='trackData'>
-            {{trackData.title}}
-            {{trackData.producer}}
-            {{likeCount}}
-        </div>
-        <div>
-            <v-btn v-if='!doesLike' @click='likeMix(clickedMixID, true)'>like</v-btn>
-            <v-btn v-if='doesLike' @click='likeMix(clickedMixID, false)'>unlike</v-btn>
+        <div class="mixWrapper" v-if='trackData'>    
+            <div>
+                {{trackData.title}}
+                {{trackData.producer}}
+                Likes
+                {{likeCount}}
+                Plays
+                {{trackData.plays}}
+            </div>
+            <div class="artwork">
+                <img :src="trackData.artworkURL" width="150px">
+            </div>
+            <div>
+                <v-btn v-if='!doesLike' @click='likeMix(clickedMixID, true)'>like</v-btn>
+                <v-btn v-if='doesLike' @click='likeMix(clickedMixID, false)'>unlike</v-btn>
+            </div>
+            <div v-if='trackData.likers' class="liker">
+                Likes
+                <div class="user" v-for='x in trackData.likers' :key='x.uID'> 
+                    {{x.name}}
+                    <div>
+                        <img :src='x.profileURL' width='150px'>
+                    </div>
+                </div>
+            </div>
+            <div class="">
+                Producer Stuff
+            </div>
         </div>
     </div>
     
@@ -22,6 +42,8 @@
 //comment count
 //Comments - with users showing
 
+import mixMixin from '../mixins/mixMixin'
+
 import {
     mapGetters
 } from 'vuex'
@@ -35,8 +57,13 @@ export default {
         return{
             likeCount : 0,
             doesLike : null,
+            x : 0,
         }
     },
+
+    mixins: [
+        mixMixin
+    ],
 
     computed: {
         ...mapGetters({
@@ -53,26 +80,18 @@ export default {
     },
 
     watch: {
-        clickedMixID: function(newValue) {
-            firebase.firestore().collection('users').doc(this.uID).collection('likedMixes').doc(newValue).get().then(doc=> {
-                if(doc.exists){
-                    this.doesLike = true
-                }else{
-                     this.doesLike = false
-                }
-            })
-            this.$store.dispatch('getTrackData', newValue)
-            firebase.firestore().collection('mixes').doc(newValue).get().then(response => {
-                console.log(response.data().likeCount)
-                this.likeCount = response.data().likeCount
-            })
-            
+        clickedMixID: function(newValue) {            
+            this.fetchMixInfo(newValue)
         }
   },
 
   created: function(){
-      
-      
+    const storage = JSON.parse(localStorage.getItem('vuex'))
+    if(storage.clickedMixID){
+        console.log(storage.clickedMixID)
+        this.fetchMixInfo(storage.clickedMixID)
+    }
+
   },
 
   methods: {
@@ -82,6 +101,7 @@ export default {
           }else{
               this.likeCount = this.likeCount - 1
           }
+          this.trackData.likers.push()
           this.doesLike = !this.doesLike
           var callFunction = firebase.functions().httpsCallable('likeMix')
           callFunction({
@@ -91,6 +111,11 @@ export default {
               likerName : this.name, 
               mixName : this.trackData.title,
               liked : like,
+              profileURL : this.profileURL,
+              producerName : this.trackData.producer,
+              artworkURL : this.trackData.artworkURL,
+              likes: this.likeCount,
+              plays: this.trackData.plays 
           }).then((response) => {
               console.log(response)
           }).catch(error => {
@@ -104,6 +129,15 @@ export default {
 
 <style>
 
+.mixWrapper{
+    display: flex;
+}
+
+
+.user {
+    border: 1px solid fuchsia;
+    width: 250px;
+}
 
 
 </style>

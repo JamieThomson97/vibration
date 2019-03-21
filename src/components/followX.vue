@@ -1,6 +1,6 @@
 <template>
     <div class="follWrapper">
-        <v-list-tile class="card" router :to="`/users/${user.id}`" v-for="user in clickedUser[XXX]" :key="user.uID">
+        <v-list-tile class="card" @click='setClickeduID(user.id)' router :to="`/users/${user.name}`" v-for="user in clickedUser[XXX]" :key="user.uID">
             {{user.name}}
             <img height='100%' :src='user.profileURL'>
         </v-list-tile>
@@ -30,7 +30,14 @@ computed:{
         ]),
     
     
-}
+},
+    methods:{
+         setClickeduID(uID){
+            console.log('in set clickeduid')
+            console.log(uID)
+            this.$store.dispatch('actionSetClickeduID', uID)
+        },
+    }
 }
 
 
