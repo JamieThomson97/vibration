@@ -14,14 +14,17 @@
         <div class="currentInfo">
             <div>Information</div>
         </div>
-        <div class="follow">
+        <div class="followWrapper">
             <v-btn @click='follow(profileName ,uID , name, true)'>Follow</v-btn>
             <v-btn @click='follow(profileName ,uID , name, false)'>Un-Follow</v-btn>
-            <span>Following Count : {{clickedUser.followingCount}} </span>
-            <span>Follower Count : {{clickedUser.followerCount}} </span>
             <div class="followers">
+                <span>Following Count : {{clickedUser.followingCount}} </span>
                 <followX XXX='followers'/>    
-            </div>       
+            </div> 
+            <div class="following">
+                <span>Follower Count : {{clickedUser.followerCount}} </span>
+                <followX XXX='following'/>    
+            </div>        
         </div>
         <div class="userPlayer">User Player</div>
     </div>
@@ -60,15 +63,18 @@ export default {
 
     mounted() {
         
-    const { params: { id } } = this.$route
-    this.$store.dispatch('getUserProfile', id)    
-    this.createClickedStream(id)
-    this.$store.dispatch('getUserFollowX', { id : id , array : ['followers' , 'following']});
   },
 
     components: {
         Stream,
         followX
+    },
+
+    beforeRouteUpdate(to) {
+        const id = to.params.id
+        this.$store.dispatch('getUserProfile', id)    
+        this.createClickedStream(id)
+        this.$store.dispatch('getUserFollowX', { id : id , array : ['followers' , 'following']});
     },
 
     data() {
@@ -81,14 +87,24 @@ export default {
         }
     },
 
+    watch: {
+        clickeduID: function(newValue) {
+            console.log('clickeduID')
+            console.log(newValue)
+            this.$store.dispatch('getUserProfile', newValue)    
+            this.createClickedStream(newValue)
+            this.$store.dispatch('getUserFollowX', { id : newValue , array : ['followers' , 'following']});
+        }
+  },
+
     computed: {
-        ...mapGetters([
-            'profileURL',
-            'uID',
-            'name',
-            'clickeduID',
-            'clickedUser',
-        ]),
+        ...mapGetters({
+            profileURL : 'profileURL',
+            uID : 'uID',
+            name : 'name',
+            clickeduID : 'clickeduID',
+            clickedUser: 'clickedUser',
+        }),
     },
 
 
@@ -99,8 +115,8 @@ export default {
 
 
     created: function () {
-        console.log('in created function')
-        //this.createStream(this.streamComponents)
+        
+       
         firebase.firestore().collection('users').where('name', '==', this.profileName).onSnapshot(response => {
             this.profileuID = response.docs[0].id
             //console.log(response.docs[0].data())

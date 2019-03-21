@@ -2,7 +2,7 @@
     <div class="follWrapper">
         <v-list-tile class="card" router :to="`/users/${user.id}`" v-for="user in clickedUser[XXX]" :key="user.uID">
             {{user.name}}
-            <img height='75px' width='75px' :src='user.profileURL'>
+            <img height='100%' :src='user.profileURL'>
         </v-list-tile>
     </div>
 </template>

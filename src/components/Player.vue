@@ -3,10 +3,10 @@
     <div class="trackDetails">
       <img :src="playerCurrentTrack.artwork_url" alt="">
       <div class="titleWrapper">
-        <router-link class="title" :to="`/tracks/${playerCurrentTrack.id}`">
+        <v-btn class="title" @click='setClickedmID(playerCurrentTrack.mID)' :to="`/users/${(playerCurrentTrack.producer).split(' ').join('_')}/mixes/${(playerCurrentTrack.title).split(' ').join('_')}`">
           {{playerCurrentTrack.title}}
-        </router-link>
-        <v-btn class="user" :to="`/users/${playerCurrentTrack.uID}`">
+        </v-btn>
+        <v-btn class="user" @click='setClickeduID(playerCurrentTrack.uID)' :to="`/users/${(playerCurrentTrack.producer).split(' ').join('_')}`">
           {{playerCurrentTrack.producer}}
         </v-btn>
       </div>
@@ -84,6 +84,7 @@ export default {
             let nextIndex = 0;
             nextIndex = index + 1;
             if (nextIndex < Object.values(self.playerTracks).length) {
+              Object.values(self.playerTracks)[nextIndex]['mID'] = Object.keys(this.playerTracks)[nextIndex]
               this.$store.dispatch('setPlayerCurrentTrack', Object.values(self.playerTracks)[nextIndex]);
             }else{
               console.log('end of queue')
@@ -162,6 +163,8 @@ export default {
           if (direction === 'next') {
             nextIndex = index + 1;
             if (nextIndex < Object.values(self.playerTracks).length) {
+              console.log('key')
+              Object.values(self.playerTracks)[nextIndex]['mID'] = Object.keys(this.playerTracks)[nextIndex]
               this.$store.dispatch('setPlayerCurrentTrack', Object.values(self.playerTracks)[nextIndex]);
             }else{
               console.log('end of quque')
@@ -169,12 +172,22 @@ export default {
           } else if (direction === 'previous') {
             nextIndex = index - 1;
             if (nextIndex >= 0) {
+              Object.values(self.playerTracks)[nextIndex]['mID'] = Object.keys(this.playerTracks)[nextIndex]
               this.$store.dispatch('setPlayerCurrentTrack', Object.values(self.playerTracks)[nextIndex]);
             }
           }
         }
       });
     },
+
+  setClickeduID(uID){
+    this.$store.dispatch('actionSetClickeduID', uID)
+  },
+
+  setClickedmID(mID){
+    this.$store.dispatch('actionSetClickedmID', mID)
+  },
+
     calculateSeekOnClick(e) {
       const element = e.target;
       const offset = {

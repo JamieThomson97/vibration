@@ -6,13 +6,17 @@ import router from './router'
 import player from './store/modules/player';
 import user from './store/modules/user';
 // import * as _ from 'underscore'
+const database = firebase.firestore()
 
 Vue.use(Vuex)
 
 const vuexLocal = new VuexPersistence({
   storage: window.localStorage,
   reducer: (state) => ({
-    customer: state.customer
+    customer: state.customer,
+    //clickedMix: state.clickedMix,
+    clickedUser: state.clickeduser,
+    //trackData: state.trackData,
   })
 })
 
@@ -40,7 +44,8 @@ export default new Vuex.Store({
     },
     clickedUser: { 
       playlists: {},
-     },
+    },
+    clickedMix: {},
     user: null,
     error: null,
     loading: false,
@@ -77,8 +82,15 @@ export default new Vuex.Store({
       Vue.set(state , 'clickedUser' , data)
     },
 
+    setClickeduID(state, payload) {
+      state.clickedUser.uID = payload
+    },
+    setClickedmID(state, payload) {
+      Vue.set(state.clickedMix , 'mID' , payload)
+    },
+
     setuID(state, payload) {  
-      state.customer.uID = payload
+      state.clickedMix.uID = payload
     },
     setError(state, payload) {
       state.error = payload
@@ -137,6 +149,10 @@ export default new Vuex.Store({
       Vue.delete(state.customer.playlists[payload.pName], payload.mID)      
     },
 
+    setTrackData(state, trackData) {
+      Vue.set(state, 'trackData', trackData)
+    }
+
 
   },
 
@@ -164,6 +180,13 @@ export default new Vuex.Store({
         }).catch((error) => {
           console.log(error)
         })
+    },
+
+    actionSetClickeduID({ commit }, payload) {
+      commit('setClickeduID' , payload)
+    },
+    actionSetClickedmID({ commit }, payload) {
+      commit('setClickedmID' , payload)
     },
 
     signUserIn({// eslint-disable-next-line
@@ -202,6 +225,14 @@ export default new Vuex.Store({
         }).catch((error) => {
           console.log(error)
         })
+    },
+
+    getTrackData({ commit }, mID) {
+      console.log(mID)
+      database.collection('mixes').doc(mID).get().then(response => {
+        console.log(response.data())
+        commit('setTrackData', response.data())
+      })
     },
 
     actionDeleteMix({commit}, payload){
@@ -290,6 +321,12 @@ export default new Vuex.Store({
     },
     followerCount(state){
       return state.customer.followerCount
+    },
+    clickedMixID(state){
+      return state.clickedMix.mID
+    },
+    trackData(state){
+      return state.trackData
     },
   },
 

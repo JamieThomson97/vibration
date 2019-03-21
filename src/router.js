@@ -5,6 +5,7 @@ import Home_Template from './views/Home_Template.vue'
 import About from './views/About.vue'
 import User from './views/User.vue'
 import addMix from './views/addMix.vue'
+import mix from './views/Mix.vue'
 
 Vue.use(Router)
 
@@ -30,15 +31,19 @@ export default new Router({
       component: Home_Template
     },
     {
-      path: '/users/:id',
+      path: '/users/:name',
       name: 'User',
       component: User,
-      alias: 'users/:name'
     },
     {
       path: '/addMix',
       name: 'addMix',
       component: addMix
+    },
+    {
+      path: '/users/:name/mixes/:mID',
+      name: 'mix',
+      component: mix
     },
   ]
 })
