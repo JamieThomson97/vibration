@@ -18,6 +18,8 @@ export default {
                     this.doesLike = false
                 }
             })
+            
+            this.$store.dispatch('actionSetClickedmID', mID) 
             this.$store.dispatch('getTrackData', mID)
             database.collection('mixes').doc(mID).get().then(response => {
                 console.log(response.data().likeCount)
@@ -32,6 +34,11 @@ export default {
                 // Must ensure that when new mix is added, the cloud function creates the entries elsewhere using the SAME DOCUMENT ID, otherwise this will fail
                 const item = documents[entry].data()
                 item['uID'] = documents[entry].id
+                if(documents[entry].id === this.uID){
+                    this.inLiked = entry
+                }else{
+                    this.inLiked = -1
+                }
                 
                 likers.push(item)
                 }

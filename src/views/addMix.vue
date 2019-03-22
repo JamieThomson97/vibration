@@ -1,11 +1,13 @@
 <template>
     <div class="wrapper">
         <form @submit.prevent="addMix" class="pt-3">
-            <div class='fields' v-for="field in this.fields" :key="field.title">
-                <div>{{field.name}}</div>
-                <v-text-field outline type="text" v-model="field.input" placeholder=""></v-text-field>
+            <div class='fields'>
+                <div>Title</div>
+                <v-text-field outline type="text" v-model="title" placeholder=""></v-text-field>
+                <div>Series</div>
+                <v-text-field outline type="text" v-model="series" placeholder=""></v-text-field>
             </div>
-            <v-btn class="btn">Upload File</v-btn>
+            <input type='file' @change='storeFile' placeholder="Choose your next " class="btn">
             <v-btn type=submit class="btn">Submit Mix</v-btn>
         </form>
     </div>
@@ -20,17 +22,24 @@
 
 import * as firebase from 'firebase'
 import { mapGetters } from 'vuex'
+import metadataPopulation from '../mixins/metadataPopulation.js'
+const database = firebase.firestore()
+const storage = firebase.storage()
 
 export default {
 
+  mixins: [
+        metadataPopulation,
+        
+    ],
+
     data() {
         return{
-            fields: [
-                 { name : 'Title' , input: '' },
-                 { name : 'Other Contributors' , input: '' },
-                 { name : 'Tracklist' , input: '' },
-                 { name: 'Series' , input: ''}
-            ]
+            
+            title : '',
+            series : '',
+
+            uploadedFile : null,
         }
     },
 
@@ -45,16 +54,72 @@ export default {
       },
 
     methods: {
-        addMix(){
-            for ( var i in this.fields) {
-                console.log(this.fields[i].input)
-            }
-            var callFunction = firebase.functions().httpsCallable('addMix');
-              callFunction({title : this.fields[0].input , tracklist : this.fields[2].input , series : this.fields[3].input , producer : this.name}).then(function(result) {
-                console.log(result)
-            });
+        addMix(){ 
 
+                    
+          var firstPromises = []
+          var mixPromises = []
+          // Receives data from request and puts into an object
+          var mixData = {
+            uID: this.uID,
+            title: this.title,
+            dateUploaded: new Date(),
+            series: this.series,
+            producer: this.name,
+            likeCount : 0,
+          }
+          
+          const followersProm = this.returnIDs(this.uID, 'followers', false)
+          var mID = database.collection("mixes").add(mixData).then(response => {
+            return response.id
+          }).catch(error => {
+            return error
+          })
+          
 
+          firstPromises.push(followersProm)
+          firstPromises.push(mID)
+          
+
+          return Promise.all(firstPromises).then(response => {
+             var mIDs = response[0]
+             var NmID = response[1]
+             
+
+            var storageRef = storage.ref('mixes/'+NmID+'.mp3')
+            var put = storageRef.put(this.uploadedFile).then(() => {
+                console.log('complete')      
+                return storageRef.getDownloadURL().then(function(URL) {
+                  mixData['streamURL'] = URL
+                  return URL
+              })
+            })
+            return put.then((response2) => {
+                mixPromises.push(database.collection('mixes').doc(NmID).update({
+                  streamURL : response2
+                }))
+                mixPromises.push(database.collection("users").doc(this.uID).collection('mixes').doc(NmID).set(mixData))
+                  for (var follower in mIDs) {
+                    console.log(follower)
+                    mixPromises.push(database.collection("users").doc(mIDs[follower]).collection('timeline').doc(NmID).set(mixData))
+                  }
+                  return response
+                }).then(() => {
+                  return Promise.all(mixPromises)
+                }).catch(error => {
+                  console.log(error)
+                })          
+              
+            
+          })
+        },
+
+        storeFile(e){
+          if(e.target.files[0].type == 'audio/mpeg'){
+            this.uploadedFile = e.target.files[0]
+          }else{
+            console.log('please upload an mp3')
+          }
         }
     }
 }

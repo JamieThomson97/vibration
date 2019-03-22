@@ -25,7 +25,7 @@
                 <followX XXX='following'/>    
             </div>        
         </div>
-        <div class="userPlayer">User Player</div>
+        
     </div>
         
    

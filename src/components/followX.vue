@@ -1,6 +1,6 @@
 <template>
     <div class="follWrapper">
-        <v-list-tile class="card" @click='setClickeduID(user.id)' router :to="`/users/${user.name}`" v-for="user in clickedUser[XXX]" :key="user.uID">
+        <v-list-tile class="card" @click='setClickeduID(user.id)' router :to="`/users/${user.name}.split(' ').join('_')`" v-for="user in clickedUser[XXX]" :key="user.uID">
             {{user.name}}
             <img height='100%' :src='user.profileURL'>
         </v-list-tile>

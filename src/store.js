@@ -14,7 +14,7 @@ const vuexLocal = new VuexPersistence({
   storage: window.localStorage,
   reducer: (state) => ({
     customer: state.customer,
-    clickedMixID: state.clickedMix.mID,
+    clickedMixID: state.clickedmID,
     clickedUseruID : state.clickedUseruID
     //clickedUser: state.clickeduser,
     //trackData: state.trackData,
@@ -87,7 +87,7 @@ export default new Vuex.Store({
       Vue.set(state, 'clickedUseruID' , payload)
     },
     setClickedmID(state, payload) {
-      Vue.set(state.clickedMix , 'mID' , payload)
+      Vue.set(state , 'clickedmID' , payload)
     },
 
     setuID(state, payload) {  
@@ -330,7 +330,7 @@ export default new Vuex.Store({
       return state.customer.followerCount
     },
     clickedMixID(state){
-      return state.clickedMix.mID
+      return state.clickedmID
     },
     trackData(state){
       return state.trackData

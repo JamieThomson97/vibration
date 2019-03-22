@@ -18,12 +18,12 @@
             </div>
             <div v-if='trackData.likers' class="liker">
                 Likes
-                <div class="user" v-for='x in trackData.likers' :key='x.uID'> 
+                <v-list-tile class="user" @click='setClickeduID(x.uID)' router :to="`/users/${x.name}`" v-for='x in trackData.likers' :key='x.uID'> 
                     {{x.name}}
                     <div>
-                        <img :src='x.profileURL' width='150px'>
+                        <img height='40px' width='60px' :src='x.profileURL'>
                     </div>
-                </div>
+                </v-list-tile>
             </div>
             <div class="">
                 Producer Stuff
@@ -58,6 +58,7 @@ export default {
             likeCount : 0,
             doesLike : null,
             x : 0,
+            inLiked: -1,
         }
     },
 
@@ -75,6 +76,7 @@ export default {
             clickedMixID : 'clickedMixID',
             trackData : 'trackData',
         }),
+
         
         
     },
@@ -96,9 +98,24 @@ export default {
 
   methods: {
       likeMix(mID, like) {
+          const likersObj = {
+                      'name' : this.name,
+                      'uID' : this.uID, 
+                      'profileURL' : this.profileURL,
+                  }
           if(like){
               this.likeCount = this.likeCount + 1
+              if(this.trackData.likers.length < 10){
+                  
+                  (this.trackData.likers).push(likersObj)
+                  this.inLiked = this.trackData.likers.length - 1
+                  console.log(this.inLiked)
+              }
           }else{
+              if(this.inLiked > -1){
+                
+                  (this.trackData.likers).splice(this.inLiked, 1)
+              }
               this.likeCount = this.likeCount - 1
           }
           this.trackData.likers.push()
@@ -121,7 +138,15 @@ export default {
           }).catch(error => {
               console.log(error)
           })
-      }
+      },
+
+      methods:{
+         setClickeduID(uID){
+            console.log('in set clickeduid')
+            console.log(uID)
+            this.$store.dispatch('actionSetClickeduID', uID)
+        },
+    }
   }
 
 }
@@ -131,6 +156,7 @@ export default {
 
 .mixWrapper{
     display: flex;
+    border: 1px solid
 }
 
 
