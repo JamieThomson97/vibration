@@ -3,7 +3,7 @@
       <v-navigation-drawer permanent drawer="true" right app :temporary="hover && mini" slot-scope="{ hover }" :mini-variant="mini && !hover">
         <v-toolbar flat class="transparent">
             <v-list>
-                <v-list-tile router :to="`/users/${name.split(' ').join('_')}`" avatar v-if="uID">
+                <v-list-tile @click='setClickeduID(uID)' router :to="`/users/${name.split(' ').join('_')}`" avatar v-if="uID">
                     <v-list-tile-avatar>
                         <img :src=profileURL>
                     </v-list-tile-avatar>
@@ -58,6 +58,7 @@
 
 
 import { mapGetters } from 'vuex'
+import userMixin from '../mixins/userMixin'
 
 export default {
     data (){
@@ -73,6 +74,10 @@ export default {
             
         }
     },
+
+ mixins: [
+    userMixin,
+  ],
 
     computed: {
 
@@ -91,6 +96,10 @@ export default {
     methods:{
         signOutUser(){
           this.$store.dispatch('logUserOut')
+        },
+
+        clickID(uID){
+            this.setClickeduID(uID)
         },
     },
 

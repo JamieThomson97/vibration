@@ -2,11 +2,11 @@
     <div class="streamWrapper">
         <div class="nothing" v-if="!stream">Something</div>
          <div class="flat tile entry" 
-         @click="handleClickTrack(stream[Object.keys(stream)[x-1]], Object.keys(stream)[x-1])"
+         
          v-for='x in streamLength'
           :key='Object.keys(stream)[x-1]'
           >
-            <v-img class='artwork' :aspect-ratio="1/1" contain height='100%' width='100%' :src="stream[Object.keys(stream)[x-1]].artworkURL"></v-img>
+            <v-img class='artwork' @click="handleClickTrack(stream[Object.keys(stream)[x-1]], Object.keys(stream)[x-1])" :aspect-ratio="1/1" contain height='100%' width='100%' :src="stream[Object.keys(stream)[x-1]].artworkURL"></v-img>
             <div class="artist caption grey--text">{{stream[Object.keys(stream)[x-1]].title}}</div>
             <div class="title caption grey--text">{{stream[Object.keys(stream)[x-1]].producer}}</div>
             <v-btn v-if="uID == stream[Object.keys(stream)[x-1]].uID" @click="deleteMix(Object.keys(stream)[x-1])">Delete</v-btn>

@@ -6,9 +6,11 @@ import store from './store'
 import './registerServiceWorker'
 import '@/components/firebaseConfig.js'
 import VueFire from 'vuefire'
+import InstantSearch from 'vue-instantsearch';
 
 
 Vue.use(VueFire)
+Vue.use(InstantSearch)
 Vue.use(require('vue-moment'));
 
 Vue.config.productionTip = false

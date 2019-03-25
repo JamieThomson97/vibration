@@ -46,6 +46,7 @@ import { Howl } from 'howler';
 import _ from 'lodash';
 import { mapGetters } from 'vuex';
 import secondsToTime from '@/utils/secondsToTime';
+import userMixin from '../mixins/userMixin'
 
 export default {
   data() {
@@ -53,6 +54,10 @@ export default {
       player: null,
     };
   },
+
+  mixins:[
+    userMixin
+  ],
   computed: {
     ...mapGetters({
       isPlay: 'isPlay',
@@ -179,10 +184,6 @@ export default {
         }
       });
     },
-
-  setClickeduID(uID){
-    this.$store.dispatch('actionSetClickeduID', uID)
-  },
 
   setClickedmID(mID){
     this.$store.dispatch('actionSetClickedmID', mID)

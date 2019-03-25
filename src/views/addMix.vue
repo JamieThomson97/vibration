@@ -103,8 +103,12 @@ export default {
                     console.log(follower)
                     mixPromises.push(database.collection("users").doc(mIDs[follower]).collection('timeline').doc(NmID).set(mixData))
                   }
+                  const indexFunction = firebase.functions().httpsCallable('indexMix')
+                  mixPromises.push(indexFunction({ mixData : mixData , NmID : NmID }))
                   return response
                 }).then(() => {
+                  console.log('length')
+                  console.log(mixPromises.length)
                   return Promise.all(mixPromises)
                 }).catch(error => {
                   console.log(error)

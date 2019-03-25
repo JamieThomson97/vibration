@@ -14,15 +14,15 @@
             <div>Information</div>
         </div>
         <div class="followWrapper">
-            <v-btn @click='follow(profileName ,uID , name, true)'>Follow</v-btn>
-            <v-btn @click='follow(profileName ,uID , name, false)'>Un-Follow</v-btn>
+            <v-btn v-if='!doesFollow' @click='follow(clickedUser.name ,uID , name, true)'>Follow</v-btn>
+            <v-btn v-if='doesFollow' @click='follow(clickedUser.name ,uID , name, false)'>Un-Follow</v-btn>
             <div class="followers">
-                <span>Following Count : {{clickedUser.followingCount}} </span>
-                <followX XXX='followers'/>    
+                <div>Following Count : {{clickedUser.followingCount}} </div>
+                <followX XXX='following'/>    
             </div> 
             <div class="following">
-                <span>Follower Count : {{clickedUser.followerCount}} </span>
-                <followX XXX='following'/>    
+                <div>Follower Count : {{clickedUser.followerCount}} </div>
+                <followX XXX='followers'/>    
             </div>        
         </div>
         
@@ -33,9 +33,11 @@
 
 <script>
 
-    import firebase from 'firebase'
-    import createPlaylistMixin from '../mixins/createPlaylistMixin'
-    import userMixin from '../mixins/userMixin'
+import firebase from 'firebase'
+import createPlaylistMixin from '../mixins/createPlaylistMixin'
+import userMixin from '../mixins/userMixin'
+//const database = firebase.firestore()
+const functions = firebase.functions()
 
     
 import {
@@ -62,7 +64,7 @@ export default {
     data() {
         return {
             streamComponents: ['mixes'],
-            profileName: 'Test Producer',
+            // profileName: 'Test Producer',
             profileuID: null,
             followingCount: 0,
             followerCount: 0,
@@ -73,8 +75,18 @@ export default {
         clickeduID: function(newValue) {
         
             this.fetchUserDetails(newValue)
+        },
 
+        followingCount: function(){
+            console.log('in following count function')
+            for(var a in this.clickedUser.followers){
+                console.log((this.clickedUser.followers[a]))
+                    if(this.clickedUser.followers[a].uID == this.uID){
+                        this.doesFollow = true
+                    }
+                }
         }
+
   },
 
     computed: {
@@ -84,7 +96,10 @@ export default {
             name : 'name',
             clickeduID : 'clickeduID',
             clickedUser : 'clickedUser',
+            doesFollow: 'doesFollow'
         }),
+
+
     },
 
 
@@ -96,19 +111,25 @@ export default {
 
 
     created: function () {
-        
-        const storage = JSON.parse(localStorage.getItem('vuex'))
-        console.log(storage)
-        if(storage.clickedUseruID){
-            console.log(storage.clickedUseruID)
-            this.fetchUserDetails(storage.clickedUseruID)
+
+        const { params: { passeduID } } = this.$route;
+        if(!(passeduID.length === 28)){
+            const storage = JSON.parse(localStorage.getItem('vuex'))
+            console.log(storage)
+            if(storage.clickedUseruID){
+                this.fetchUserDetails(storage.clickedUseruID)
+                       
+            }
+        }else{
+            this.fetchUserDetails(passeduID)
         }
     },
     
     methods:{
 
         follow(followingName, followeruID, followerName, follow){
-            const callFunctions = firebase.functions().httpsCallable('followUser')
+            this.$store.commit('doesFollow', !this.doesFollow)
+            const callFunctions = functions.httpsCallable('followUser')
             
             callFunctions({
                 'followingName' : followingName,
@@ -118,6 +139,8 @@ export default {
                 }).then(response => {
                     console.log(response)
                 })
+
+            this.$store.dispatch('actionDeletePlaylist' , 'timeline')
                 
         }, 
         
@@ -131,6 +154,14 @@ export default {
 
     .userWrapper{
         display: grid;
+        grid-template-columns: repeat(4, 1fr);
+        grid-template-rows: repeat(4,1fr);
+        grid-gap: 1em;
+        height: 100%
+    }
+
+    .followWrapper{
+        display: flex;
         grid-template-columns: repeat(4, 1fr);
         grid-template-rows: repeat(4,1fr);
         grid-gap: 1em;
@@ -165,6 +196,10 @@ export default {
         border: solid 1px;
         grid-row: 4/5;
         grid-column: 1/-1;        
+    }
+
+    .followers{
+        color: red;
     }
 
 </style>

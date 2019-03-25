@@ -15,8 +15,8 @@ const vuexLocal = new VuexPersistence({
   reducer: (state) => ({
     customer: state.customer,
     clickedMixID: state.clickedmID,
-    clickedUseruID : state.clickedUseruID
-    //clickedUser: state.clickeduser,
+    clickedUseruID : state.clickedUseruID,
+    clickedUser: state.clickeduser,
     //trackData: state.trackData,
   })
 })
@@ -45,6 +45,7 @@ export default new Vuex.Store({
     },
     clickedUser: { 
       playlists: {},
+      doesFollow: false
     },
     clickedMix: {},
     user: null,
@@ -140,8 +141,16 @@ export default new Vuex.Store({
       //Vue.set( )
     },
 
-    // deletePlaylist(state, payload) {
-    // },
+    doesFollow(state, bool) {
+      Vue.set(state.clickedUser, 'doesFollow', bool)
+    
+    },
+
+    deletePlaylist(state, playlist) {
+
+      Vue.set(state.customer.playlists, playlist, null)
+    
+    },
 
     deleteMix(state, payload){
       console.log(payload.pName)
@@ -165,6 +174,10 @@ export default new Vuex.Store({
 
     actionSetLikers({commit}, likers){
       commit('setLikers' , likers)
+    },
+
+    actionDeletePlaylist({commit}, playlist) {
+      commit('deletePlaylist' , playlist)    
     },
 
     signUserUp({
@@ -278,11 +291,14 @@ export default new Vuex.Store({
 
   getters: {
 
-    
-
     clickedUser(state) {
       return state.clickedUser
     },
+
+    doesFollow(state) {
+      return state.clickedUser.doesFollow
+    },
+
 
     clickeduID(state) {
       return state.clickedUseruID

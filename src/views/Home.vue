@@ -33,11 +33,12 @@ import Stream from '@/components/Stream.vue'
 export default {
 
   beforeRouteEnter(to, from, next) {
-    if (!localStorage.getItem('vuex')) {
+    var storage  = (JSON.parse(localStorage.getItem('vuex')))
+    if(!storage) {
       console.log("doesnt exist")
       next('/about')
     } else {
-      if ((JSON.parse(localStorage.getItem('vuex')).customer.uID) == null) {
+      if ((storage.customer.uID) == null) {
         next('/about')
         console.log("property is NULL")
       } else {

@@ -1,12 +1,10 @@
 
 import * as firebase from 'firebase'
 const database = firebase.firestore()
-  
+
 export default {
 
-
-
-  getUserProfile: (context, uID) => {
+getUserProfile: (context, uID) => {
     console.log('in get user profile')
     database.collection('users').doc(uID).get().then(response => {
       const profile = response.data()
@@ -18,13 +16,19 @@ export default {
   
   getUserFollowX: (context, payload) => {
     console.log('getuserfollowX')
+    const customeruID = payload.customeruID
     const uID = payload.id
     const array = payload.array
     array.forEach(foll => {
       var callFunction = firebase.functions().httpsCallable('getFollowX')
-      callFunction({ uID : uID , followX : foll}).then(response => {
-        console.log('httpsresposne')
-        console.log(response.data)
+      callFunction({ uID: uID, followX: foll }).then(response => {
+        if (foll == 'followers') {
+          for (var a in response.data) {
+            if (response.data[a].id == customeruID) {
+              context.commit('doesFollow' , true)
+            }
+          }
+        }
         context.commit('setFollowX' , { response : response.data , follX : foll})
       })
     } ) 

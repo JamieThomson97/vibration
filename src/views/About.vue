@@ -6,6 +6,8 @@
           
           <v-card height=95vh flat color="rgb(255, 0, 0, 0.0)">
             <v-card-text> Why Vibby</v-card-text>
+             <v-card-text> Added data to Algolia, dataUploaded was blank, I suspect an object within an object thing </v-card-text>
+             <v-card-text> unIndex not working, should probably re upload with https.onDelete() </v-card-text>
             <v-btn  @click="show = !show" success>Login</v-btn>
             <v-btn  @click="signOutUser" success>Log Out</v-btn>
             <v-btn  @click="createStream" success>Create Stream</v-btn>

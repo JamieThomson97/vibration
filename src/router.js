@@ -22,12 +22,11 @@ export default new Router({
       path: '/about',
       name: 'about',
       component: About,
-      alias: '/minge'
             
     },
     
     {
-      path: '/users/:name',
+      path: '/users/:passeduID',
       name: 'User',
       component: User,
     },
