@@ -1,6 +1,7 @@
 import Vue from 'vue'
 import Router from 'vue-router'
 import Home from './views/Home.vue'
+import Home_Template from './views/Home_Template.vue'
 
 import About from './views/About.vue'
 import User from './views/User.vue'
@@ -39,6 +40,11 @@ export default new Router({
       path: '/users/:name/mixes/:mID',
       name: 'mix',
       component: mix
+    },
+    {
+      path: '/homeTemp',
+      name: 'homeTemp',
+      component: Home_Template
     },
   ]
 })

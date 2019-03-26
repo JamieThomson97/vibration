@@ -303,6 +303,9 @@ export default new Vuex.Store({
     clickeduID(state) {
       return state.clickedUseruID
     },
+    customer(state){
+      return state.customer
+    },
     
     uID(state) {
       return state.customer.uID

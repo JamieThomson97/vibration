@@ -15,10 +15,6 @@
 
 <script>
 
-//add local function to calculate length of 
-//mix when it is submitted then upload it with the file as metadata
-
-//Or calc when it is downloaded from howler
 
 import * as firebase from 'firebase'
 import { mapGetters } from 'vuex'

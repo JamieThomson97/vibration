@@ -1,24 +1,40 @@
 <template>
 
-  
-  <div class="wrapper">
-    <div class="box stream">
+  <div class="homeWrapper">
+    <div class="outline timeline">
       <div>
         <div>Timeline</div>
         <Stream pagePart="timeline" passedUser = 'customer'/>
       </div>
     </div>
-    <div class="box listened">
+    <div class="outline history">
       <div>History</div>
-      <Stream pagePart="history"  passedUser = 'customer'/>
+      <Stream pagePart="history"  passedUser = 'customer'/>      
     </div>
-    <div class="box recommended">
+    <div class="outline recommended">
       <div>Listen Later</div>
-      <Stream pagePart="listenLater"  passedUser = 'customer'/>
+      <Stream pagePart="listenLater"  passedUser = 'customer'/>      
     </div>
-    <div class="box right">Something on the Right (maybe list of playlists)</div>
-    
+    <div class="outline playlists">
+      <div>Playlists</div>
+      <div>
+        <playlists />
+      </div>
+
+    </div>
   </div>
+
+  
+  <!-- <div class="wrapper">
+
+    27/03/19 Notes
+    
+    - Listen later playlist is tempremental and needs fixing
+    - Need to add delete functionality for mixes in playlists also (massive cunt ache)
+    - Add general "add to playlist button" , that expands to a youtube style list showing the available playlists to add to and an option to create a new playlist 
+    - Work out saving the customer object to state and the effect this has on updating playlist behaivour
+
+  </div> -->
   
 
 </template>
@@ -29,6 +45,7 @@ import createPlaylistMixin from '../mixins/createPlaylistMixin'
 //import createStreamMixin from '../mixins/createStreamMixin'
 
 import Stream from '@/components/Stream.vue'
+import playlists from '@/components/playlists.vue'
 
 export default {
 
@@ -49,8 +66,8 @@ export default {
   },
 
   components: {
-    Stream
-
+    Stream,
+    playlists,
   },
 
   props: {
@@ -97,38 +114,38 @@ export default {
 
 <style>
 
-    .wrapper{
-      display: flex;
+    .homeWrapper{
+      display: grid;
       grid-template-columns: 2.5fr 3.5fr 3fr;
       grid-template-rows: repeat(12, 1fr);
       grid-gap: 1em;
-      
+      height: 100%
     }
     
-    .stream{
+    .timeline{
       
-      grid-column:1/3;
+      grid-column:2/3;
       grid-row: 2/10;
       border:1px solid #333;
       
       
     }
 
-    .listened{      
+    .history{      
       margin-left: 1rem;
       grid-column:1/2;
-      grid-row:4/6;
+      grid-row:3/6;
       border:1px solid #333;
     }
 
     .recommended{
       margin-left: 1rem;
       grid-column:1/2;
-      grid-row: 7/9;      
+      grid-row: 7/10;      
       border:1px solid #333;
     }
 
-    .right{
+    .playlists{
       
       margin-right: 1rem;
       grid-column:3/4;
@@ -136,14 +153,8 @@ export default {
       
       border:1px solid #333;
     }
-
-    .player{
-      
-      margin  : 1rem;
-      grid-column:1/-1;
-      grid-row: 11/13;
-      border:1px solid #333;
-      
-    }
+    
   </style>
+
+
 

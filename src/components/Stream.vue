@@ -2,7 +2,6 @@
     <div class="streamWrapper">
         <div class="nothing" v-if="!stream">Something</div>
          <div class="flat tile entry" 
-         
          v-for='x in streamLength'
           :key='Object.keys(stream)[x-1]'
           >
@@ -10,6 +9,7 @@
             <div class="artist caption grey--text">{{stream[Object.keys(stream)[x-1]].title}}</div>
             <div class="title caption grey--text">{{stream[Object.keys(stream)[x-1]].producer}}</div>
             <v-btn v-if="uID == stream[Object.keys(stream)[x-1]].uID" @click="deleteMix(Object.keys(stream)[x-1])">Delete</v-btn>
+            <v-btn @click="addToPlaylist(stream[Object.keys(stream)[x-1]], 'listenLater')">Listen Later</v-btn>
         </div>
     </div>
  </template>
@@ -19,6 +19,7 @@
 import { mapGetters } from 'vuex';
 import firebase from 'firebase'
 import mixMixin from '../mixins/mixMixin'
+import playlistMixin from '../mixins/playlistMixin'
 // import { Howl } from 'howler';
 // import _ from 'lodash';
 // import secondsToTime from '@/utils/secondsToTime';
@@ -35,7 +36,7 @@ export default {
     },
 
     mixins: [
-        
+        playlistMixin,
         mixMixin
     ],
 
@@ -45,7 +46,9 @@ export default {
     ],
 
     created(){
-            
+        
+        console.log('created checks')
+        console.log(this.pagePart)
         console.log(this.passedUser)
         
     },

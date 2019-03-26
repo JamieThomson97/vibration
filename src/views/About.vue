@@ -19,7 +19,7 @@
           </div>
         <v-slide-x-transition>
           <v-flex xs4>
-            <v-card v-if='show' color="rgb(26, 50, 91,0.1)">
+            <v-card color="rgb(26, 50, 91,0.1)">
               <SignIn />
             </v-card>
           </v-flex>
