@@ -98,7 +98,7 @@ export default {
 <style>
 
     .wrapper{
-      display: grid;
+      display: flex;
       grid-template-columns: 2.5fr 3.5fr 3fr;
       grid-template-rows: repeat(12, 1fr);
       grid-gap: 1em;
@@ -107,7 +107,7 @@ export default {
     
     .stream{
       
-      grid-column:2/3;
+      grid-column:1/3;
       grid-row: 2/10;
       border:1px solid #333;
       

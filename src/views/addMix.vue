@@ -38,6 +38,7 @@ export default {
             
             title : '',
             series : '',
+            artworkURL: '',
 
             uploadedFile : null,
         }
@@ -67,6 +68,7 @@ export default {
             series: this.series,
             producer: this.name,
             likeCount : 0,
+            artworkURL : 'http://i64.tinypic.com/rr7ds7.jpg' //this.artworkURL
           }
           
           const followersProm = this.returnIDs(this.uID, 'followers', false)
@@ -104,6 +106,7 @@ export default {
                     mixPromises.push(database.collection("users").doc(mIDs[follower]).collection('timeline').doc(NmID).set(mixData))
                   }
                   const indexFunction = firebase.functions().httpsCallable('indexMix')
+                  console.log(mixData.dateUploaded)
                   mixPromises.push(indexFunction({ mixData : mixData , NmID : NmID }))
                   return response
                 }).then(() => {

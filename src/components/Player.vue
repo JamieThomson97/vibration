@@ -8,6 +8,7 @@
         </v-btn>
         <v-btn align right  class="user" @click='setClickeduID(playerCurrentTrack.uID)' :to="`/users/${(playerCurrentTrack.producer).split(' ').join('_')}`">
           {{playerCurrentTrack.producer}}
+          {{playerTracks.length}}D
         </v-btn>
       </div>
     </div>
@@ -47,6 +48,7 @@ import _ from 'lodash';
 import { mapGetters } from 'vuex';
 import secondsToTime from '@/utils/secondsToTime';
 import userMixin from '../mixins/userMixin'
+import mixMixin from '../mixins/mixMixin'
 
 export default {
   data() {
@@ -56,7 +58,8 @@ export default {
   },
 
   mixins:[
-    userMixin
+    userMixin,
+    mixMixin
   ],
   computed: {
     ...mapGetters({
@@ -185,9 +188,9 @@ export default {
       });
     },
 
-  setClickedmID(mID){
-    this.$store.dispatch('actionSetClickedmID', mID)
-  },
+  // setClickedmID(mID){
+  //   this.$store.dispatch('actionSetClickedmID', mID)
+  // },
 
     calculateSeekOnClick(e) {
       const element = e.target;

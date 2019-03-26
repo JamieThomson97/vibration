@@ -18,7 +18,7 @@
 
 import { mapGetters } from 'vuex';
 import firebase from 'firebase'
-
+import mixMixin from '../mixins/mixMixin'
 // import { Howl } from 'howler';
 // import _ from 'lodash';
 // import secondsToTime from '@/utils/secondsToTime';
@@ -33,6 +33,11 @@ export default {
             x: 0,
         }
     },
+
+    mixins: [
+        
+        mixMixin
+    ],
 
     props: [
         "pagePart",
@@ -102,16 +107,16 @@ export default {
             })
         },
 // eslint-disable-next-line
-        handleClickTrack(trackData, trackID) {
+        // handleClickTrack(trackData, trackID) {
             
-            if (this.playerCurrentTrack && this.playerCurrentTrack.title === trackData.title) {
-                this.$store.dispatch('setPlayerCurrentTrack', null);
-            } else {
-                trackData['mID'] = trackID 
-                this.$store.dispatch('setPlayerCurrentTrack', trackData);
-                this.$store.dispatch('setPlayerTracks', this.stream)
-            }
-        },
+        //     if (this.playerCurrentTrack && this.playerCurrentTrack.title === trackData.title) {
+        //         this.$store.dispatch('setPlayerCurrentTrack', null);
+        //     } else {
+        //         trackData['mID'] = trackID 
+        //         this.$store.dispatch('setPlayerCurrentTrack', trackData);
+        //         this.$store.dispatch('setPlayerTracks', this.stream)
+        //     }
+        // },
         
     },
 

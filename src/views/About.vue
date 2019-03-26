@@ -6,15 +6,17 @@
           
           <v-card height=95vh flat color="rgb(255, 0, 0, 0.0)">
             <v-card-text> Why Vibby</v-card-text>
-             <v-card-text> Added data to Algolia, dataUploaded was blank, I suspect an object within an object thing </v-card-text>
-             <v-card-text> unIndex not working, should probably re upload with https.onDelete() </v-card-text>
             <v-btn  @click="show = !show" success>Login</v-btn>
             <v-btn  @click="signOutUser" success>Log Out</v-btn>
             <v-btn  @click="createStream" success>Create Stream</v-btn>
             <v-btn  @click="getTimeline" success>Get Timeline</v-btn>
             <v-btn  @click="onSnapshotTest" success>Snapshot Test</v-btn>
           </v-card>
+         
         </v-flex>
+         <div class="testSearch">
+            <Search />
+          </div>
         <v-slide-x-transition>
           <v-flex xs4>
             <v-card v-if='show' color="rgb(26, 50, 91,0.1)">
@@ -33,6 +35,7 @@
 import 'intersection-observer'
 //import Register from '../components/Register.vue'
 import SignIn from '../components/SignIn.vue'
+import Search from '../components/Search.vue'
 import * as firebase from 'firebase'
 
 export default {
@@ -41,6 +44,7 @@ export default {
 components: {
     //Register,
     SignIn,
+    Search,
    // Scrollama,
   //  Scroll,
   },
@@ -48,7 +52,7 @@ components: {
   data () {
     return{
       show: false,
-
+      
       userArray : [
         
         {
