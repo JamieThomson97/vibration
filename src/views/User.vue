@@ -14,8 +14,8 @@
             <div>Information</div>
         </div>
         <div class="followWrapper">
-            <v-btn v-if='!doesFollow' @click='follow(clickedUser.name ,uID , name, true)'>Follow</v-btn>
-            <v-btn v-if='doesFollow' @click='follow(clickedUser.name ,uID , name, false)'>Un-Follow</v-btn>
+            <v-btn v-if='!doesFollow & (uID !== clickeduID)' @click='follow(clickedUser.name ,uID , name, true)'>Follow</v-btn>
+            <v-btn v-if='doesFollow & (uID !== clickeduID)' @click='follow(clickedUser.name ,uID , name, false)'>Un-Follow</v-btn>
             <div class="followers">
                 <div>Following Count : {{clickedUser.followingCount}} </div>
                 <followX XXX='following'/>    
@@ -96,7 +96,8 @@ export default {
             name : 'name',
             clickeduID : 'clickeduID',
             clickedUser : 'clickedUser',
-            doesFollow: 'doesFollow'
+            doesFollow: 'doesFollow',
+            customer : 'customer',
         }),
 
 
@@ -134,6 +135,8 @@ export default {
             callFunctions({
                 'followingName' : followingName,
                 'followeruID' : followeruID,
+                'followerProfileURL' : this.customer.profileURL,
+                'followingProfileURL' : this.clickedUser.profileURL,
                 'followerName' : followerName,
                 'follow' : follow
                 }).then(response => {

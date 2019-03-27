@@ -15,7 +15,7 @@
                 <v-btn @click='setClickeduID(item.uID)' :to="`/users/${(item.producer).split(' ').join('_')}`"><ais-highlight :hit="item" attribute="producer" /></v-btn>
                 <v-btn ><ais-highlight :hit="item" attribute="dateUploaded"/></v-btn>
                 <v-btn ><ais-highlight :hit="item" attribute="series" /></v-btn>
-                <v-btn ><ais-highlight :hit="item" attribute="event" /></v-btn>
+                <v-btn class='smallButton'><ais-highlight :hit="item" attribute="event" /></v-btn>
                 <v-img class='artwork' @click="handleClickTrack(item,item.objectID)" :aspect-ratio="1/1" contain height='25%' width='25%' :src="item.artworkURL"></v-img>
               </template>
             </ais-hits>

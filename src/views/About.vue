@@ -10,7 +10,7 @@
             <v-btn  @click="signOutUser" success>Log Out</v-btn>
             <v-btn  @click="createStream" success>Create Stream</v-btn>
             <v-btn  @click="getTimeline" success>Get Timeline</v-btn>
-            <v-btn  @click="onSnapshotTest" success>Snapshot Test</v-btn>
+            <v-btn  @click="deleteFromPlst2()">Delete from playlist</v-btn>
           </v-card>
          
         </v-flex>
@@ -38,6 +38,7 @@ import SignIn from '../components/SignIn.vue'
 import Search from '../components/Search.vue'
 import * as firebase from 'firebase'
 
+
 export default {
 
 
@@ -53,38 +54,7 @@ components: {
     return{
       show: false,
       
-      userArray : [
-        
-        {
-          uID: "S7LAgSzfr8QIGls6vgwXiXxfxjB2",
-          name: "User1"
-        },
-
-        {
-          uID: "vmzZESZ6sqZGdDn34EwxhUPHS5H3",
-          name: "User2"
-        },
-
-        {
-          uID: "yr5kKT8D7DW8oqVToOYzitrhDWg1",
-          name: "User3"
-        },
-
-        {
-          uID: "dpgTmumbFLaw4shaKBLJfymiZCv1",
-          name: "Producer1"
-        },
-
-        {
-          uID: "m9neT7uGxRVXXLkT7Gyf7lzGwXb2",
-          name: "Producer2"
-        },
-
-        {
-          uID: "wOhegUQfy8PB0wMphhlsQy5gmwv1",
-          name: "Producer3"
-        },
-      ],
+     
 
     
 
@@ -111,6 +81,15 @@ components: {
    signOutUser(){
           this.$store.dispatch('logUserOut')
         },
+
+    deleteFromPlst2(){
+
+      const mID = 'RNmsaEgyXKDjL3lUhxte'
+
+      firebase.firestore().collection('songsPlaylists').doc(mID).get().then(response => {
+        console.log(response.data())
+      })
+    },
 
 
     //Returns all of the data for each mix found in the timeline of mIDs, which can be mounted and displayed

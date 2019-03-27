@@ -26,75 +26,66 @@ export default {
         //Takes, playlist name, mID as input
         //Adds mix to playlist locally, and in DB
 
-        addToPlaylist(mixData, playlistName){
-
-            // var mixDataPass = {
-            //     artworkURL : "http://i64.tinypic.com/rr7ds7.jpg",// mixData.artworkURL
-            //     likeCount : 0, // mixData.likeCount
-            //     mID : "OVuQ9zDhn12fn8aV8Ods" , //mixData.mID
-            //     producer : 'NewUser', //mixData.producer
-            //     series : 'a brand new series', //mixData.series
-            //     streamURL : "https://firebasestorage.googleapis.com/v0/b/vibration-401b4.appspot.com/o/mixes%2FOVuQ9zDhn12fn8aV8Ods.mp3?alt=media&token=a01bddaf-7236-4ae8-b15f-71e0f84b5b48", //mixData.streamURL
-            //     title : 'New User Mix', //mixData.title
-            //     uID : "zONR3mCAA8R2sBXTv58GhjrqQOQ2" //mixData.uID
-            // }
+        addToPlaylist(mixData, mID, playlistNameArray){
 
             console.log(mixData)
             console.log(this.uID)
-            console.log(playlistName)
+            console.log(playlistNameArray)
 
             var mixDataPass = {
+
                 artworkURL : mixData.artworkURL,
                 likeCount : mixData.likeCount,
-                mID : mixData.mID,
+                mID : mID,
                 producer : mixData.producer,
                 series : mixData.series,
                 streamURL : mixData.streamURL,
                 title : mixData.title,
                 uID : mixData.uID,
+                dateUploaded :  mixData.dateUploaded,
+                dateAdded : new Date()
+
             }
             
             console.log(mixDataPass)
 
-            var playlistCreated = false
+            // var playlistCreated = false
 
-            const playlistNames = this.customer.playlistNames
-            var message = 'created playlist '+playlistName+' and added mix'
+            // const playlistNames = this.customer.playlistNames
+            var message = 'created playlist '+playlistNameArray+' and added mix'
 
-            for(var a in playlistNames){
-                    var name = playlistNames[a]
-                    if(name === playlistName){
-                        playlistCreated = true
-                        message = 'added to playlist'
-                    }  
-            }
+            // playlistNames.forEach(name => {
+            //     playlistNameArray.forEach(newName => {
+            //         if(name === newName){
+            //             playlistCreated = true
+            //             message = 'added to playlist'
+            //         }
+            //     })
+            // })
 
-            if(!playlistCreated){
-                if(playlistName !== 'ListenLater'){
-                    console.log('in name checker if')
-                    this.createPlaylist(playlistName)
-                }
-            }
+            // if(!playlistCreated){
+            //     if(playlistNameArray !== 'ListenLater'){
+            //         console.log('in name checker if')
+            //         this.createPlaylist(playlistNameArray)
+            //     }
+            // }
 
-            database.collection('users').doc(this.uID).collection(playlistName).doc(mixDataPass.mID).set(mixDataPass).then(() => {
-                console.log(message)
-            }).catch(error => {
-                console.log(error)
+            playlistNameArray.forEach(playlistName => {
+
+                //playlistName = playlistName.split(' ').join('')
+
+                database.collection('users').doc(this.uID).collection(playlistName).doc(mixDataPass.mID).set(mixDataPass).then(() => {
+                    console.log(message)
+                    this.$store.commit('addToPlaylist' , {mix : mixDataPass , playlistName : playlistName})
+                }).catch(error => {
+                    console.log(error)
+                })
+               
             })
-        },
-
-
-        removeFromPlaylist(mID, playlistName){
 
             
-            playlistName = 'FIFA Songs'
-
-            database.collection('users').doc(this.uID).collection(playlistName).doc(mID).delete().then(() => {
-                return 'mix delete from '+playlistName
-            }).catch(error => {
-                return error
-            })
         },
+
 
         createPlaylist(playlistName){
 
@@ -110,14 +101,14 @@ export default {
             database.collection('users').doc(this.uID).update({
                 playlistNames: firebase.firestore.FieldValue.arrayUnion(playlistName)
             }).then(() => {
+                this.$store.commit('createPlaylist', playlistName)
                 return 'Playlist created, now add some mixes!'
             })
 
         },
 
-        getPlaylists(uID){
-
-            uID = "zONR3mCAA8R2sBXTv58GhjrqQOQ2" //mixData.uID
+        getPlaylists(){
+            
             const playlistNames = this.customer.playlistNames
             
             for(var a in playlistNames){

@@ -8,8 +8,21 @@
             <v-img class='artwork' @click="handleClickTrack(stream[Object.keys(stream)[x-1]], Object.keys(stream)[x-1])" :aspect-ratio="1/1" contain height='100%' width='100%' :src="stream[Object.keys(stream)[x-1]].artworkURL"></v-img>
             <div class="artist caption grey--text">{{stream[Object.keys(stream)[x-1]].title}}</div>
             <div class="title caption grey--text">{{stream[Object.keys(stream)[x-1]].producer}}</div>
-            <v-btn v-if="uID == stream[Object.keys(stream)[x-1]].uID" @click="deleteMix(Object.keys(stream)[x-1])">Delete</v-btn>
-            <v-btn @click="addToPlaylist(stream[Object.keys(stream)[x-1]], 'listenLater')">Listen Later</v-btn>
+            <v-btn class='smallButton' small v-if="uID == stream[Object.keys(stream)[x-1]].uID" @click="deleteMix(Object.keys(stream)[x-1])">Delete</v-btn>
+            <v-btn class='smallButton' @click="addToPlaylist(stream[Object.keys(stream)[x-1]], Object.keys(stream)[x-1] , ['Listen Later'])">Listen Later</v-btn>
+            <v-btn class='smallButton' v-if='pagePart !== "mixes"' @click="removeFromPlaylist(Object.keys(stream)[x-1])">Remove from playlist</v-btn>
+            <v-btn class='smallButton' v-if='!clickedAddToPlaylist' @click='togglePlaylist()' icon dark>Add to Playlist</v-btn>
+            <v-btn class='smallButton' v-if='clickedAddToPlaylist & showPlaylists' @click='addToPlaylist(stream[Object.keys(stream)[x-1]] , Object.keys(stream)[x-1] , playlistChoice)' icon dark>Submit</v-btn>
+            <v-btn class='smallButton' v-if='clickedAddToPlaylist & showPlaylists' @click='createPlaylist("HELLO")' icon dark>Create Playlist</v-btn>
+            <v-select
+            v-if='showPlaylists'
+            v-model="playlistChoice"
+            :items="playlistOptions"
+            attach
+            chips
+            label="Choose a playlist"
+            multiple
+          ></v-select>
         </div>
     </div>
  </template>
@@ -20,6 +33,7 @@ import { mapGetters } from 'vuex';
 import firebase from 'firebase'
 import mixMixin from '../mixins/mixMixin'
 import playlistMixin from '../mixins/playlistMixin'
+const database = firebase.firestore()
 // import { Howl } from 'howler';
 // import _ from 'lodash';
 // import secondsToTime from '@/utils/secondsToTime';
@@ -32,6 +46,10 @@ export default {
         return {
             i: 0,
             x: 0,
+            playlistOptions : ['Listen Later' , 'FIFA Songs'],
+            playlistChoice : null,
+            clickedAddToPlaylist : false,
+            showPlaylists : false,
         }
     },
 
@@ -46,11 +64,8 @@ export default {
     ],
 
     created(){
-        
-        console.log('created checks')
-        console.log(this.pagePart)
+        console.log('this.pagePart')
         console.log(this.passedUser)
-        
     },
 
     computed:{
@@ -59,15 +74,20 @@ export default {
             name : 'name',
             profileURL : 'profileURL',
             playerCurrentTrack : 'playerCurrentTrack',
-            
+            customer : 'customer'
             // ...
         }),
     
         stream(){
-            if(this.$store.getters.playlists(this.pagePart , this.passedUser)){
-                return this.$store.getters.playlists(this.pagePart , this.passedUser)
+
+            if(this.passedUser === 'clickedUser'){                
+                return this.$store.getters[this.passedUser].playlists[this.pagePart]
             }else{
-                return false
+                if(this.$store.getters.playlists(this.pagePart , this.passedUser)){
+                    return this.customer.playlists[this.pagePart]
+                }else{
+                    return false
+                }
             }
         },
 
@@ -87,12 +107,17 @@ export default {
             }else if(this.pagePart == "listenLater"){
                 return "Add some mixes to 'Listen Later', and they will appear here for easy access"
             }else{
-                return "null"
+                return null
             }
         }
     },
 
     watch:{
+
+        stream: function(newValue){
+            console.log('watch')
+            console.log(newValue)
+        }
         
     },
 
@@ -109,18 +134,30 @@ export default {
                 console.log(error)
             })
         },
-// eslint-disable-next-line
-        // handleClickTrack(trackData, trackID) {
+
+        togglePlaylist(){
+            this.showPlaylists = true
+            this.clickedAddToPlaylist = true
+        },
+    
+
+        removeFromPlaylist(mID){
+
+            //Remove from playlist in DB
+
+            console.log(mID)
+
+            database.collection('users').doc(this.uID).collection(this.pagePart).doc(mID).delete().then((response) => {
+                console.log(response)
+
+                //Remove from playlist in state
+
+                this.$store.commit('deleteFromPlaylist' , {mID : mID , playlist : this.pagePart})
+
+            })
             
-        //     if (this.playerCurrentTrack && this.playerCurrentTrack.title === trackData.title) {
-        //         this.$store.dispatch('setPlayerCurrentTrack', null);
-        //     } else {
-        //         trackData['mID'] = trackID 
-        //         this.$store.dispatch('setPlayerCurrentTrack', trackData);
-        //         this.$store.dispatch('setPlayerTracks', this.stream)
-        //     }
-        // },
-        
+
+        }
     },
 
 }
@@ -189,6 +226,11 @@ export default {
         grid-column: 2/3;
         grid-row: 4/5;
     }
-    
+
+    .smallButton{
+        width: 50px;
+        font-size: 9px;
+        color: purple !important;
+    }
 
 </style>

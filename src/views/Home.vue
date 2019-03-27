@@ -13,7 +13,7 @@
     </div>
     <div class="outline recommended">
       <div>Listen Later</div>
-      <Stream pagePart="listenLater"  passedUser = 'customer'/>      
+      <Stream pagePart="Listen Later"  passedUser = 'customer'/>      
     </div>
     <div class="outline playlists">
       <div>Playlists</div>
@@ -43,7 +43,7 @@
 
 import createPlaylistMixin from '../mixins/createPlaylistMixin'
 //import createStreamMixin from '../mixins/createStreamMixin'
-
+import { mapGetters } from 'vuex'
 import Stream from '@/components/Stream.vue'
 import playlists from '@/components/playlists.vue'
 
@@ -88,7 +88,7 @@ export default {
   data() {
     return {
       expand: false,
-      streamComponents: ['timeline' , 'history', 'listenLater']
+      streamComponents: ['history', 'Listen Later']
     }
   },
 
@@ -97,14 +97,40 @@ export default {
   ],
 
   computed: {
-    user() {
-      return this.$store.getters.user
+        ...mapGetters({
+            profileURL : 'profileURL',
+            uID : 'uID',
+            name : 'name',
+            clickeduID : 'clickeduID',
+            clickedUser : 'clickedUser',
+            customer: 'customer',
+        }),
+    
     },
-  },
 
   created: function () {
-    this.createStream(this.streamComponents)
+    //Fetch timeline 
+    const timeline = this.getTimeline()
+
+    timeline.then(response => {
+    //Dispatch to save in state
+    this.$store.commit("setPlaylist", {
+              object: response,
+              name: 'timeline'
+            })  
+    })
     
+    this.streamComponents.forEach(component => {
+      var mixes = this.getPlaylist(component , 4)
+    
+      mixes.then(response => {
+          //Dispatch to save in state
+          this.$store.commit("setPlaylist", {
+                    object: response,
+                    name: component
+                  })  
+          })
+      })
   },
 
 

@@ -17,7 +17,7 @@ import createPlaylistMixin from '../mixins/createPlaylistMixin.js'
 import Stream from '@/components/Stream.vue'
 
 const database = firebase.firestore()
-const storage = firebase.storage()
+//const storage = firebase.storage()
 
 export default {
 
@@ -49,9 +49,9 @@ export default {
 
     watch:{
 
-        customer: function(newValue){
-            console.log(newValue.playlistNames)
-        }
+        // customer: function(newValue){
+        //     console.log(newValue.playlistNames)
+        // }
 
     },
 

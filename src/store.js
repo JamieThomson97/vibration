@@ -126,6 +126,7 @@ export default new Vuex.Store({
         followersCount: null,
         followingCount: null,
         playlists: {},
+        playlistNames : [],
       }
     },
 
@@ -150,6 +151,20 @@ export default new Vuex.Store({
 
       Vue.set(state.customer.playlists, playlist, null)
     
+    },
+
+    deleteFromPlaylist(state, payload){
+      Vue.delete(state.customer.playlists[payload.playlist] , payload.mID)
+    },
+
+    addToPlaylist(state, payload){
+      Vue.set(state.customer.playlists[payload.playlistName] , payload.mix.mID , payload.mix)
+    },
+
+    createPlaylist(state, playlistName){
+      console.log('in crate playlist')
+      console.log(playlistName)
+      state.customer.playlistNames.push(playlistName)
     },
 
     deleteMix(state, payload){
