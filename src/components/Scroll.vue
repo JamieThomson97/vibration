@@ -17,7 +17,7 @@ export default {
   methods: {
     stepEnterHandler ({element, index, direction}) {
       // handle the step-event as required here
-      console.log(element, index, direction)
+      
     }
   }
 }

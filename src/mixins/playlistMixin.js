@@ -26,12 +26,17 @@ export default {
         //Takes, playlist name, mID as input
         //Adds mix to playlist locally, and in DB
 
+        newPlaylist(playlistName) {
+            database.collection('users').doc(this.uID).update({
+                createdPlaylists: firebase.firestore.FieldValue.arrayUnion(playlistName)
+            }).then(() => {
+                this.$store.commit('createPlaylist', playlistName)
+                return 'Playlist created, now add some mixes!'
+            })
+        },
+
         addToPlaylist(mixData, mID, playlistNameArray){
-
-            console.log(mixData)
-            console.log(this.uID)
-            console.log(playlistNameArray)
-
+            
             var mixDataPass = {
 
                 artworkURL : mixData.artworkURL,
@@ -46,44 +51,61 @@ export default {
                 dateAdded : new Date()
 
             }
-            
-            console.log(mixDataPass)
-
-            // var playlistCreated = false
-
-            // const playlistNames = this.customer.playlistNames
-            var message = 'created playlist '+playlistNameArray+' and added mix'
-
-            // playlistNames.forEach(name => {
-            //     playlistNameArray.forEach(newName => {
-            //         if(name === newName){
-            //             playlistCreated = true
-            //             message = 'added to playlist'
-            //         }
-            //     })
-            // })
-
-            // if(!playlistCreated){
-            //     if(playlistNameArray !== 'ListenLater'){
-            //         console.log('in name checker if')
-            //         this.createPlaylist(playlistNameArray)
-            //     }
-            // }
-
+                var playlistCreated = false
             playlistNameArray.forEach(playlistName => {
-
-                //playlistName = playlistName.split(' ').join('')
+                playlistCreated = false
+                this.customer.createdPlaylists.forEach(pName => {
+                    if (pName === playlistName) {
+                       playlistCreated = true
+                   }
+               })
 
                 database.collection('users').doc(this.uID).collection(playlistName).doc(mixDataPass.mID).set(mixDataPass).then(() => {
-                    console.log(message)
+                    
                     this.$store.commit('addToPlaylist' , {mix : mixDataPass , playlistName : playlistName})
                 }).catch(error => {
-                    console.log(error)
-                })
+                    this.$noty.warning(error)
+                }).then(() => {
+                    if (!playlistCreated) {
+                        if(playlistName !== "Listen Later" | "Liked Mixes")
+                            this.createPlaylist(playlistName)
+                            this.$noty.success('Successfully added to Playlist : '+playlistName)
+                    }
+                } )
                
             })
 
             
+        },
+
+        deletePlaylist(playlistName) {
+            
+            var promises = []
+            database.collection('users').doc(this.uID).collection(playlistName).get().then(response => {
+                
+                response.forEach(mix => {
+                    
+                    var promise = database.collection('users').doc(this.uID).collection(playlistName).doc(mix.data().mID).delete()
+                    promises.push(promise)
+                })
+            })
+
+            const arrayEntry = database.collection('users').doc(this.uID).update({
+                createdPlaylists: firebase.firestore.FieldValue.arrayRemove(playlistName)
+            })
+            promises.push(arrayEntry)
+
+            Promise.all(promises).then(() => {
+                this.$store.commit('deletePlaylist', playlistName)
+                this.$noty.success(playlistName+' deleted')
+            })
+        },
+
+        addToHistory(trackData) {
+            trackData['dateAdded'] = new Date()
+            database.collection('users').doc(this.uID).collection('history').doc(trackData.mID).set(trackData).then(() => {
+                this.$store.commit('addToHistory', trackData)
+            })
         },
 
 
@@ -99,37 +121,31 @@ export default {
             }
 
             database.collection('users').doc(this.uID).update({
-                playlistNames: firebase.firestore.FieldValue.arrayUnion(playlistName)
+                createdPlaylists: firebase.firestore.FieldValue.arrayUnion(playlistName)
             }).then(() => {
                 this.$store.commit('createPlaylist', playlistName)
-                return 'Playlist created, now add some mixes!'
+                this.$noty.success(playlistName+' created')
             })
 
         },
 
-        getPlaylists(){
+        // getPlaylists(){
             
-            const playlistNames = this.customer.playlistNames
+        //     const playlistNames = this.customer.playlistNames
             
-            for(var a in playlistNames){
-                    var name = playlistNames[a]
-                    database.collection('users').doc(this.uID).collection(name).get().then(response => {
-                        var playlists = response.docs
-                        for(var b in playlists){
-                            var playlist = playlists[b]
-                            console.log(playlist)
-                        }
-                    })
+        //     for(var a in playlistNames){
+        //             var name = playlistNames[a]
+        //             database.collection('users').doc(this.uID).collection(name).get().then(response => {
+        //                 var playlists = response.docs
+        //                 for(var b in playlists){
+        //                     var playlist = playlists[b]
+                            
+        //                 }
+        //             })
                     
                       
-            }  
-        },
-
-        // getPlaylistData(playlistName){
-            
-            
-            
-        // }
+        //     }  
+        // },
 
     }
 

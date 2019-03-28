@@ -15,7 +15,7 @@ const vuexLocal = new VuexPersistence({
   reducer: (state) => ({
     customer: state.customer,
     clickedMixID: state.clickedmID,
-    clickedUseruID : state.clickedUseruID,
+    clickeduID : state.clickeduID,
     clickedUser: state.clickeduser,
     //trackData: state.trackData,
   })
@@ -64,12 +64,12 @@ export default new Vuex.Store({
     },
 
     setFollowX: (state, payload) => {
-      console.log('setFollowX')
-      console.log(payload.response)
+      
+      
       //state.clickedUser[payload.follX] = payload.response
       Vue.set(state.clickedUser, payload.follX , payload.response)
-      // console.log(payload.follX)
-      // console.log(payload.response)
+      
+      
       
     },
 
@@ -78,14 +78,14 @@ export default new Vuex.Store({
     },
 
     GET_USER_PROFILE_SUCCESS: (state, data) => {
-      console.log(data)
+      
       data['playlists'] = {}
       state.getClickedProfileLoading = false;
       Vue.set(state , 'clickedUser' , data)
     },
 
     setClickeduID(state, payload) {
-      Vue.set(state, 'clickedUseruID' , payload)
+      Vue.set(state, 'clickeduID' , payload)
     },
     setClickedmID(state, payload) {
       Vue.set(state , 'clickedmID' , payload)
@@ -117,7 +117,7 @@ export default new Vuex.Store({
     },
 
     setNullUser(state) {
-      // console.log('in')
+      
       // Vue.delete(state, 'customer')
       state.customer = {
         uID: null,
@@ -137,7 +137,7 @@ export default new Vuex.Store({
       user.customer.playlists = {} 
       user.customer.followerCount = 0
       user.customer.followingCount = 0
-      console.log(user.customer)
+      
       Vue.set(state, 'customer', user.customer)
       //Vue.set( )
     },
@@ -149,29 +149,34 @@ export default new Vuex.Store({
 
     deletePlaylist(state, playlist) {
 
-      Vue.set(state.customer.playlists, playlist, null)
+      const index = state.customer.createdPlaylists.indexOf(playlist);
+      state.customer.createdPlaylists.splice(index, 1);
+      Vue.delete(state.customer.playlists, playlist)
     
     },
 
     deleteFromPlaylist(state, payload){
-      Vue.delete(state.customer.playlists[payload.playlist] , payload.mID)
+      Vue.delete(state.customer.playlists[payload.playlist], payload.mID)
     },
 
-    addToPlaylist(state, payload){
-      Vue.set(state.customer.playlists[payload.playlistName] , payload.mix.mID , payload.mix)
+    addToPlaylist(state, payload) {
+      
+      Vue.set(state.customer.playlists[payload.playlistName], payload.mix.mID, payload.mix)
     },
 
     createPlaylist(state, playlistName){
-      console.log('in crate playlist')
-      console.log(playlistName)
-      state.customer.playlistNames.push(playlistName)
+      
+      
+      state.customer.createdPlaylists.push(playlistName)
     },
 
-    deleteMix(state, payload){
-      console.log(payload.pName)
-      console.log('mid')
-      console.log(payload.mID)
-      Vue.delete(state.customer.playlists[payload.pName], payload.mID)      
+    deleteMix(state, payload) {
+      
+      Vue.delete(state.clickedUser.playlists[payload.pName], payload.mID)      
+    },
+
+    addToHistory(state, trackData) {
+      Vue.set(state.customer.playlists, history, trackData)
     },
 
     setTrackData(state, trackData) {
@@ -180,9 +185,12 @@ export default new Vuex.Store({
     
     setLikers(state, likers){
       Vue.set(state.trackData, 'likers', likers)
-    }
+    },
 
-
+    setEventData(state, eventData) {
+      
+      Vue.set(state, 'event' , eventData)
+    },
   },
 
   actions: {
@@ -210,12 +218,11 @@ export default new Vuex.Store({
           }).then(() => {
 
           }).catch((error) => {
-
-            console.log(error)
+            this.$noty.error(error)
           })
           commit('setuID', user.user.uid)
         }).catch((error) => {
-          console.log(error)
+          this.$noty.error(error)
         })
     },
 
@@ -245,7 +252,7 @@ export default new Vuex.Store({
             })
           })
         }).catch((error) => {
-          console.log(error)
+          this.$noty.error(error)
         })
     },
 
@@ -258,17 +265,25 @@ export default new Vuex.Store({
           router.push({
             name: 'about'
           })
-          console.log("signed out")
+          
         }).catch((error) => {
-          console.log(error)
+          this.$noty.error(error)
         })
     },
 
     getTrackData({ commit }, mID) {
-      console.log(mID)
+      
       database.collection('mixes').doc(mID).get().then(response => {
-        console.log(response.data())
+        
         commit('setTrackData', response.data())
+      })
+    },
+
+    getEventDetails({ commit }, eID) {
+      database.collection('events').doc(eID).get().then(response => {
+        const eventData = response.data()
+        eventData['eID'] = response.id
+        commit('setEventData', eventData)
       })
     },
 
@@ -297,7 +312,7 @@ export default new Vuex.Store({
     actionSetUser({
       commit
     }, payload) {
-      console.log(payload.user)
+      
       commit('setUser', { user : payload.user , uID : payload.uID })
     }
 
@@ -354,7 +369,7 @@ export default new Vuex.Store({
     },
 
     playlists: (state) => (pName, passedUser) => {
-      console.log(passedUser, pName)
+      
       return (state[passedUser].playlists[pName])//+'.'+pName.stream)
     }, 
     followingCount(state){
@@ -368,6 +383,9 @@ export default new Vuex.Store({
     },
     trackData(state){
       return state.trackData
+    },
+    event(state){
+      return state.event
     },
   },
 

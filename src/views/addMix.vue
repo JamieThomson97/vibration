@@ -86,7 +86,7 @@ export default {
 
             var storageRef = storage.ref('mixes/'+NmID+'.mp3')
             var put = storageRef.put(this.uploadedFile).then(() => {
-                console.log('complete')      
+                
                 return storageRef.getDownloadURL().then(function(URL) {
                   mixData['streamURL'] = URL
                   return URL
@@ -98,19 +98,19 @@ export default {
                 }))
                 mixPromises.push(database.collection("users").doc(this.uID).collection('mixes').doc(NmID).set(mixData))
                   for (var follower in mIDs) {
-                    console.log(follower)
+                    
                     mixPromises.push(database.collection("users").doc(mIDs[follower]).collection('timeline').doc(NmID).set(mixData))
                   }
                   const indexFunction = firebase.functions().httpsCallable('indexMix')
-                  console.log(mixData.dateUploaded)
+                  
                   mixPromises.push(indexFunction({ mixData : mixData , NmID : NmID }))
                   return response
                 }).then(() => {
-                  console.log('length')
-                  console.log(mixPromises.length)
+                  
+                  
                   return Promise.all(mixPromises)
                 }).catch(error => {
-                  console.log(error)
+                  this.$noty.error(error)
                 })          
               
             
@@ -121,7 +121,7 @@ export default {
           if(e.target.files[0].type == 'audio/mpeg'){
             this.uploadedFile = e.target.files[0]
           }else{
-            console.log('please upload an mp3')
+            this.$noty.error("please upload an MP3")
           }
         }
     }

@@ -87,7 +87,7 @@ export default {
         const self = this;
         const currentTrackTitle = this.playerCurrentTrack.title
         Object.values(this.playerTracks).forEach((track, index) => {
-          console.log(currentTrackTitle + '    ' + track.title)
+          
           if (currentTrackTitle === track.title) {
             let nextIndex = 0;
             nextIndex = index + 1;
@@ -95,7 +95,7 @@ export default {
               Object.values(self.playerTracks)[nextIndex]['mID'] = Object.keys(this.playerTracks)[nextIndex]
               this.$store.dispatch('setPlayerCurrentTrack', Object.values(self.playerTracks)[nextIndex]);
             }else{
-              console.log('end of queue')
+              this.$noty.warning("Tracklist finished")
             }
           }
         });
@@ -103,8 +103,8 @@ export default {
     },
 
     playerCurrentTrack(nextCurrentTrack, prevCurrentTrack) {
-      console.log('track clicked')
-      console.log(nextCurrentTrack, prevCurrentTrack)
+      
+      
       if (nextCurrentTrack && !_.isEqual(nextCurrentTrack, prevCurrentTrack)) {
         if (this.player) {
           this.player.pause();
@@ -114,7 +114,7 @@ export default {
           this.player = null;
         }
         setTimeout(() => {
-          console.log('in howl')
+          
           this.player = new Howl({
             src: nextCurrentTrack.streamURL,
             html5: true,
@@ -171,11 +171,11 @@ export default {
           if (direction === 'next') {
             nextIndex = index + 1;
             if (nextIndex < Object.values(self.playerTracks).length) {
-              console.log('key')
+              
               Object.values(self.playerTracks)[nextIndex]['mID'] = Object.keys(this.playerTracks)[nextIndex]
               this.$store.dispatch('setPlayerCurrentTrack', Object.values(self.playerTracks)[nextIndex]);
             }else{
-              console.log('end of quque')
+              this.$noty.warning("Tracklist finished")
             }
           } else if (direction === 'previous') {
             nextIndex = index - 1;

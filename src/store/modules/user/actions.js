@@ -5,7 +5,7 @@ const database = firebase.firestore()
 export default {
 
 getUserProfile: (context, uID) => {
-    console.log('in get user profile')
+    
     database.collection('users').doc(uID).get().then(response => {
       const profile = response.data()
       profile['uID'] = uID
@@ -15,7 +15,7 @@ getUserProfile: (context, uID) => {
   },
   
   getUserFollowX: (context, payload) => {
-    console.log('getuserfollowX')
+    
     const customeruID = payload.customeruID
     const uID = payload.id
     const array = payload.array
@@ -35,7 +35,7 @@ getUserProfile: (context, uID) => {
   },
   
   getUserTracks: () => {
-    console.log('getUserTracks')
+    
     
   },
 };

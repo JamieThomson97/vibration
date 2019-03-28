@@ -10,12 +10,14 @@
             <div class="title caption grey--text">{{stream[Object.keys(stream)[x-1]].producer}}</div>
             <v-btn class='smallButton' small v-if="uID == stream[Object.keys(stream)[x-1]].uID" @click="deleteMix(Object.keys(stream)[x-1])">Delete</v-btn>
             <v-btn class='smallButton' @click="addToPlaylist(stream[Object.keys(stream)[x-1]], Object.keys(stream)[x-1] , ['Listen Later'])">Listen Later</v-btn>
-            <v-btn class='smallButton' v-if='pagePart !== "mixes"' @click="removeFromPlaylist(Object.keys(stream)[x-1])">Remove from playlist</v-btn>
+            <v-btn class='smallButton' v-if='!showDeleteFromPlaylist' @click="removeFromPlaylist(Object.keys(stream)[x-1])">Delete from Playlist</v-btn>
+            <v-btn class='smallButton' v-if='stream[Object.keys(stream)[x-1]].event' router :to="`/event/${(stream[Object.keys(stream)[x-1]].event.eID)}`" >{{stream[Object.keys(stream)[x-1]].event.name}}</v-btn>
             <v-btn class='smallButton' v-if='!clickedAddToPlaylist' @click='togglePlaylist()' icon dark>Add to Playlist</v-btn>
-            <v-btn class='smallButton' v-if='clickedAddToPlaylist & showPlaylists' @click='addToPlaylist(stream[Object.keys(stream)[x-1]] , Object.keys(stream)[x-1] , playlistChoice)' icon dark>Submit</v-btn>
-            <v-btn class='smallButton' v-if='clickedAddToPlaylist & showPlaylists' @click='createPlaylist("HELLO")' icon dark>Create Playlist</v-btn>
+            <v-btn class='smallButton' v-if='clickedAddToPlaylist & showPlaylists' @click='newPlaylistMethodSelector(stream[Object.keys(stream)[x-1]] , Object.keys(stream)[x-1] , playlistChoice)' icon dark>Submit</v-btn>
+            <v-btn class='smallButton' v-if='clickedAddToPlaylist & showPlaylists' @click='newPlaylist()' icon dark>Create Playlist</v-btn>
+            <v-text-field v-if='newPlaylistField' v-model='playlistChoice' outline type="text" placeholder=""></v-text-field>
             <v-select
-            v-if='showPlaylists'
+            v-if='showPlaylists & !newPlaylistField'
             v-model="playlistChoice"
             :items="playlistOptions"
             attach
@@ -34,9 +36,9 @@ import firebase from 'firebase'
 import mixMixin from '../mixins/mixMixin'
 import playlistMixin from '../mixins/playlistMixin'
 const database = firebase.firestore()
-// import { Howl } from 'howler';
-// import _ from 'lodash';
-// import secondsToTime from '@/utils/secondsToTime';
+import 'vuejs-noty/dist/vuejs-noty.css'
+
+
 
 export default {
 
@@ -46,10 +48,11 @@ export default {
         return {
             i: 0,
             x: 0,
-            playlistOptions : ['Listen Later' , 'FIFA Songs'],
             playlistChoice : null,
             clickedAddToPlaylist : false,
             showPlaylists : false,
+            newPlaylistField : false,
+            newPlaylistName : '',
         }
     },
 
@@ -64,8 +67,8 @@ export default {
     ],
 
     created(){
-        console.log('this.pagePart')
-        console.log(this.passedUser)
+        
+        
     },
 
     computed:{
@@ -74,9 +77,18 @@ export default {
             name : 'name',
             profileURL : 'profileURL',
             playerCurrentTrack : 'playerCurrentTrack',
-            customer : 'customer'
+            customer : 'customer',
             // ...
         }),
+
+        showDeleteFromPlaylist(){
+            if (this.pagePart == 'mixes' | this.pagePart == 'timeline'){
+                return true
+            }else{
+                return false
+            }
+        },
+        
     
         stream(){
 
@@ -89,6 +101,10 @@ export default {
                     return false
                 }
             }
+        },
+
+        playlistOptions(){
+            return this.customer.createdPlaylists.concat(['Listen Later'])
         },
 
         streamLength(){
@@ -113,52 +129,52 @@ export default {
     },
 
     watch:{
-
-        stream: function(newValue){
-            console.log('watch')
-            console.log(newValue)
-        }
         
     },
 
     methods: {
 
         deleteMix(ID){
-            console.log(ID)
+            
             var deleteMix = firebase.functions().httpsCallable('deleteMix' , {mID : ID , uID : this.uID})
             var deleteFromPlaylists = firebase.functions().httpsCallable('deleteFromPlaylists' , {mID : ID})
             var promises = [deleteMix , deleteFromPlaylists]
-            Promise.all(promises).then((response) => {
-                console.log(response) 
+            Promise.all(promises).then(() => {
                 //Delete Locally
                 this.$store.dispatch('actionDeleteMix', {'pName' : this.pagePart , 'mID' : ID} )
             }).catch((error) => {
-                console.log(error)
+                this.$noty.warning(error)
             })
+        },
+
+        newPlaylist(){
+            this.newPlaylistField = !this.newPlaylistField
+            this.playlistChoice = null
         },
 
         togglePlaylist(){
             this.showPlaylists = true
-            this.clickedAddToPlaylist = true
+            this.clickedAddToPlaylist = true            
+        },
+
+        newPlaylistMethodSelector(mixData, mID, playlist){
+            if(this.newPlaylistField){
+                
+                this.addToPlaylist(mixData , mID , [playlist])
+                
+            }else if(this.clickedAddToPlaylist & this.showPlaylists){
+                
+                this.addToPlaylist(mixData , mID , playlist)
+            }
+            
         },
     
 
         removeFromPlaylist(mID){
-
-            //Remove from playlist in DB
-
-            console.log(mID)
-
-            database.collection('users').doc(this.uID).collection(this.pagePart).doc(mID).delete().then((response) => {
-                console.log(response)
-
-                //Remove from playlist in state
-
+            database.collection('users').doc(this.uID).collection(this.pagePart).doc(mID).delete().then(() => {
                 this.$store.commit('deleteFromPlaylist' , {mID : mID , playlist : this.pagePart})
-
+                this.$noty.success('Mix removed from : '+this.pagePart)
             })
-            
-
         }
     },
 

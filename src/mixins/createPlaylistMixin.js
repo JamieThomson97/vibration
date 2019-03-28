@@ -76,7 +76,7 @@ export default {
     //     }
     //     return (results)
     //   }).catch((error) => {
-    //     console.log(error)
+    //     
     //   })
     // },
 
@@ -87,8 +87,8 @@ export default {
     //   for (let comp in streamComponents) {
         
     //     if (!this.$store.getters.playlists[streamComponents[comp]]) {
-    //       console.log('Comp')
-    //       console.log(streamComponents[comp])
+    //       
+    //       
           
     //       objects[comp] = {}
     //       mixIDs[comp] = await this.pullID(streamComponents[comp])
@@ -101,7 +101,7 @@ export default {
     //           name: this.streamComponents[comp]
     //         })
     //       } else {
-    //         console.log("No mixes found")
+    //         
     //       }
     //     }
     //   }
@@ -140,7 +140,7 @@ export default {
           object: mixIDs['mixes']
         })
       } else {
-        console.log("No mixes found")
+        this.$noty.error("Could not find any mixes in mixes")
       }
     },
     
@@ -182,7 +182,8 @@ export default {
       })
     },
 
-    getPlaylist(playlistName, limit){
+    getPlaylist(playlistName, limit) {
+      
       var mixesObject = {} 
       return new Promise(resolve => {
         database.collection('users').doc(this.uID).collection(playlistName).orderBy('dateAdded', 'asc').limit(limit).get().then(response => {

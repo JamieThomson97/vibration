@@ -1,6 +1,6 @@
 <template>
     <div class="follWrapper">
-        <v-list-tile class="card" @click='setClickeduID(user.id)' router :to="`/users/${user.name}.split(' ').join('_')`" v-for="user in clickedUser[XXX]" :key="user.uID">
+        <v-list-tile class="card" @click='setClickeduID(user.id)' router :to="`/users/${(user.name).split(' ').join('_')}`" v-for="user in clickedUser[XXX]" :key="user.uID">
             {{user.name}}
             <img height='100%' :src='user.profileURL'>
         </v-list-tile>
@@ -13,11 +13,17 @@ import {
     mapGetters
 } from 'vuex'
 
+import userMixin from '../mixins/userMixin'
+
 export default {
     
 props: [
         "XXX",        
     ],
+
+      mixins: [
+    userMixin
+  ],
 
 computed:{
 
@@ -32,11 +38,7 @@ computed:{
     
 },
     methods:{
-         setClickeduID(uID){
-            console.log('in set clickeduid')
-            console.log(uID)
-            this.$store.dispatch('actionSetClickeduID', uID)
-        },
+      
     }
 }
 

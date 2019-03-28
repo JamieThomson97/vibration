@@ -3,7 +3,7 @@
       <v-navigation-drawer permanent drawer="true" right app :temporary="hover && mini" slot-scope="{ hover }" :mini-variant="mini && !hover">
         <v-toolbar flat class="transparent">
             <v-list>
-                <v-list-tile @click='setClickeduID(uID)' router :to="`/users/${name.split(' ').join('_')}`" avatar v-if="uID">
+                <v-list-tile @click='setClickeduID(playerCurrentTrack.uID)' :to="`/users/${(name).split(' ').join('_')}`" avatar v-if="uID">
                     <v-list-tile-avatar>
                         <img :src=profileURL>
                     </v-list-tile-avatar>
@@ -66,7 +66,7 @@ export default {
             drawer:true,
             items: [
             { title: 'Home', icon: 'dashboard', route: '/' },
-            { title: 'About', icon: 'question_answer', route: '/about' },
+            { title: 'Landing', icon: 'question_answer', route: '/Landing' },
             { title: 'Add a Mix', icon: 'question_answer', route: '/addMix' },
             ],
             mini:true,

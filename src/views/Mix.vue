@@ -76,9 +76,6 @@ export default {
             clickedMixID : 'clickedMixID',
             trackData : 'trackData',
         }),
-
-        
-        
     },
 
     watch: {
@@ -90,7 +87,7 @@ export default {
   created: function(){
     const storage = JSON.parse(localStorage.getItem('vuex'))
     if(storage.clickedMixID){
-        console.log(storage.clickedMixID)
+        
         this.fetchMixInfo(storage.clickedMixID)
     }
 
@@ -109,7 +106,7 @@ export default {
                   
                   (this.trackData.likers).push(likersObj)
                   this.inLiked = this.trackData.likers.length - 1
-                  console.log(this.inLiked)
+                  
               }
           }else{
               if(this.inLiked > -1){
@@ -133,17 +130,15 @@ export default {
               artworkURL : this.trackData.artworkURL,
               likes: this.likeCount,
               plays: this.trackData.plays 
-          }).then((response) => {
-              console.log(response)
           }).catch(error => {
-              console.log(error)
+              this.$noty.warning(error)
           })
       },
 
       methods:{
          setClickeduID(uID){
-            console.log('in set clickeduid')
-            console.log(uID)
+            
+            
             this.$store.dispatch('actionSetClickeduID', uID)
         },
     }

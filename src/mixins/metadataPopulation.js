@@ -46,7 +46,7 @@ export default {
             }
             return (results)
             }).catch((error) => {
-            console.log(error)
+                console.log(error)
             })
             //populate array with mIDs
         

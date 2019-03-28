@@ -3,7 +3,7 @@ import Router from 'vue-router'
 import Home from './views/Home.vue'
 import Home_Template from './views/Home_Template.vue'
 
-import About from './views/About.vue'
+import Landing from './views/Landing.vue'
 import User from './views/User.vue'
 import addMix from './views/addMix.vue'
 import mix from './views/Mix.vue'
@@ -21,9 +21,9 @@ export default new Router({
       component: Home
     },
     {
-      path: '/about',
-      name: 'about',
-      component: About,
+      path: '/landing',
+      name: 'landing',
+      component: Landing,
             
     },
     

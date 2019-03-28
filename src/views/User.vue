@@ -73,14 +73,13 @@ export default {
 
     watch: {
         clickeduID: function(newValue) {
-        
             this.fetchUserDetails(newValue)
         },
 
         followingCount: function(){
-            console.log('in following count function')
+            
             for(var a in this.clickedUser.followers){
-                console.log((this.clickedUser.followers[a]))
+                
                     if(this.clickedUser.followers[a].uID == this.uID){
                         this.doesFollow = true
                     }
@@ -116,10 +115,9 @@ export default {
         const { params: { passeduID } } = this.$route;
         if(!(passeduID.length === 28)){
             const storage = JSON.parse(localStorage.getItem('vuex'))
-            console.log(storage)
-            if(storage.clickedUseruID){
-                this.fetchUserDetails(storage.clickedUseruID)
-                       
+            if(storage.clickeduID){
+                
+                this.fetchUserDetails(storage.clickeduID)
             }
         }else{
             this.fetchUserDetails(passeduID)
@@ -139,8 +137,8 @@ export default {
                 'followingProfileURL' : this.clickedUser.profileURL,
                 'followerName' : followerName,
                 'follow' : follow
-                }).then(response => {
-                    console.log(response)
+                }).then(() => {
+                    this.$noty.success("User Followed")
                 })
 
             this.$store.dispatch('actionDeletePlaylist' , 'timeline')

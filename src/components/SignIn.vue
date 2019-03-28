@@ -72,10 +72,10 @@ import firebase from 'firebase'
         },
     
         retrieveUserInfo(){
-            console.log("getter     "+this.$store.getters.uID)
+            
             const ref = firebase.firestore().collection('users').doc(this.$store.getters.uID)            
             ref.get().then((snapshot) => {
-                console.log("snapshot  "+snapshot.data())
+                
                 this.$store.dispatch("actionSetUser", { name:snapshot.data().name, profileURL:snapshot.data().profileURL})
             })
         },

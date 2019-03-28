@@ -9,7 +9,7 @@
     </div>
     <div class="outline history">
       <div>History</div>
-      <Stream pagePart="history"  passedUser = 'customer'/>      
+      <Stream pagePart="History"  passedUser = 'customer'/>      
     </div>
     <div class="outline recommended">
       <div>Listen Later</div>
@@ -46,18 +46,19 @@ import createPlaylistMixin from '../mixins/createPlaylistMixin'
 import { mapGetters } from 'vuex'
 import Stream from '@/components/Stream.vue'
 import playlists from '@/components/playlists.vue'
+import 'vuejs-noty/dist/vuejs-noty.css'
 
 export default {
 
   beforeRouteEnter(to, from, next) {
     var storage  = (JSON.parse(localStorage.getItem('vuex')))
     if(!storage) {
-      console.log("doesnt exist")
+      
       next('/about')
     } else {
       if ((storage.customer.uID) == null) {
         next('/about')
-        console.log("property is NULL")
+        
       } else {
         next()
       }
@@ -88,7 +89,6 @@ export default {
   data() {
     return {
       expand: false,
-      streamComponents: ['history', 'Listen Later']
     }
   },
 
@@ -105,7 +105,11 @@ export default {
             clickedUser : 'clickedUser',
             customer: 'customer',
         }),
-    
+
+        allPlaylists(){
+          return this.customer.prePlaylists.concat(this.customer.createdPlaylists)
+        }
+            
     },
 
   created: function () {
@@ -120,9 +124,8 @@ export default {
             })  
     })
     
-    this.streamComponents.forEach(component => {
-      var mixes = this.getPlaylist(component , 4)
-    
+    this.allPlaylists.forEach(component => {
+      var mixes = this.getPlaylist(component , 4) //for is limit for db return 
       mixes.then(response => {
           //Dispatch to save in state
           this.$store.commit("setPlaylist", {

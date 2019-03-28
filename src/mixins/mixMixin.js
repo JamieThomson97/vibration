@@ -1,9 +1,12 @@
 import firebase from 'firebase'
 const database = firebase.firestore()
+import playlistMixin from '../mixins/playlistMixin'
 
 export default {
 
- 
+    mixins: [
+        playlistMixin
+ ],
 
   methods: {
 
@@ -22,7 +25,7 @@ export default {
             this.$store.dispatch('actionSetClickedmID', mID) 
             this.$store.dispatch('getTrackData', mID)
             database.collection('mixes').doc(mID).get().then(response => {
-                console.log(response.data().likeCount)
+                
                 this.likeCount = response.data().likeCount
             })
             database.collection('mixes').doc(mID).collection('liked').limit(10).get().then(response => {
@@ -42,7 +45,7 @@ export default {
                 
                 likers.push(item)
                 }
-                console.log(likers)
+                
                 this.$store.dispatch('actionSetLikers', likers)
             })
         },
@@ -59,6 +62,7 @@ export default {
                 trackData['mID'] = trackID 
                 this.$store.dispatch('setPlayerCurrentTrack', trackData);
                 this.$store.dispatch('setPlayerTracks', this.stream)
+                this.addToHistory(trackData)
             }
         },
 

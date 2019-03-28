@@ -1,8 +1,15 @@
 <template>
     <div class="playlistsWrapper">
-        <div class="playlistNames" v-for='x in customer.playlistNames' :key='x'>
+        <div class="playlistNames" style='background-color:red;' v-for='x in customer.createdPlaylists' :key='x'>
             {{x}}
+            <i class="material-icons" @click='deletePlaylist(x)'>
+                clear
+            </i>
             <Stream :pagePart='x' passedUser = 'customer'/>
+        </div>
+        <div class="newPlaylist">
+            <!-- <v-text-field v-model='newPlaylist' outline type="text" placeholder="Quick New Playlist"></v-text-field> -->
+            <v-text-field v-model='newPlaylistName' outline type="text" v-on:keyup.enter="newPlaylist(newPlaylistName)"  placeholder="Quick Add"></v-text-field>
         </div>
     </div>
 </template>
@@ -14,6 +21,7 @@ import * as firebase from 'firebase'
 import { mapGetters } from 'vuex'
 import metadataPopulation from '../mixins/metadataPopulation.js'
 import createPlaylistMixin from '../mixins/createPlaylistMixin.js'
+import playlistMixin from '../mixins/playlistMixin.js'
 import Stream from '@/components/Stream.vue'
 
 const database = firebase.firestore()
@@ -23,12 +31,13 @@ export default {
 
   mixins: [
         metadataPopulation,
-        createPlaylistMixin,        
+        createPlaylistMixin,    
+        playlistMixin,    
     ],
 
     data() {
         return{
-        
+            newPlaylistName : ''
         }
     },
 
@@ -50,7 +59,7 @@ export default {
     watch:{
 
         // customer: function(newValue){
-        //     console.log(newValue.playlistNames)
+        //     
         // }
 
     },
@@ -62,18 +71,18 @@ export default {
 
         database.collection('users').doc(this.uID).get().then(response => {
             const user = response.data() 
-            console.log(user)
+            
             if(!(user.playlistNames == this.customer.playlistNames)){
-                console.log('new and old playlistnames are equal')
+                
                 this.customer.playlistNames = user.playlistNames
             }
         })
 
         var playlistNamesArray = this.customer.playlistNames
-        console.log(playlistNamesArray)
+        
         // for(var a in playlistNamesArray){
         //     var playlistName = playlistNamesArray[a]
-        //     console.log(playlistName)
+        //     
         //     this.createStream(playlistName)
         // }
         this.fetchPlaylists(playlistNamesArray)
