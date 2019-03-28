@@ -7,6 +7,7 @@ import About from './views/About.vue'
 import User from './views/User.vue'
 import addMix from './views/addMix.vue'
 import mix from './views/Mix.vue'
+import Event from './views/Event.vue'
 
 Vue.use(Router)
 
@@ -45,6 +46,11 @@ export default new Router({
       path: '/homeTemp',
       name: 'homeTemp',
       component: Home_Template
+    },
+    {
+      path: '/event/:eID',
+      name: 'Event',
+      component: Event
     },
   ]
 })

@@ -125,8 +125,10 @@ export default {
 
         deleteMix(ID){
             console.log(ID)
-            var deleteMix = firebase.functions().httpsCallable('deleteMix')
-            deleteMix({mID : ID , uID : this.uID}).then((response) => {
+            var deleteMix = firebase.functions().httpsCallable('deleteMix' , {mID : ID , uID : this.uID})
+            var deleteFromPlaylists = firebase.functions().httpsCallable('deleteFromPlaylists' , {mID : ID})
+            var promises = [deleteMix , deleteFromPlaylists]
+            Promise.all(promises).then((response) => {
                 console.log(response) 
                 //Delete Locally
                 this.$store.dispatch('actionDeleteMix', {'pName' : this.pagePart , 'mID' : ID} )
