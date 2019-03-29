@@ -263,7 +263,7 @@ export default new Vuex.Store({
         .then(() => {
           commit('setNullUser')
           router.push({
-            name: 'about'
+            name: 'Landing'
           })
           
         }).catch((error) => {

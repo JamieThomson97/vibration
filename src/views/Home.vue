@@ -11,11 +11,11 @@
       <div>History</div>
       <Stream pagePart="History"  passedUser = 'customer'/>      
     </div>
-    <div class="outline recommended">
+    <div class="outline listenLater">
       <div>Listen Later</div>
       <Stream pagePart="Listen Later"  passedUser = 'customer'/>      
     </div>
-    <div class="outline playlists">
+    <div class="outline homePlaylists">
       <div>Playlists</div>
       <div>
         <playlists />
@@ -54,10 +54,10 @@ export default {
     var storage  = (JSON.parse(localStorage.getItem('vuex')))
     if(!storage) {
       
-      next('/about')
+      next('/landing')
     } else {
       if ((storage.customer.uID) == null) {
-        next('/about')
+        next('/landing')
         
       } else {
         next()
@@ -145,42 +145,43 @@ export default {
 
     .homeWrapper{
       display: grid;
-      grid-template-columns: 2.5fr 3.5fr 3fr;
+      grid-template-columns: 1.5fr 1.5fr 1.5fr;
       grid-template-rows: repeat(12, 1fr);
-      grid-gap: 1em;
-      height: 100%
+      grid-gap: 4em;
+      height: 100%;
+      background-color:#824949;
+      padding-left: 1rem;
     }
     
     .timeline{
       
-      grid-column:2/3;
-      grid-row: 2/10;
+      grid-column:1/2;
+      grid-row: 2/12;
       border:1px solid #333;
       
       
     }
 
     .history{      
-      margin-left: 1rem;
-      grid-column:1/2;
-      grid-row:3/6;
-      border:1px solid #333;
-    }
-
-    .recommended{
-      margin-left: 1rem;
-      grid-column:1/2;
-      grid-row: 7/10;      
-      border:1px solid #333;
-    }
-
-    .playlists{
       
-      margin-right: 1rem;
       grid-column:3/4;
-      grid-row :4/7;
-      
+      grid-row:7/12;
       border:1px solid #333;
+      padding-right: 1rem;
+    }
+
+    .listenLater{
+      
+      grid-column: 2/3;
+      grid-row: 7/12;      
+      border:1px solid #333;
+    }
+
+    .homePlaylists{
+      padding-right: 1rem;
+      grid-column:2/4;
+      grid-row :2/7;
+      border: 1px solid #333;
     }
     
   </style>

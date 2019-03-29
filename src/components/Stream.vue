@@ -1,20 +1,23 @@
 <template>
     <div class="streamWrapper">
         <div class="nothing" v-if="!stream">Something</div>
-         <div class="flat tile entry" 
+         <div class="entry" 
          v-for='x in streamLength'
           :key='Object.keys(stream)[x-1]'
-          >
-            <v-img class='artwork' @click="handleClickTrack(stream[Object.keys(stream)[x-1]], Object.keys(stream)[x-1])" :aspect-ratio="1/1" contain height='100%' width='100%' :src="stream[Object.keys(stream)[x-1]].artworkURL"></v-img>
+          > 
+            <div class="itemArtwork"></div>
+            <!-- <v-img class='artwork' @click="handleClickTrack(stream[Object.keys(stream)[x-1]], Object.keys(stream)[x-1])" :aspect-ratio="1/1" contain height='100%' width='100%' :src="stream[Object.keys(stream)[x-1]].artworkURL"></v-img> -->
             <div class="artist caption grey--text">{{stream[Object.keys(stream)[x-1]].title}}</div>
             <div class="title caption grey--text">{{stream[Object.keys(stream)[x-1]].producer}}</div>
-            <v-btn class='smallButton' small v-if="uID == stream[Object.keys(stream)[x-1]].uID" @click="deleteMix(Object.keys(stream)[x-1])">Delete</v-btn>
-            <v-btn class='smallButton' @click="addToPlaylist(stream[Object.keys(stream)[x-1]], Object.keys(stream)[x-1] , ['Listen Later'])">Listen Later</v-btn>
-            <v-btn class='smallButton' v-if='!showDeleteFromPlaylist' @click="removeFromPlaylist(Object.keys(stream)[x-1])">Delete from Playlist</v-btn>
-            <v-btn class='smallButton' v-if='stream[Object.keys(stream)[x-1]].event' router :to="`/event/${(stream[Object.keys(stream)[x-1]].event.eID)}`" >{{stream[Object.keys(stream)[x-1]].event.name}}</v-btn>
-            <v-btn class='smallButton' v-if='!clickedAddToPlaylist' @click='togglePlaylist()' icon dark>Add to Playlist</v-btn>
-            <v-btn class='smallButton' v-if='clickedAddToPlaylist & showPlaylists' @click='newPlaylistMethodSelector(stream[Object.keys(stream)[x-1]] , Object.keys(stream)[x-1] , playlistChoice)' icon dark>Submit</v-btn>
-            <v-btn class='smallButton' v-if='clickedAddToPlaylist & showPlaylists' @click='newPlaylist()' icon dark>Create Playlist</v-btn>
+            <div class="date"></div>
+            <div class='' small v-if="uID == stream[Object.keys(stream)[x-1]].uID" @click="deleteMix(Object.keys(stream)[x-1])"></div>
+            <div class=' addtoListen' @click="addToPlaylist(stream[Object.keys(stream)[x-1]], Object.keys(stream)[x-1] , ['Listen Later'])"></div>
+            <div class='' v-if='!showDeleteFromPlaylist' @click="removeFromPlaylist(Object.keys(stream)[x-1])"></div>
+            <!-- <div class='' v-if='stream[Object.keys(stream)[x-1]].event' router :to="`/event/${(stream[Object.keys(stream)[x-1]].event.eID)}`" >{{stream[Object.keys(stream)[x-1]].event.name}}</div> -->
+            <div class=' addtoPlaylist' v-if='!clickedAddToPlaylist' @click='togglePlaylist()' icon dark></div>
+            <div class=' favourite' icon dark></div>
+            <div class=' ' v-if='clickedAddToPlaylist & showPlaylists' @click='newPlaylistMethodSelector(stream[Object.keys(stream)[x-1]] , Object.keys(stream)[x-1] , playlistChoice)' icon dark></div>
+            <div class='' v-if='clickedAddToPlaylist & showPlaylists' @click='newPlaylist()' icon dark></div>
             <v-text-field v-if='newPlaylistField' v-model='playlistChoice' outline type="text" placeholder=""></v-text-field>
             <v-select
             v-if='showPlaylists & !newPlaylistField'
@@ -184,65 +187,72 @@ export default {
 <style>
 
     .streamWrapper{
-        display: grid;
-        height: 10px;
-        grid-template-rows: repeat(3, 1fr);
+        display: flex;
+        flex-wrap: wrap;
         grid-template-columns: repeat(auto-fit, minmax(
             180px, 1fr
         ));
-         grid-gap:0.5rem;    
+         grid-gap: 1.5rem;  
+         
     }
 
     .entry{
         display: grid;
+        height : 200px;
+        width: 150px;
+        grid-template-areas: 
+            "itemArtwork itemArtwork itemArtwork"
+            "itemArtwork itemArtwork itemArtwork"
+            "itemArtwork itemArtwork itemArtwork"
+            "title title addtoListen"
+            "artist artist addtoPlaylist"
+            "date date favourite";
     }
 
     .entry:nth-child(3n+1) {
         
         grid-row: auto;
+        margin-left: 1em;
         
     }
-    .entry:nth-child(3n+2) {
-        
-        grid-row: auto;
-
+    
+    .favourite{
+        grid-area : favourite;
+        background-color: aliceblue;
     }
-    .entry:nth-child(3n+3) {
-     
-        grid-row: auto;     
-    }    
-
-    .tile{
-        background-color: black;
-        display: grid;
-        grid-template-columns: 1fr 1fr;
-        grid-template-rows: 1fr 1fr 1fr 1fr;
-        max-height: 80px;
-    }
-
-    .artwork{
-        grid-column: 1/2;
-        grid-row: 1/5
+    .itemArtwork{
+        grid-area : itemArtwork;
+        background-color: blue;
     }
 
     .artist{
-        grid-column: 2/3;
-        grid-row: 2/3
+        grid-area : artist;
+        background-color: darkolivegreen;
     }
     
     .title{
-        grid-column: 2/3;
-        grid-row: 1/2
+        grid-area : title;
+        background-color: darkgoldenrod;
     }
 
     .date{
-        grid-column: 2/3;
-        grid-row: 3/4
+        background-color: red;
+        grid-area : date;
     }
 
     .length{
         grid-column: 2/3;
         grid-row: 4/5;
+    }
+
+    .addtoPlaylist{
+        grid-area: addtoPlaylist;
+        background-color: black;
+    }
+
+    .addtoListen{
+        grid-area: addtoListen;
+        background-color: purple;
     }
 
     .smallButton{

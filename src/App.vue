@@ -1,6 +1,6 @@
 <template>
   <v-app>
-    <Nav v-if="landing"/>
+    <Nav v-if="uID"/>
     
     <router-view class='windows'></router-view>
     <Player />
@@ -15,6 +15,10 @@
 import '@/components/firebaseConfig.js'
 import Nav from '@/components/Nav.vue'
 import Player from '@/components/Player.vue'
+import {
+    mapGetters
+} from 'vuex'
+
 
 
 export default {
@@ -38,11 +42,18 @@ export default {
     }
   },
 
-  computed:{
-    uID(){
-      return this.$store.getters.uID
-    }
-  },
+   computed: {
+        ...mapGetters({
+            profileURL : 'profileURL',
+            uID : 'uID',
+            name : 'name',
+            clickeduID : 'clickeduID',
+            clickedUser: 'clickedUser',
+            clickedMixID : 'clickedMixID',
+            trackData : 'trackData',
+            event : 'event' ,
+        }),
+   },
 
   methods:{
     
@@ -53,7 +64,8 @@ export default {
 </script>
 
 <style>
-.element::-webkit-scrollbar { width: 0 !important }
+
+.element::-webkit-scrollbar { width: 0 !important } 
 
 
 </style>

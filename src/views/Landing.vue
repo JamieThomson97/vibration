@@ -5,7 +5,9 @@
         
       </div>
       <div class="headText">
-          Finally a service that makes it easy to keep track of the mixes from the DJ's you love ... but that doesn't sound quite as wanky
+         <v-card color="rgb(26, 50, 91,0.1)">
+              <SignIn />
+            </v-card>
         </div>
       <!-- <div class="headingConent">
         A service designed to make listening to the mixes you love easier <br />
@@ -29,9 +31,7 @@
           </div>
         <v-slide-x-transition>
           <v-flex xs4>
-            <v-card color="rgb(26, 50, 91,0.1)">
-              <SignIn />
-            </v-card>
+            
           </v-flex>
         </v-slide-x-transition>
       </v-layout> -->
@@ -43,7 +43,7 @@
 <script>
 
 import 'intersection-observer'
-// import SignIn from '../components/SignIn.vue'
+import SignIn from '../components/SignIn.vue'
 // import Search from '../components/Search.vue'
 
 
@@ -53,7 +53,7 @@ export default {
 
 components: {
     //Register,
-    // SignIn,
+    SignIn,
     // Search,
    // Scrollama,
   //  Scroll,
