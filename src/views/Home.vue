@@ -138,7 +138,11 @@ export default {
 
   watch: {
     searchQuery: function (newValue) {
-      this.$store.dispatch('actionSetSearchQuery', newValue)
+      if(newValue == null){
+        this.$store.commit( 'setShowSearch' , false)
+      }else{
+        this.$store.dispatch('actionSetSearchQuery', newValue)
+      }
     },
   },
 
@@ -154,7 +158,7 @@ export default {
       grid-template-columns: 1.5fr 1.5fr 1.5fr;
       grid-template-rows: repeat(12, 1fr);
       grid-gap: 4em;
-      height: 100%;
+      height: 100vh;
       background-color:rgb(232, 225, 225);
       padding-left: 1rem;
       padding-right: 1rem;
