@@ -1,22 +1,21 @@
 <template>
 
   <div class="homeWrapper">
+    <div class='searchBox'>
+      <v-text-field v-model='searchQuery'  box clearable type="text" v-on:keyup.enter="s"  placeholder="Search"></v-text-field>
+    </div>
     <div class="outline timeline">
       <div>
-        <div>Timeline</div>
         <Stream pagePart="timeline" passedUser = 'customer'/>
       </div>
     </div>
     <div class="outline history">
-      <div>History</div>
       <Stream pagePart="History"  passedUser = 'customer'/>      
     </div>
     <div class="outline listenLater">
-      <div>Listen Later</div>
       <Stream pagePart="Listen Later"  passedUser = 'customer'/>      
     </div>
     <div class="outline homePlaylists">
-      <div>Playlists</div>
       <div>
         <playlists />
       </div>
@@ -89,6 +88,7 @@ export default {
   data() {
     return {
       expand: false,
+      searchQuery :''
     }
   },
 
@@ -136,12 +136,18 @@ export default {
       })
   },
 
+  watch: {
+    searchQuery: function (newValue) {
+      this.$store.dispatch('actionSetSearchQuery', newValue)
+    },
+  },
+
 
 }
 
 </script>
 
-<style>
+<style> 
 
     .homeWrapper{
       display: grid;
@@ -149,39 +155,51 @@ export default {
       grid-template-rows: repeat(12, 1fr);
       grid-gap: 4em;
       height: 100%;
-      background-color:#824949;
+      background-color:rgb(232, 225, 225);
       padding-left: 1rem;
+      padding-right: 1rem;
+      max-width: 97%;
+    }
+
+    .header{
+      margin-left: 15px;
+      font-size: 50px;
+      color:rgb(252, 250, 250);
+      flex-basis: 100%;
     }
     
     .timeline{
       
       grid-column:1/2;
       grid-row: 2/12;
-      border:1px solid #333;
-      
+      background-color : rgba(229, 192, 192, 0.8);
+      -webkit-box-shadow: 0 3px 8px rgba(0, 0, 0, .45);
       
     }
 
     .history{      
-      
+
+      background-color : rgb(192, 222, 229);
       grid-column:3/4;
       grid-row:7/12;
-      border:1px solid #333;
       padding-right: 1rem;
+      -webkit-box-shadow: 0 3px 8px rgba(0, 0, 0, .45);
     }
 
     .listenLater{
       
       grid-column: 2/3;
-      grid-row: 7/12;      
-      border:1px solid #333;
+      grid-row: 7/12;
+      background-color : rgb(192, 222, 229);
+      -webkit-box-shadow: 0 3px 8px rgba(0, 0, 0, .45);      
     }
 
     .homePlaylists{
       padding-right: 1rem;
       grid-column:2/4;
       grid-row :2/7;
-      border: 1px solid #333;
+      background-color : rgb(192, 222, 229);
+      -webkit-box-shadow: 0 3px 8px rgba(0, 0, 0, .45);
     }
     
   </style>

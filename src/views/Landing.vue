@@ -122,9 +122,9 @@ components: {
 
 /* Position text in the middle of the page/image */
 .headText {
-  background-color: rgb(0,0,0); /* Fallback color */
-  background-color: rgba(0,0,0, 0.4); /*Black w/opacity/see-through */
-  color: white;
+  /* background-color: rgb(0,0,0); Fallback color */
+  background-color: rgb(324,3,46, 0.4); /*Black w/opacity/see-through */
+  color: rgb(116, 0, 0);
   font-weight: bold;
   /* border: 2px solid #f1f1f1; */
   position: absolute;

@@ -47,6 +47,8 @@ export default new Vuex.Store({
       playlists: {},
       doesFollow: false
     },
+    showSearch: false,
+    searchQuery : '',
     clickedMix: {},
     user: null,
     error: null,
@@ -71,6 +73,14 @@ export default new Vuex.Store({
       
       
       
+    },
+
+    setShowSearch(state, value){
+      Vue.set(state , 'showSearch' , value)
+    },
+
+    setSearchQuery(state, query){
+      Vue.set(state , 'searchQuery' , query)
     },
 
     setClickedPlaylist(state, payload) {
@@ -117,17 +127,7 @@ export default new Vuex.Store({
     },
 
     setNullUser(state) {
-      
-      // Vue.delete(state, 'customer')
-      state.customer = {
-        uID: null,
-        name: null,
-        profileURL: null,
-        followersCount: null,
-        followingCount: null,
-        playlists: {},
-        playlistNames : [],
-      }
+      Vue.delete(state, Vuex)
     },
 
     setUser(state, payload) {
@@ -176,7 +176,7 @@ export default new Vuex.Store({
     },
 
     addToHistory(state, trackData) {
-      Vue.set(state.customer.playlists, history, trackData)
+      Vue.set(state.customer.playlists.History, trackData.mID , trackData)
     },
 
     setTrackData(state, trackData) {
@@ -201,6 +201,16 @@ export default new Vuex.Store({
 
     actionDeletePlaylist({commit}, playlist) {
       commit('deletePlaylist' , playlist)    
+    },
+
+    actionSetSearchQuery({commit} , payload){
+      commit('setSearchQuery' , payload)
+      console.log(payload.length)
+      if(payload.length > 3){
+        commit( 'setShowSearch' , true)
+      }else{
+        commit( 'setShowSearch' , false)
+      }
     },
 
     signUserUp({
@@ -262,9 +272,7 @@ export default new Vuex.Store({
       firebase.auth().signOut()
         .then(() => {
           commit('setNullUser')
-          router.push({
-            name: 'Landing'
-          })
+          router.push('/landing')
           
         }).catch((error) => {
           this.$noty.error(error)
@@ -331,7 +339,7 @@ export default new Vuex.Store({
 
 
     clickeduID(state) {
-      return state.clickedUseruID
+      return state.clickeduID
     },
     customer(state){
       return state.customer
@@ -377,6 +385,12 @@ export default new Vuex.Store({
     },
     followerCount(state){
       return state.customer.followerCount
+    },
+    searchQuery(state){
+      return state.searchQuery
+    },
+    showSearch(state){
+      return state.showSearch
     },
     clickedMixID(state){
       return state.clickedmID

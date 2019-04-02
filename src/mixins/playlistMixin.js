@@ -103,7 +103,7 @@ export default {
 
         addToHistory(trackData) {
             trackData['dateAdded'] = new Date()
-            database.collection('users').doc(this.uID).collection('history').doc(trackData.mID).set(trackData).then(() => {
+            database.collection('users').doc(this.uID).collection('History').doc(trackData.mID).set(trackData).then(() => {
                 this.$store.commit('addToHistory', trackData)
             })
         },

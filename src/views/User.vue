@@ -3,6 +3,7 @@
         <div class="image">
             <div>
              {{clickedUser.name}}
+             <img :src='clickedUser.profileURL'>
             </div>
         </div>
         <div class="mixes">
@@ -73,6 +74,7 @@ export default {
 
     watch: {
         clickeduID: function(newValue) {
+            console.log('clickeduID watcher')
             this.fetchUserDetails(newValue)
         },
 

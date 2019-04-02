@@ -183,11 +183,15 @@ export default {
     },
 
     getPlaylist(playlistName, limit) {
+      console.log('get playlist')
       
       var mixesObject = {} 
       return new Promise(resolve => {
         database.collection('users').doc(this.uID).collection(playlistName).orderBy('dateAdded', 'asc').limit(limit).get().then(response => {
           var mixes = response.docs
+          if(playlistName == 'History'){
+            console.log(mixes)
+          }
           mixes.forEach(mix => {
             mixesObject[mix.id] = mix.data()
           })

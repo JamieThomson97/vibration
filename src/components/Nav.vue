@@ -3,7 +3,7 @@
       <v-navigation-drawer permanent drawer="true" right app :temporary="hover && mini" slot-scope="{ hover }" :mini-variant="mini && !hover">
         <v-toolbar flat class="transparent">
             <v-list>
-                <v-list-tile @click='setClickeduID(playerCurrentTrack.uID)' :to="`/users/${(name).split(' ').join('_')}`" avatar v-if="uID">
+                <v-list-tile @click='clickID()' :to="`/users/${(name).split(' ').join('_')}`" avatar v-if="uID">
                     <v-list-tile-avatar>
                         <img :src=profileURL>
                     </v-list-tile-avatar>
@@ -98,8 +98,8 @@ export default {
           this.$store.dispatch('logUserOut')
         },
 
-        clickID(uID){
-            this.setClickeduID(uID)
+        clickID(){
+            this.setClickeduID(this.uID)
         },
     },
 

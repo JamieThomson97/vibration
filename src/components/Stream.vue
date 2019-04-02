@@ -1,33 +1,50 @@
 <template>
     <div class="streamWrapper">
-        <div class="nothing" v-if="!stream">Something</div>
+        <div class='header'>
+            {{pagePart}}
+            <v-combobox class='streamVComb'
+            v-if='showPlaylistInput'
+            clearable
+            allow-overflow
+            v-model="playlistChoice"    
+            :items="playlistOptions"
+            attach
+            label="Choose a playlist"
+            multiple
+            chips
+            small
+            selected
+            deletable-chips
+            loading
+            small-chips
+            v-on:keyup.enter='newPlaylistMethodSelector(mixChoice , playlistChoice)'
+          >
+          </v-combobox>
+        </div>
+        
+        <div class="nothing" v-if="!stream">No mixes found</div>
          <div class="entry" 
          v-for='x in streamLength'
           :key='Object.keys(stream)[x-1]'
           > 
-            <div class="itemArtwork"></div>
-            <!-- <v-img class='artwork' @click="handleClickTrack(stream[Object.keys(stream)[x-1]], Object.keys(stream)[x-1])" :aspect-ratio="1/1" contain height='100%' width='100%' :src="stream[Object.keys(stream)[x-1]].artworkURL"></v-img> -->
-            <div class="artist caption grey--text">{{stream[Object.keys(stream)[x-1]].title}}</div>
-            <div class="title caption grey--text">{{stream[Object.keys(stream)[x-1]].producer}}</div>
-            <div class="date"></div>
+            <div class="artworkContainer" >
+                <img class='itemArtwork' @click="handleClickTrack(stream[Object.keys(stream)[x-1]], Object.keys(stream)[x-1])" style="height: 100%; width: 100%; object-fit: contain" :src="stream[Object.keys(stream)[x-1]].artworkURL">
+                <i class="material-icons" style='position:absolute; top:0;right:0;' v-if='!showDeleteFromPlaylist' @click="removeFromPlaylist(Object.keys(stream)[x-1])">clear</i>
+            </div>
+            <div class="streamTitle mixText">{{stream[Object.keys(stream)[x-1]].title}}</div>
+            <div class="streamArtist mixText">{{stream[Object.keys(stream)[x-1]].producer}}</div>
+            <div v-if='!playlist_toggle[x-1]' class="streamDate mixText">{{streamDates[x-1]}}</div>
             <div class='' small v-if="uID == stream[Object.keys(stream)[x-1]].uID" @click="deleteMix(Object.keys(stream)[x-1])"></div>
-            <div class=' addtoListen' @click="addToPlaylist(stream[Object.keys(stream)[x-1]], Object.keys(stream)[x-1] , ['Listen Later'])"></div>
+            <div class=' addtoListen' @click="addToPlaylist(stream[Object.keys(stream)[x-1]], Object.keys(stream)[x-1] , ['Listen Later'])"><i v-if='pagePart !== "Listen Later" && !playlist_toggle[x-1]' class="material-icons">watch_later</i></div>
             <div class='' v-if='!showDeleteFromPlaylist' @click="removeFromPlaylist(Object.keys(stream)[x-1])"></div>
             <!-- <div class='' v-if='stream[Object.keys(stream)[x-1]].event' router :to="`/event/${(stream[Object.keys(stream)[x-1]].event.eID)}`" >{{stream[Object.keys(stream)[x-1]].event.name}}</div> -->
-            <div class=' addtoPlaylist' v-if='!clickedAddToPlaylist' @click='togglePlaylist()' icon dark></div>
-            <div class=' favourite' icon dark></div>
-            <div class=' ' v-if='clickedAddToPlaylist & showPlaylists' @click='newPlaylistMethodSelector(stream[Object.keys(stream)[x-1]] , Object.keys(stream)[x-1] , playlistChoice)' icon dark></div>
-            <div class='' v-if='clickedAddToPlaylist & showPlaylists' @click='newPlaylist()' icon dark></div>
-            <v-text-field v-if='newPlaylistField' v-model='playlistChoice' outline type="text" placeholder=""></v-text-field>
-            <v-select
-            v-if='showPlaylists & !newPlaylistField'
-            v-model="playlistChoice"
-            :items="playlistOptions"
-            attach
-            chips
-            label="Choose a playlist"
-            multiple
-          ></v-select>
+            <div class=' addtoPlaylist' v-if='!clickedAddToPlaylist' @click='mixChoice[Object.keys(stream)[x-1]] = stream[Object.keys(stream)[x-1]] , togglePlaylist(x)' icon dark><i class="material-icons">playlist_add</i></div>
+            <div v-if='!playlist_toggle[x-1]' class=' favourite' icon dark><i class="material-icons">favorite_border</i></div>
+            <i  v-if='playlist_toggle[x-1]' @click='newPlaylistMethodSelector(mixChoice , playlistChoice)' class="material-icons addtoListen">
+                done
+            </i>
+            <div class='' v-if='playlist_toggle[x-1]' @click='newPlaylist()' icon dark></div>
+            
         </div>
     </div>
  </template>
@@ -40,6 +57,8 @@ import mixMixin from '../mixins/mixMixin'
 import playlistMixin from '../mixins/playlistMixin'
 const database = firebase.firestore()
 import 'vuejs-noty/dist/vuejs-noty.css'
+import * as _ from 'underscore'
+import Vue from 'vue'
 
 
 
@@ -51,11 +70,17 @@ export default {
         return {
             i: 0,
             x: 0,
+            a: 0,
             playlistChoice : null,
+            mixChoice : {},
             clickedAddToPlaylist : false,
             showPlaylists : false,
             newPlaylistField : false,
             newPlaylistName : '',
+            options : { year: 'numeric', month: 'numeric', day: 'numeric' },
+            playlist_toggle : [false,false,false,false,false],
+            showPlaylistInput : false,
+            reset : false,
         }
     },
 
@@ -71,7 +96,7 @@ export default {
 
     created(){
         
-        
+    
     },
 
     computed:{
@@ -90,8 +115,7 @@ export default {
             }else{
                 return false
             }
-        },
-        
+        },        
     
         stream(){
 
@@ -116,6 +140,18 @@ export default {
             }else{
                 return 0
             }          
+        },
+
+        streamDates(){
+
+            var streamDates = []
+            for(var a in this.stream){
+                var seconds = this.stream[a].dateUploaded.seconds
+                var date = new Date(seconds * 1000).toLocaleDateString('en-UK', this.options)
+                streamDates.push(date)
+            }
+            return streamDates
+
         },
 
         message(){
@@ -155,20 +191,34 @@ export default {
             this.playlistChoice = null
         },
 
-        togglePlaylist(){
-            this.showPlaylists = true
-            this.clickedAddToPlaylist = true            
+        togglePlaylist(x){
+            
+            if(!this.reset){
+                this.showPlaylistInput = !this.showPlaylistInput
+                this.reset = true
+            }
+            Vue.set((this.playlist_toggle) , x-1 , !this.playlist_toggle[x-1])    
+            
         },
 
-        newPlaylistMethodSelector(mixData, mID, playlist){
-            if(this.newPlaylistField){
-                
-                this.addToPlaylist(mixData , mID , [playlist])
-                
-            }else if(this.clickedAddToPlaylist & this.showPlaylists){
-                
-                this.addToPlaylist(mixData , mID , playlist)
+        newPlaylistMethodSelector(mixChoice, playlist){
+            const keys = Object.keys(mixChoice)
+            const values = Object.values(mixChoice)
+            console.log(values.length)
+            if(keys.length > 0){
+                console.log('in if')
+                keys.forEach(key => {
+                    console.log(key)
+                    const mixData = mixChoice[key]
+                    console.log(mixData)
+                    this.addToPlaylist(mixData, key, playlist)
+                })
             }
+            for(var b in this.playlist_toggle){
+                Vue.set((this.playlist_toggle) , b, false)    
+            }
+            this.playlistChoice = null
+            this.reset = false
             
         },
     
@@ -178,6 +228,14 @@ export default {
                 this.$store.commit('deleteFromPlaylist' , {mID : mID , playlist : this.pagePart})
                 this.$noty.success('Mix removed from : '+this.pagePart)
             })
+        },
+
+        sortbyDate(object){
+            if(this.pagePart !== 'timeline'){
+                return _.sortBy(object, 'dateAdded');
+            }else{
+                return _.sortBy(object, 'dateUploaded');
+            }
         }
     },
 
@@ -192,73 +250,92 @@ export default {
         grid-template-columns: repeat(auto-fit, minmax(
             180px, 1fr
         ));
-         grid-gap: 1.5rem;  
+         grid-gap: 2rem;  
+         margin-left: 1em;
          
+    }
+
+    .mixTextTimeline{
+        color : rgb(112, 85, 85)
+    }
+
+    .material-icons{
+        cursor:pointer;
     }
 
     .entry{
         display: grid;
-        height : 200px;
-        width: 150px;
-        grid-template-areas: 
-            "itemArtwork itemArtwork itemArtwork"
-            "itemArtwork itemArtwork itemArtwork"
-            "itemArtwork itemArtwork itemArtwork"
-            "title title addtoListen"
-            "artist artist addtoPlaylist"
-            "date date favourite";
-    }
-
-    .entry:nth-child(3n+1) {
-        
-        grid-row: auto;
-        margin-left: 1em;
+        grid-template-rows: 5fr 1fr 1fr 1fr;
+        grid-template-columns: 1fr 1fr 1fr 1fr;
+        background-color : rgba(255, 255, 255, 0.3);
+        max-height : 249px;
+        max-width : 118px;
         
     }
+    .entry:hover{
+        -webkit-box-shadow: 0 3px 8px rgba(0, 0, 0, .45);
+        background-color : rgba(255, 255, 255, 0.5);
+    }
+        
     
     .favourite{
-        grid-area : favourite;
-        background-color: aliceblue;
-    }
-    .itemArtwork{
-        grid-area : itemArtwork;
-        background-color: blue;
+        grid-row : 4/4;
     }
 
-    .artist{
-        grid-area : artist;
-        background-color: darkolivegreen;
+    img{
+        max-height: 150px;
+    }
+
+    .artworkContainer {
+        grid-row: 1/1;
+        grid-column: 1/5;
+        position: relative;
+        cursor:pointer;
+
+        
+    }
+
+    .streamArtist{
+        padding-left: 4px;
+        grid-row : 3/3;
+        grid-column: 1/4;
+        font-weight: bold;
+        
     }
     
-    .title{
-        grid-area : title;
-        background-color: darkgoldenrod;
+    .streamTitle{
+        padding-left: 4px;
+        grid-row : 2/2;
+        grid-column: 1/4;
+        
     }
 
-    .date{
-        background-color: red;
-        grid-area : date;
-    }
-
-    .length{
-        grid-column: 2/3;
-        grid-row: 4/5;
+    .streamDate{
+        padding-left: 4px;
+        grid-column: 1/4;
+        grid-row : 4/4;
     }
 
     .addtoPlaylist{
-        grid-area: addtoPlaylist;
-        background-color: black;
+        grid-row: 3/3;
+        grid-column: 4/5;
     }
 
     .addtoListen{
-        grid-area: addtoListen;
-        background-color: purple;
+        grid-row: 2/2;
+        grid-column: 4/5;
     }
 
     .smallButton{
         width: 50px;
         font-size: 9px;
         color: purple !important;
+    }
+
+    .streamVComb{
+        padding-left: 4px;
+        grid-column: 1/5;
+        grid-row : 4/4;
     }
 
 </style>
