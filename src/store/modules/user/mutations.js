@@ -24,6 +24,7 @@ export default {
     state.getUserTracksLoading = true;
   },
   GET_USER_TRACKS_SUCCESS: (state, data) => {
+    
     state.getUserTracksLoading = false;
     state.userTracksData = data;
   },

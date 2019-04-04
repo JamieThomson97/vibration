@@ -24,19 +24,18 @@
         
         <div class="nothing" v-if="!stream">No mixes found</div>
          <div class="entry" 
-         v-for='x in streamLength'
+        v-for='x in streamLength'
           :key='Object.keys(stream)[x-1]'
           > 
             <div class="artworkContainer" >
                 <img class='itemArtwork' @click="handleClickTrack(stream[Object.keys(stream)[x-1]], Object.keys(stream)[x-1])" style="height: 100%; width: 100%; object-fit: contain" :src="stream[Object.keys(stream)[x-1]].artworkURL">
                 <i class="material-icons" style='position:absolute; top:0;right:0;' v-if='!showDeleteFromPlaylist' @click="removeFromPlaylist(Object.keys(stream)[x-1])">clear</i>
             </div>
-            <div class="streamTitle mixText">{{stream[Object.keys(stream)[x-1]].title}}</div>
-            <div class="streamArtist mixText">{{stream[Object.keys(stream)[x-1]].producer}}</div>
+            <div class="streamTitle mixText">{{stream[Object.keys(stream)[x-1]].title}}</div>>
             <div v-if='!playlist_toggle[x-1]' class="streamDate mixText">{{streamDates[x-1]}}</div>
-            <div class='' small v-if="uID == stream[Object.keys(stream)[x-1]].uID" @click="deleteMix(Object.keys(stream)[x-1])"></div>
+            
             <div class=' addtoListen' @click="addToPlaylist(stream[Object.keys(stream)[x-1]], Object.keys(stream)[x-1] , ['Listen Later'])"><i v-if='pagePart !== "Listen Later" && !playlist_toggle[x-1]' class="material-icons">watch_later</i></div>
-            <div class='' v-if='!showDeleteFromPlaylist' @click="removeFromPlaylist(Object.keys(stream)[x-1])"></div>
+            
             <!-- <div class='' v-if='stream[Object.keys(stream)[x-1]].event' router :to="`/event/${(stream[Object.keys(stream)[x-1]].event.eID)}`" >{{stream[Object.keys(stream)[x-1]].event.name}}</div> -->
             <div class=' addtoPlaylist' v-if='!clickedAddToPlaylist' @click='mixChoice[Object.keys(stream)[x-1]] = stream[Object.keys(stream)[x-1]] , togglePlaylist(x)' icon dark><i class="material-icons">playlist_add</i></div>
             <div v-if='!playlist_toggle[x-1]' class=' favourite' icon dark><i class="material-icons">favorite_border</i></div>
@@ -118,15 +117,12 @@ export default {
         },        
     
         stream(){
-
-            if(this.passedUser === 'clickedUser'){                
-                return this.$store.getters[this.passedUser].playlists[this.pagePart]
+            if(this.pagePart == 'events'){
+                return this.$store.getters.event.mixes
+            }else if(this.pagePart == 'shows'){
+                return this.$store.getters.show.mixes
             }else{
-                if(this.$store.getters.playlists(this.pagePart , this.passedUser)){
-                    return this.customer.playlists[this.pagePart]
-                }else{
-                    return false
-                }
+                return false
             }
         },
 
@@ -135,11 +131,13 @@ export default {
         },
 
         streamLength(){
-            if(this.$store.getters.playlists(this.pagePart , this.passedUser)){
-                return Object.keys(this.$store.getters.playlists(this.pagePart , this.passedUser)).length;
+            if(this.pagePart == 'events'){
+                return Object.keys(this.$store.getters.event.mixes).length
+            }else if(this.pagePart == 'shows'){
+                return Object.keys(this.$store.getters.show.mixes).length
             }else{
-                return 0
-            }          
+                return false
+            }     
         },
 
         streamDates(){

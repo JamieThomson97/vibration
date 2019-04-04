@@ -41,13 +41,12 @@
                         {{customer.createdPlaylists[x-1]}}
                     </div>                
                 </div>
-                <!-- <div  class="show">
-                    <playlistStream :pagePart='customer.createdPlaylists[x-1]' passedUser = 'customer'/>
-                </div> -->
             </div>
         </div> <br />  
         <div v-if='reset' class="show"> 
-                <playlistStream :pagePart='customer.createdPlaylists[iteration]' passedUser = 'customer'/>
+            <div class="listenLaterTiles homeTiles">
+                <mixTile v-for='mix in customer.playlists[customer.createdPlaylists[iteration]]' :collection='customer.createdPlaylists[iteration]' deletable='1' :key='mix.mID' :object='mix' playerTracksReference='customer.playlists.timeline'> </mixTile>
+            </div> 
         </div>
             
     </div>
@@ -58,10 +57,11 @@
 
 import * as firebase from 'firebase'
 import { mapGetters } from 'vuex'
+import mixTile from '@/components/mixTile.vue'
 import metadataPopulation from '../mixins/metadataPopulation.js'
 import createPlaylistMixin from '../mixins/createPlaylistMixin.js'
 import playlistMixin from '../mixins/playlistMixin.js'
-import playlistStream from '@/components/playlistStream.vue'
+
 import Vue from 'vue'
 
 
@@ -90,7 +90,7 @@ export default {
     },
 
     components:{
-        playlistStream,
+        mixTile,
     },
 
     computed: {

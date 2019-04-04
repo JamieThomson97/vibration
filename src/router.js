@@ -8,6 +8,7 @@ import User from './views/User.vue'
 import addMix from './views/addMix.vue'
 import mix from './views/Mix.vue'
 import Event from './views/Event.vue'
+import Show from './views/Show.vue'
 
 Vue.use(Router)
 
@@ -38,7 +39,7 @@ export default new Router({
       component: addMix
     },
     {
-      path: '/users/:name/mixes/:mID',
+      path: '/mixes/:mixName',
       name: 'mix',
       component: mix
     },
@@ -48,9 +49,14 @@ export default new Router({
       component: Home_Template
     },
     {
-      path: '/event/:eID',
+      path: '/events/:eID',
       name: 'Event',
       component: Event
+    },
+    {
+      path: '/shows/:sID',
+      name: 'Show',
+      component: Show
     },
   ]
 })

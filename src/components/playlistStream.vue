@@ -298,7 +298,6 @@ export default {
         padding-left: 4px;
         grid-column: 1/5;
         grid-row : 4/4;
-        font-size: 8px !important;
     }
 
 </style>

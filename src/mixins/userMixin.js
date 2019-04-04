@@ -4,6 +4,8 @@ import createPlaylistMixin from '../mixins/createPlaylistMixin'
 import {
     mapGetters
 } from 'vuex'
+import * as firebase from 'firebase'
+const database = firebase.firestore()
 
 
 export default {
@@ -32,9 +34,21 @@ export default {
             this.$store.dispatch('getUserFollowX', { id : uID , array : ['followers' , 'following'], customeruID : this.uID});
         },
 
-        setClickeduID(uID) {
-            
-            this.$store.commit('setClickeduID', uID)
+          getUserShowsorEvents(uID, type){
+            console.log()
+            var entries = []
+
+            database.collection('users').doc(uID).collection(type).get().then(response => {
+                var docs = response.docs
+                docs.forEach(doc => {
+                    var info = doc.data()
+                    info['eID'] = doc.id 
+                    entries.push(info)
+                    
+                })
+                this.$store.commit(`set${type}` , entries)
+            })
+
           },
     },
 

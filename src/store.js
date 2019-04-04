@@ -16,6 +16,8 @@ const vuexLocal = new VuexPersistence({
     customer: state.customer,
     clickedMixID: state.clickedmID,
     clickeduID : state.clickeduID,
+    clickedeID : state.clickedeID,
+    clickedsID : state.clickedsID,
     clickedUser: state.clickeduser,
     //trackData: state.trackData,
   })
@@ -44,9 +46,12 @@ export default new Vuex.Store({
       playlists: { },
     },
     clickedUser: { 
+      Events: {},
+      Shows: {},
       playlists: {},
       doesFollow: false
     },
+    playerCurrentTracks: {},
     showSearch: false,
     searchQuery : '',
     clickedMix: {},
@@ -61,22 +66,33 @@ export default new Vuex.Store({
 
   mutations: {
 
-    setPlaylist(state, payload) {
+    setPlaylist(state, payload){
+      if(payload.name == "Listen Later"){
+        payload.name = "listenLater"
+      }
       Vue.set(state.customer.playlists, payload.name , payload.object)
+    },
+
+    setCurrentPlayerTracks(state, tracks) {
+      Vue.set(state, 'playerCurrentTracks' , tracks)
     },
 
     setFollowX: (state, payload) => {
       
-      
       //state.clickedUser[payload.follX] = payload.response
       Vue.set(state.clickedUser, payload.follX , payload.response)
-      
-      
-      
     },
 
     setShowSearch(state, value){
       Vue.set(state , 'showSearch' , value)
+    },
+
+    setevents(state, value){
+      Vue.set(state.clickedUser  , 'Events' , value)
+    },
+
+    setshows(state, value){
+      Vue.set(state.clickedUser , 'Shows'  , value)
     },
 
     setSearchQuery(state, query){
@@ -90,12 +106,20 @@ export default new Vuex.Store({
     GET_USER_PROFILE_SUCCESS: (state, data) => {
       
       data['playlists'] = {}
+      data['Events'] = {}
+      data['Shows'] = {}
       state.getClickedProfileLoading = false;
       Vue.set(state , 'clickedUser' , data)
     },
 
     setClickeduID(state, payload) {
       Vue.set(state, 'clickeduID' , payload)
+    },
+    setClickedeID(state, payload) {
+      Vue.set(state, 'clickedeID' , payload)
+    },
+    setClickedsID(state, payload) {
+      Vue.set(state, 'clickedsID' , payload)
     },
     setClickedmID(state, payload) {
       Vue.set(state , 'clickedmID' , payload)
@@ -156,27 +180,27 @@ export default new Vuex.Store({
     },
 
     deleteFromPlaylist(state, payload){
-      Vue.delete(state.customer.playlists[payload.playlist], payload.mID)
+      const index = state.customer.playlists[payload.playlist].indexOf(payload.mID)
+      state.customer.playlists[payload.playlist].splice(index, 1);
     },
 
     addToPlaylist(state, payload) {
-      
       Vue.set(state.customer.playlists[payload.playlistName], payload.mix.mID, payload.mix)
     },
 
     createPlaylist(state, playlistName){
-      
-      
       state.customer.createdPlaylists.push(playlistName)
+      Vue.set(state.customer.playlists, playlistName, {})
     },
 
+    
+
     deleteMix(state, payload) {
-      
       Vue.delete(state.clickedUser.playlists[payload.pName], payload.mID)      
     },
 
     addToHistory(state, trackData) {
-      Vue.set(state.customer.playlists.History, trackData.mID , trackData)
+      state.customer.playlists.History.push(trackData)
     },
 
     setTrackData(state, trackData) {
@@ -187,9 +211,20 @@ export default new Vuex.Store({
       Vue.set(state.trackData, 'likers', likers)
     },
 
-    setEventData(state, eventData) {
-      
+    setEventData(state, eventData) {      
       Vue.set(state, 'event' , eventData)
+    },
+    setEventMixes(state, mixes){
+      Vue.set(state.event, 'mixes', mixes )
+    },
+    setShowData(state, ShowData) {      
+      Vue.set(state, 'Show' , ShowData)
+    },
+    setShowMixes(state, mixes){
+      Vue.set(state.Show, 'mixes', mixes )
+    },
+    setSuggestedShowMixes(state, mixes){
+      Vue.set(state.Show, 'suggestedMixes', mixes )
     },
   },
 
@@ -241,6 +276,12 @@ export default new Vuex.Store({
     },
     actionSetClickedmID({ commit }, payload) {
       commit('setClickedmID' , payload)
+    },
+    actionSetClickedeID({ commit }, payload) {
+      commit('setClickedeID' , payload)
+    },
+    actionSetClickedsID({ commit }, payload) {
+      commit('setClickedsID' , payload)
     },
 
     signUserIn({// eslint-disable-next-line
@@ -294,9 +335,29 @@ export default new Vuex.Store({
         commit('setEventData', eventData)
       })
     },
+    getShowDetails({ commit }, sID) {
+      database.collection('shows').doc(sID).get().then(response => {
+        const eventData = response.data()
+        eventData['sID'] = response.id
+        commit('setShowData', eventData)
+      })
+    },
 
     actionDeleteMix({commit}, payload){
      commit('deleteMix', payload)
+    },
+
+    actionSetPlayerCurrentTracks({commit}, tracks){
+      commit('setCurrentPlayerTracks', tracks)
+     },
+ 
+
+    actionCreatePlaylist({commit} , playlistName){
+      commit('createPlaylist' , playlistName)
+    },
+
+    actionAddToPlaylist({commit} , payload){
+      commit('addToPlaylist' , payload)
     },
 
     actionSetmID({
@@ -341,6 +402,15 @@ export default new Vuex.Store({
     clickeduID(state) {
       return state.clickeduID
     },
+    clickedmID(state) {
+      return state.clickedmID
+    },
+    clickedeID(state) {
+      return state.clickedeID
+    },
+    clickedsID(state) {
+      return state.clickedsID
+    },
     customer(state){
       return state.customer
     },
@@ -377,8 +447,11 @@ export default new Vuex.Store({
     },
 
     playlists: (state) => (pName, passedUser) => {
-      
-      return (state[passedUser].playlists[pName])//+'.'+pName.stream)
+      if(pName && passedUser){
+        return (state[passedUser].playlists[pName])//+'.'+pName.stream)
+      }else{
+        return false
+      }
     }, 
     followingCount(state){
       return state.customer.followingCount
@@ -400,6 +473,12 @@ export default new Vuex.Store({
     },
     event(state){
       return state.event
+    },
+    show(state){
+      return state.Show
+    },
+    currentPlayerTracks(state){
+      return state.currentPlayerTracks
     },
   },
 

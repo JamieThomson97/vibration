@@ -111,17 +111,20 @@ export default {
       return new Promise(resolve => {
         //Ref references the playlist that this stream component is loading (e.g. timeline, history, or user created playlist, this does not query the database
         const ref = database.collection('users').doc(uID).collection('mixes')
-        var mIDs = {}
+        var mIDs = []
         //Actually queries the database, but only returns the 12 most recent entries
         ref.orderBy("dateUploaded", "asc").limit(12).get().then((snapshot) => {
-          const timeline = snapshot.docs
-          for (var entry = 0; entry < timeline.length; entry++) {
+          const mixes = snapshot.docs
+          mixes.forEach(mix => {
+            const item = mix.data()
+            item['mID'] = mix.id
+            mIDs.push(item)
+          }) 
             // Adds the document to an array, that will be passed into the next function --- *** currently working on, is not yet designed correctly, may cause errors ***
             // Must ensure that when new mix is added, the cloud function creates the entries elsewhere using the SAME DOCUMENT ID, otherwise this will fail
-            const item = timeline[entry].data()
-            mIDs[timeline[entry].id] = item
-          }
-          resolve(mIDs)
+            resolve(mIDs)
+          
+          
         })
       })
     },
@@ -143,6 +146,10 @@ export default {
         this.$noty.error("Could not find any mixes in mixes")
       }
     },
+
+    // fetchMixes(path, uID){
+    //   var path = 'collection("users").doc()
+    // }
     
     async fetchPlaylists(playlistNames) {
       
@@ -170,35 +177,67 @@ export default {
 
     getTimeline(){
 
-      var mixesObject = {} 
+      var mixesArray = []
       return new Promise(resolve => {
         database.collection('users').doc(this.uID).collection('timeline').orderBy('dateUploaded', 'asc').limit(12).get().then(response => {
           var mixes = response.docs
           mixes.forEach(mix => {
-            mixesObject[mix.id] = mix.data()
+            var mixInfo = mix.data()
+            mixInfo['mID'] = mix.id
+            mixesArray.push(mixInfo)
           })
-          resolve (mixesObject)
+          resolve (mixesArray)
         })
       })
     },
 
     getPlaylist(playlistName, limit) {
-      console.log('get playlist')
       
-      var mixesObject = {} 
+      var mixesArray = []
       return new Promise(resolve => {
         database.collection('users').doc(this.uID).collection(playlistName).orderBy('dateAdded', 'asc').limit(limit).get().then(response => {
           var mixes = response.docs
-          if(playlistName == 'History'){
-            console.log(mixes)
-          }
           mixes.forEach(mix => {
-            mixesObject[mix.id] = mix.data()
+            var mixInfo = mix.data()
+            mixInfo['mID'] = mix.id
+            mixesArray.push(mixInfo)
           })
-          resolve (mixesObject)
+          resolve (mixesArray)
         })
       }) 
-    }
+    },
+
+    getEventMixes(eID){
+
+      var mixesArray = []
+      return new Promise(resolve => {
+        database.collection('events').doc(eID).collection('mixes').limit(12).get().then(response => {
+          var mixes = response.docs
+          mixes.forEach(mix => {
+            var mixInfo = mix.data()
+            mixInfo['mID'] = mix.id
+            mixesArray.push(mixInfo)
+          })
+          resolve (mixesArray)
+        })
+      }) 
+    },
+
+    getShowMixes(eID){
+
+      var mixesArray = []
+      return new Promise(resolve => {
+        database.collection('shows').doc(eID).collection('mixes').limit(12).get().then(response => {
+          var mixes = response.docs
+          mixes.forEach(mix => {
+            var mixInfo = mix.data()
+            mixInfo['mID'] = mix.id
+            mixesArray.push(mixInfo)
+          })
+          resolve (mixesArray)
+        })
+      }) 
+    },
 
 
 

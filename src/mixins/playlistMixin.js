@@ -52,13 +52,13 @@ export default {
 
             }
                 var playlistCreated = false
-            playlistNameArray.forEach(playlistName => {
-                playlistCreated = false
-                this.customer.createdPlaylists.forEach(pName => {
-                    if (pName === playlistName) {
-                       playlistCreated = true
-                   }
-               })
+                playlistNameArray.forEach(playlistName => {
+                    playlistCreated = false
+                    this.customer.createdPlaylists.forEach(pName => {
+                        if (pName === playlistName) {
+                        playlistCreated = true
+                    }
+                })
 
                 database.collection('users').doc(this.uID).collection(playlistName).doc(mixDataPass.mID).set(mixDataPass).then(() => {
                     

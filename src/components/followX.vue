@@ -1,9 +1,27 @@
 <template>
     <div class="follWrapper">
-        <v-list-tile class="card" @click='setClickeduID(user.id)' router :to="`/users/${(user.name).split(' ').join('_')}`" v-for="user in clickedUser[XXX]" :key="user.uID">
-            {{user.name}}
-            <img height='100%' :src='user.profileURL'>
-        </v-list-tile>
+        <div class="card" @click='setClickeduID(user.id)' router :to="`/users/${(user.name).split(' ').join('_')}`" v-for="user in clickedUser[XXX]" :key="user.uID">
+            <v-card color="cyan darken-2" class="userFollowXCard" elevation='10'>
+                <v-layout column="true">
+                <v-flex xs5>
+                    <v-img 
+                    class = 'searchProducerImage'
+                    @click='clickedProducer(item.uID , item.producer)'
+                    :src='user.profileURL'
+                    height="125px"
+                    contain
+                    ></v-img>
+                </v-flex>
+                <v-card-title primary-title>
+                    
+                        <div class='userFollowXInfo' @click='clickedProducer(item.uID , item.producer)'>{{user.name}}</div>
+                    
+                    </v-card-title>
+                
+                </v-layout>
+                
+            </v-card>
+        </div>
     </div>
 </template>
 
@@ -52,9 +70,17 @@ computed:{
     grid-gap: 1em;
 }
 
-.card{
-    width: 100px;
-    border:1px solid #333;
+.userFollowXCard{
+    width: 5vw;
+    height: 11vh;
+}
+
+
+.userFollowXInfo{
+    text-align: center !important;
+    color : white;
+    font-weight: bold;
+    width:100%;
 }
 
 </style>

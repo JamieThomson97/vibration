@@ -6,21 +6,31 @@
     </div>
     <div class="outline timeline">
       <div>
-        <Stream pagePart="timeline" passedUser = 'customer'/>
+        <div class='header'>Timeline</div>
+        <div class="timelineTiles homeTiles">
+            <mixTile v-for='mix in customer.playlists.timeline' :key='mix.mID' :object='mix' playerTracksReference='customer.playlists.timeline'> </mixTile>
+        </div>
       </div>
     </div>
     <div class="outline history">
-      <Stream pagePart="History"  passedUser = 'customer'/>      
+      <div class='header'>History</div>
+      <div class="historyTiles homeTiles">
+        <mixTile v-for='mix in customer.playlists.History' :key='mix.mID' :object='mix' deletable='1' collection='History' playerTracksReference='customer.playlists.timeline'> </mixTile>
+      </div>     
     </div>
     <div class="outline listenLater">
-      <Stream pagePart="Listen Later"  passedUser = 'customer'/>      
+      <div class='header'>Listen Later</div>
+      <div class="listenLaterTiles homeTiles">
+        <mixTile v-for='mix in customer.playlists.listenLater' :key='mix.mID' deletable='1' collection='ListenLater' :object='mix' playerTracksReference='customer.playlists.timeline'> </mixTile>
+      </div>       
     </div>
     <div class="outline homePlaylists">
       <div>
         <playlists />
-      </div>
+      </div> 
 
     </div>
+    
   </div>
 
   
@@ -43,9 +53,11 @@
 import createPlaylistMixin from '../mixins/createPlaylistMixin'
 //import createStreamMixin from '../mixins/createStreamMixin'
 import { mapGetters } from 'vuex'
-import Stream from '@/components/Stream.vue'
+
 import playlists from '@/components/playlists.vue'
 import 'vuejs-noty/dist/vuejs-noty.css'
+import mixTile from '@/components/mixTile.vue'
+
 
 export default {
 
@@ -66,8 +78,10 @@ export default {
   },
 
   components: {
-    Stream,
+    
     playlists,
+    mixTile,
+    
   },
 
   props: {
@@ -76,6 +90,14 @@ export default {
       required: false,
     },
     passedUser: {
+      type: String,
+      required: false,
+    },
+    deletable: {
+      type: Number,
+      required: false,
+    },
+    collection: {
       type: String,
       required: false,
     }
@@ -88,7 +110,8 @@ export default {
   data() {
     return {
       expand: false,
-      searchQuery :''
+      searchQuery :'',
+      history : null,
     }
   },
 
@@ -105,6 +128,7 @@ export default {
             clickedUser : 'clickedUser',
             customer: 'customer',
         }),
+
 
         allPlaylists(){
           return this.customer.prePlaylists.concat(this.customer.createdPlaylists)
@@ -134,6 +158,8 @@ export default {
                   })  
           })
       })
+
+      this.mixesHistory = this.customer.playlists.History
   },
 
   watch: {
@@ -144,6 +170,7 @@ export default {
         this.$store.dispatch('actionSetSearchQuery', newValue)
       }
     },
+    
   },
 
 
@@ -163,6 +190,14 @@ export default {
       padding-left: 1rem;
       padding-right: 1rem;
       max-width: 97%;
+    }
+
+    .homeTiles{
+      margin-top: 15px;
+      margin-left: 15px;
+      display:inline-flex;
+      flex-wrap : wrap;
+      grid-gap: 1rem;
     }
 
     .header{

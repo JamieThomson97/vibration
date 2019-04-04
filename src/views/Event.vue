@@ -1,26 +1,37 @@
 <template>
     
 <div class='eventWrapper'>
-
+    <div class="eventImage">
+            
+             <v-img 
+                width='100%'
+                height='100%'
+                :src="event.imageURL"
+                ></v-img>
+            
+    </div>
     <div class="eventInfo">
-        {{event.name}} <br/> {{startDate}} -- {{endDate}} <br/>
-        <div class='eventImage'>
-            <img :src="event.imageURL" style="float:left;width:100%;height:100%;object-fit:cover;align:end;">
-        </div>
+        <div class='header'>{{event.name}} </div><br/> 
+        <div class="dateHeader">{{startDate}} - {{endDate}} <br/></div>
+        <div class="dateHeader"> Knebworth Fields <br/></div>
+        
     </div>
-    <div class="eventOverlap">
-        Event Overlap
-    </div>
-
+   
     <div class="eventStream">
-        Stream
+        <div class="header">Mixes</div>
+            <div class="eventsGrid">
+                <mixTile v-for='mix in event.mixes' :object='mix' playerTracksReference='clickedUser.artists' :key='mix.mID'></mixTile>
+            </div>
     </div>
 
     <div class="eventArtists">
-        <v-list-tile style='background-color:red;width:30%;' class="artistCard" v-for="artist in event.artists" :key="artist.name" @click='pushtoUser(artist.name , artist.uID)'>
-            {{artist.name}}
-            <img style="float:left;width:20%;height:100%;object-fit:cover;align:end;"   :src='artist.profileURL'>
-        </v-list-tile>
+        
+        <div class='eventProducersCards'>
+            <div class="header">Artists</div>
+            <div class="eventsGrid">
+                <producerTile v-for='artist in event.artists' :object='artist' playerTracksReference='clickedUser.artists' :key='artist.uID'></producerTile>
+            </div>
+        </div>
     </div>
         
 </div>
@@ -28,14 +39,24 @@
 
 </template>
 
+
 <script>
 
 import userMixin from '../mixins/userMixin.js'
+import eventStream from '@/components/eventStream.vue'
 import {
     mapGetters
 } from 'vuex'
+import mixTile from '@/components/mixTile.vue'
+import producerTile from '@/components/producerTile.vue'
 
 export default {
+
+    components:{
+        eventStream,
+        mixTile,
+        producerTile,
+    },
 
       mixins: [
     userMixin
@@ -44,7 +65,13 @@ export default {
     mounted() {
     // const { params: { eID } } = this.$route;
     const eID = 'TtjuzgP8TTY9JIFQEG3Y'
-    this.$store.dispatch('getEventDetails', eID)
+    this.$store.dispatch('getEventDetails', eID).then(() => {
+    var mixes = this.getEventMixes('TtjuzgP8TTY9JIFQEG3Y') 
+        mixes.then(response => {
+          //Dispatch to save in state
+          this.$store.commit("setEventMixes", response)  
+          })
+    })
     },
 
     data(){
@@ -80,6 +107,12 @@ export default {
         }
     },
 
+    created: function(){
+        
+        
+      
+    }
+
     //  return new Date(this.event.startDate.seconds * 1000).toLocaleDateString('en-UK', this.options)
     
 }
@@ -90,9 +123,9 @@ export default {
     .eventWrapper{
         display: grid;
         grid-template-columns: 2.5fr 3.5fr 3fr;
-        grid-template-rows: repeat(12, 1fr);
-        grid-gap: 1em;
+        grid-template-rows: 1fr 1fr;
         height: 100%;
+        width:96.2vw;
         background-color: #e0a99a
     }
 
@@ -100,46 +133,73 @@ export default {
 
         display: block;
         overflow: auto;
-        border: 1px solid;
-        grid-column: 1/2;
-        grid-row: 1/12;
+        grid-column: 2/3;
+        grid-row: 2/3;
         background-color: blue;
         color:#e0a99a;
+        margin-bottom:5px;
     }
 
-    
+    .eventImage{
+        margin-top:5px;
+        
+        grid-column: 2/3;
+        grid-row: 1/2;
+    }
 
-    .eventOverlap{
+    .eventProducersCards{
+        margin-left:15px;
+        display: inline-flex;
+        flex-wrap: wrap;
+        grid-gap:10px;
+    }
 
+    .eventProducersCard{
+        width: 5vw;
+        height: 11vh;
+    }
+
+    .eventProducerInfo{
+    margin-top: 2px;
+    text-align: center !important;
+    color : white;
+    font-weight: bold;
+    width:100%;
+}   
+
+    .eventStream{
+
+        margin-top:5px;
+        margin-bottom:5px;
+        margin-left:5px;
+        margin-right:3px;
         display: block;
         overflow: auto;
-        border: 1px solid;
-        grid-column: 2/3;
-        grid-row: 1/6;
-        background-color: blue;
+        grid-column: 1/2;
+        grid-row: 1/3;
+        background-color: black;
         color:#e0a99a;
     }
 
     .eventArtists{
-
+        margin-top:5px;
+        margin-bottom:5px;
+        margin-left:3px;
+        margin-right:5px;
         display: block;
         overflow: auto;
-        border: 1px solid;
-        grid-column: 2/3;
-        grid-row: 6/12;
+        grid-column: 3/4;
+        grid-row: 1/3;
         background-color: green;
         color:#e0a99a;
     }
 
-    .eventStream{
-
-        display: block;
-        overflow: auto;
-        border: 1px solid;
-        grid-column: 3/4;
-        grid-row: 1/12;
-        background-color: black;
-        color:#e0a99a;
+    .dateHeader{
+        margin-left: 20px;
+        color: white;
+        font-size: 35px;
     }
+
+    
 
 </style>

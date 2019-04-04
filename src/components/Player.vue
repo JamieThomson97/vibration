@@ -3,13 +3,13 @@
     <div class="trackDetails">
       <img :src="playerCurrentTrack.artworkURL" alt="">
       <div class="titleWrapper">
-        <v-btn align right class="title" @click='setClickedmID(playerCurrentTrack.mID)' :to="`/users/${(playerCurrentTrack.producer).split(' ').join('_')}/mixes/${(playerCurrentTrack.title).split(' ').join('_')}`">
+        <v-btn align right class="title" @click='setClickedmID(playerCurrentTrack.mID)' :to="`/users/${(playerCurrentTrack.artists[0].name).split(' ').join('_')}/mixes/${(playerCurrentTrack.title).split(' ').join('_')}`">
           {{playerCurrentTrack.title}}
         </v-btn>
-        <v-btn align right  class="user" @click='setClickeduID(playerCurrentTrack.uID)' :to="`/users/${(playerCurrentTrack.producer).split(' ').join('_')}`">
-          {{playerCurrentTrack.producer}}
-          {{playerTracks.length}}D
+        <v-btn align right v-for='artist in playerCurrentTrack.artists' :key='artist.uID'  class="user" @click='setClickeduID(artist.uID)' :to="`/users/${(artist.name).split(' ').join('_')}`">
+          {{artist.name}}
         </v-btn>
+        {{playerTracks.length}}
       </div>
     </div>
     <div class="mainButtons">

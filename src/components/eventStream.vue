@@ -31,7 +31,7 @@
                 <img class='itemArtwork' @click="handleClickTrack(stream[Object.keys(stream)[x-1]], Object.keys(stream)[x-1])" style="height: 100%; width: 100%; object-fit: contain" :src="stream[Object.keys(stream)[x-1]].artworkURL">
                 <i class="material-icons" style='position:absolute; top:0;right:0;' v-if='!showDeleteFromPlaylist' @click="removeFromPlaylist(Object.keys(stream)[x-1])">clear</i>
             </div>
-            <div class="streamTitle mixText">{{stream[Object.keys(stream)[x-1]].title}}</div>
+            
             <div class="streamArtist mixText">{{stream[Object.keys(stream)[x-1]].producer}}</div>
             <div v-if='!playlist_toggle[x-1]' class="streamDate mixText">{{streamDates[x-1]}}</div>
             <div class='' small v-if="uID == stream[Object.keys(stream)[x-1]].uID" @click="deleteMix(Object.keys(stream)[x-1])"></div>
@@ -89,11 +89,6 @@ export default {
         mixMixin
     ],
 
-    props: [
-        "pagePart",
-        "passedUser"
-    ],
-
     created(){
         
     
@@ -106,6 +101,7 @@ export default {
             profileURL : 'profileURL',
             playerCurrentTrack : 'playerCurrentTrack',
             customer : 'customer',
+            event : 'event' ,
             // ...
         }),
 
@@ -119,15 +115,7 @@ export default {
     
         stream(){
 
-            if(this.passedUser === 'clickedUser'){                
-                return this.$store.getters[this.passedUser].playlists[this.pagePart]
-            }else{
-                if(this.$store.getters.playlists(this.pagePart , this.passedUser)){
-                    return this.customer.playlists[this.pagePart]
-                }else{
-                    return false
-                }
-            }
+            return this.event.mixes
         },
 
         playlistOptions(){
@@ -135,11 +123,8 @@ export default {
         },
 
         streamLength(){
-            if(this.$store.getters.playlists(this.pagePart , this.passedUser)){
-                return Object.keys(this.$store.getters.playlists(this.pagePart , this.passedUser)).length;
-            }else{
-                return 0
-            }          
+            
+            return Object.keys(this.event.mixes).length        
         },
 
         streamDates(){
@@ -291,8 +276,6 @@ export default {
         grid-column: 1/5;
         position: relative;
         cursor:pointer;
-
-        
     }
 
     .streamArtist{

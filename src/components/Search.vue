@@ -1,66 +1,23 @@
 <template>
-<transition name = 'fade'>
+<transition name = 'slide-fade'>
 <div class="searchContainer" v-if='showSearch' >
      <div class="mixSearch">
       <ais-instant-search
         :search-client="searchClient"
         index-name="test_mixes"
       >
-            <!-- <ais-search-box placeholder="Search here…" class="searchbox" v-model='searchQuery'/> -->
-            <div class="searchResults">
-              
-               <div class="titleResults">
-                 <div class="header" style='padding-left:15px;'>Mixes <v-icon >
-                expand_more
-                </v-icon></div>
-                 
-                 
-                <ais-hits > 
-                  <template slot="item" slot-scope="{ item }">
-                    <v-card color="cyan darken-2" class="white--text titleResultsCard" elevation='10'>
-                      <v-layout>
-                        <v-flex xs5>
-                          <v-img 
-                            class = 'searchTitleImage'
-                            @click="handleClickTrack(item,item.objectID)"
-                            :src="item.artworkURL"
-                            height="125px"
-                            contain
-                          ></v-img>
-                          <v-divider></v-divider>
-                        <div class="searchIcons">
-                          <v-icon>watch_later</v-icon>
-                          <v-spacer></v-spacer>
-                          <v-icon>playlist_add</v-icon>
-                          <v-spacer></v-spacer>
-                          <v-icon>favorite_border</v-icon>
-                        </div>
-                        </v-flex>
-                        <v-flex xs7>
-                          <v-card-title primary-title>
-                            <div class='searchMixInfo'>
-                              <!-- :to="`/users/${(item.producer).split(' ').join('_')}/mixes/${(item.title).split(' ').join('_')}`" -->
-                              <div class="headline" style='color:black;' @click='clickedTitle(item.objectID , item.producer , item.title)' ><ais-highlight :hit="item" attribute="title" /></div>
-                              <v-divider light></v-divider>
-                              <div  class="headline" style='color:black;' @click='clickedProducer(item.uID , item.producer)'><ais-highlight :hit="item" attribute="producer" /></div>
-                              <div  class='subInfo' style='color:black;'><ais-highlight :hit="item" attribute="dateUploaded"/></div>
-                              <div class='subInfo' style='color:black;'><ais-highlight :hit="item" attribute="series" /></div>
-                              <div class='subInfo' style='color:black;'><ais-highlight :hit="item" attribute="uID" /></div>
-                            </div>
-                          </v-card-title>
-                          
-                        </v-flex>
-                      </v-layout>
-                      <v-divider light></v-divider>
-                      
-                    </v-card>
-                  </template>
-                </ais-hits>
-                
-              </div>
-            
-            </div>
-       </ais-instant-search>
+      <ais-search-box placeholder="Search here…" style='display: none;'  v-model='searchQuery' class="searchbox" />
+      <div class="header" style='padding-left:15px;'>Mixes <v-icon >
+          expand_more
+          </v-icon></div>
+          <ais-hits > 
+            <template slot="item" slot-scope="{ item }">
+              <transition name = 'slide-fade'>
+                <mixTile :object='item'></mixTile>
+              </transition>
+            </template>
+          </ais-hits>
+      </ais-instant-search>
      </div>
 
      <div class="producerSearch">
@@ -68,7 +25,7 @@
         :search-client="searchClient"
         index-name="producers"
       >
-            <!-- <ais-search-box placeholder="Search here…" class="searchbox" v-model='searchQuery'/> -->
+            <ais-search-box placeholder="Search here…" style='display: none;' class="searchbox" v-model='searchQuery'/>
             <div class="producerSearchResults">
               <div class="header" style='padding-left:30px;'>Producers<v-icon >
                 expand_more
@@ -77,30 +34,8 @@
                  
                 <ais-hits class='producerAISResults' > 
                   <template slot="item" slot-scope="{ item }">
+                    <producerTile :object='item'></producerTile>
                     
-                    <v-card color="cyan darken-2" class="producerResultsCard" elevation='10'>
-                      <v-layout column="true">
-                        <v-flex xs5>
-                          <v-img 
-                            class = 'searchProducerImage'
-                            @click="handleClickTrack(item,item.objectID)"
-                            :src="item.artworkURL"
-                            height="125px"
-                            containzout
-                          ></v-img>
-                        </v-flex>
-                       <v-card-title primary-title>
-                            <div>
-                              <div class='producerResultsInfo' @click='clickedProducer(item.uID , item.producer)'><ais-highlight :hit="item" attribute="producer" /></div>
-                              <div class='producerResultsInfo'>Followers : <ais-highlight :hit="item" attribute="followerCount" /></div>
-                              <div class='producerResultsInfo'>Following : <ais-highlight :hit="item" attribute="followingCount"/></div>
-                            </div>
-                          </v-card-title>
-                        
-                      </v-layout>
-                      
-                    </v-card>
-                  
                   </template>
                 </ais-hits>
                 
@@ -113,9 +48,9 @@
      <div class="eventSearch">
       <ais-instant-search
         :search-client="searchClient"
-        index-name="test_mixes"
+        index-name="events"
       >
-            <!-- <ais-search-box placeholder="Search here…" class="searchbox" v-model='searchQuery'/> -->
+            <ais-search-box style='display: none;' placeholder="Search here…" class="searchbox" v-model='searchQuery'/>
             <div class="producerSearchResults">
               <div class="header" style='padding-left:30px;'>
                 Events
@@ -125,32 +60,10 @@
               </div>
                <div class="producerResults">
                  
-                <ais-hits class='producerAISResults' > 
+                
+                  <ais-hits class='eventsAISResults' > 
                   <template slot="item" slot-scope="{ item }">
-                    
-                    <v-card color="cyan darken-2" class="producerResultsCard" elevation='10'>
-                      <v-layout column="true">
-                        <v-flex xs5>
-                          <v-img 
-                            class = 'searchProducerImage'
-                            @click="handleClickTrack(item,item.objectID)"
-                            :src="item.artworkURL"
-                            height="125px"
-                            containzout
-                          ></v-img>
-                        </v-flex>
-                       <v-card-title primary-title>
-                            <div>
-                              <div class='producerResultsInfo' @click='clickedProducer(item.uID , item.producer)'><ais-highlight :hit="item" attribute="producer" /></div>
-                              <div class='producerResultsInfo'>Dates : XXX</div>
-                              <div class='producerResultsInfo'>Location : XXX</div>
-                            </div>
-                          </v-card-title>
-                        
-                      </v-layout>
-                      
-                    </v-card>
-                  
+                    <eventTile :object='item'></eventTile>
                   </template>
                 </ais-hits>
                 
@@ -165,41 +78,18 @@
      <div class="seriesSearch">
       <ais-instant-search
         :search-client="searchClient"
-        index-name="test_mixes"
+        index-name="shows"
       >
-            <!-- <ais-search-box placeholder="Search here…" class="searchbox" v-model='searchQuery'/> -->
+            <ais-search-box placeholder="Search here…" style='display: none;'  class="searchbox" v-model='searchQuery'/>
             <div class="producerSearchResults">
-              <div class="header" style='padding-left:30px;'>Series<v-icon >
+              <div class="header" style='padding-left:30px;'>Shows<v-icon >
                 expand_more
                 </v-icon></div>
                <div class="producerResults">
                  
                 <ais-hits class='producerAISResults' > 
                   <template slot="item" slot-scope="{ item }">
-                    
-                    <v-card color="cyan darken-2" class="producerResultsCard" elevation='10'>
-                      <v-layout column="true">
-                        <v-flex xs5>
-                          <v-img 
-                            class = 'searchProducerImage'
-                            @click="handleClickTrack(item,item.objectID)"
-                            :src="item.artworkURL"
-                            height="125px"
-                            containzout
-                          ></v-img>
-                        </v-flex>
-                       <v-card-title primary-title>
-                            <div>
-                              <div class='producerResultsInfo'><ais-highlight :hit="item" attribute="producer" /></div>
-                              <div class='producerResultsInfo'>Artists : XXX</div>
-                              <div class='producerResultsInfo'>Entries : XXX</div>
-                            </div>
-                          </v-card-title>
-                        
-                      </v-layout>
-                      
-                    </v-card>
-                  
+                    <showTile :object='item'></showTile>
                   </template>
                 </ais-hits>
                 
@@ -220,8 +110,20 @@ import createPlaylistMixin from '../mixins/createPlaylistMixin'
 import userMixin from '../mixins/userMixin'
 import mixMixin from '../mixins/mixMixin'
 import { mapGetters } from 'vuex'
+import mixTile from '@/components/mixTile.vue'
+import showTile from '@/components/showTile.vue'
+import eventTile from '@/components/eventTile.vue'
+import producerTile from '@/components/producerTile.vue'
 
 export default {
+
+  components:{
+    mixTile,
+    showTile,
+    eventTile,
+    producerTile,
+  },
+
   data() {
     return {
       searchClient: algoliasearch(
@@ -229,7 +131,6 @@ export default {
         '77a30f217b5763c36e99ed23dcf0e555'
       ),
       stream : [],
-      localsearchQuery : '',
     };
   },
 
@@ -243,15 +144,17 @@ export default {
 
       clickedTitle(mID , producer, title){
         
+        this.$store.commit('setShowSearch' , false)
         this.setClickedmID(mID)
         this.$router.push(`/users/${(producer).split(' ').join('_')}/mixes/${(title).split(' ').join('_')}`)
-        this.localsearchQuery = ''
+        this.searchQuery = ''
       },
 
       clickedProducer(uID, name){
+        this.$store.commit('setShowSearch' , false)
         this.setClickeduID(uID)
         this.$router.push(`/users/${(name).split(' ').join('_')}`)
-        this.localsearchQuery = ''
+        this.searchQuery = ''
       }
       
       
@@ -345,11 +248,24 @@ ol li{
   opacity: 0;
 }
 
+.slide-fade-enter-active {
+  transition: all .6s ease;
+}
+.slide-fade-leave-active {
+  transition: all .8s cubic-bezier(1.0, 0.5, 0.8, 1.0);
+}
+.slide-fade-enter, .slide-fade-leave-to
+/* .slide-fade-leave-active below version 2.1.8 */ {
+  transform: translateX(10px);
+  opacity: 0;
+}
+
 .ais-InstantSearch{
   height: 100% !important;
 }
 
 .ais-Hits-list{
+  margin-top: 15px;
   display: inline-flex;
   flex-wrap: wrap;
   /* gap: 1rem; */
@@ -431,6 +347,12 @@ h1 {
   max-height: 100%;
   width: 350px;
   padding-right:30px;
+}
+
+.titleResultsCard{
+  height: 100%;
+  width:100%;
+
 }
 
 .v-card__title--primary {
