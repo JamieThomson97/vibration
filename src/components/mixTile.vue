@@ -87,15 +87,15 @@
                 allow-overflow
                 v-model="playlistChoice"    
                 :items="playlistOptions"
-                attach
+                loading
+            
                 label="Choose a playlist"
                 multiple
                 chips
                 small
-                selected
+                
                 deletable-chips
-                loading
-                small-chips
+                
                 
             >
             </v-combobox>
@@ -151,12 +151,12 @@ export default {
 
     readableDate(){
             
-            if(this.object.dateUploaded.seconds){
+            if(this.object.dateUploaded){
                 var seconds = this.object.dateUploaded.seconds
                 var date = new Date(seconds * 1000).toLocaleDateString('en-UK', this.options)
                 return date
             }else{
-                return this.object.dateUploaded
+                return 'not sure'
             }
                 
             
@@ -195,7 +195,7 @@ export default {
   transition: opacity .9s;
 }
 .fade-enter, .fade-leave-to /* .fade-leave-active below version 2.1.8 */ {
-  opacity: 0;
+  opacity: 0.4;
 }
 
 .mixTileInfoHover{

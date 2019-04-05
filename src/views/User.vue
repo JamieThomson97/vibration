@@ -9,14 +9,21 @@
                 ></v-img>
             
         </div>
-        <div class="userStream">
-            
-                <div class='header'>Timeline</div>
-                <div class="mixTiles">
-                    <mixTile v-for='mix in clickedUser.playlists.mixes' :key='mix.mID' :object='mix' playerTracksReference='show.mixes'> </mixTile>
-                </div>
-            
-        </div>
+            <v-hover>
+                <div class="userStream" slot-scope="{ hover }">
+                    <div class="headerandSearch">
+                        <div class='header' >Producer's Mixes</div>
+                        <div class='userMixSearch'>
+                            <v-fade-transition>
+                                <v-text-field v-if='hover' height='50%' v-model='mixSearch' class='userMixSearchbox' box clearable type="text" v-on:keyup.enter="s"  placeholder="Search"></v-text-field>
+                            </v-fade-transition>
+                        </div>
+                    </div>
+                    <div class="mixTiles">
+                        <mixTile v-for='mix in fitleredMixes' :key='mix.mID' :object='mix' playerTracksReference='show.mixes'> </mixTile>
+                    </div>
+               </div>
+            </v-hover>
         <div class="currentUserInfo">
             <div class="userFollowNumbers">
                     <div class='userFollowingCount'>
@@ -58,19 +65,36 @@
                 
             </div>        
         </div>
-        <div class="userEvents">
-            <div class="header">Events Performed</div>
-            <div class="eventsGrid">
-                <eventTile v-for='event in clickedUser.Events' :object='event' playerTracksReference='clickedUser.events' :key='event.eID'></eventTile>
+        <v-hover>   
+            <div class="userEvents" slot-scope="{ hover }" >
+                <div class="headerandSearch">
+                    <div class='header' >Events</div>
+                    <div class='userMixSearch'>
+                        <v-fade-transition>
+                            <v-text-field v-if='hover' height='50%' v-model='eventSearch' class='userMixSearchbox' box clearable type="text" v-on:keyup.enter="s"  placeholder="Search"></v-text-field>
+                        </v-fade-transition>
+                    </div>
+                </div>
+                <div class="eventsGrid">
+                    <eventTile v-for='event in fitleredEvents' :object='event' playerTracksReference='clickedUser.events' :key='event.eID'></eventTile>
+                </div>
             </div>
-        </div>
-        <div class="userShows">
-            <div class="header">Shows</div>
-            <div class="eventsGrid">
-                <showTile v-for='show in clickedUser.Shows' :object='show' playerTracksReference='clickedUser.events' :key='show.sID'></showTile>
+        </v-hover>   
+        <v-hover>
+            <div class="userShows" slot-scope="{ hover }" >
+                <div class="headerandSearch">
+                    <div class='header' >Shows</div>
+                    <div class='userMixSearch'>
+                        <v-fade-transition>
+                            <v-text-field v-if='hover' height='50%' v-model='showSearch' class='userMixSearchbox' box clearable type="text" v-on:keyup.enter="s"  placeholder="Search"></v-text-field>
+                        </v-fade-transition>
+                    </div>
+                </div>
+                <div class="eventsGrid">
+                    <showTile v-for='show in fitleredShows' :object='show' playerTracksReference='clickedUser.events' :key='show.sID'></showTile>
+                </div>
             </div>
-        </div>
-        
+        </v-hover>
     </div>
         
    
@@ -120,7 +144,12 @@ export default {
             profileuID: null,
             followingCount: 0,
             followerCount: 0,
-            trueFollowing : true
+            trueFollowing : true,
+            mixSearch : '',
+            showSearch : '',
+            eventSearch : '',
+            followingSearch : '',
+            followersSearch : '',
         }
     },
 
@@ -156,6 +185,57 @@ export default {
             customer : 'customer',
         }),
 
+        fitleredMixes() {
+            if(this.clickedUser.playlists.mixes){
+                if(this.mixSearch != null){
+                    return this.clickedUser.playlists.mixes.filter(mix => {
+                        return mix.title.toLowerCase().includes(this.mixSearch.toLowerCase())
+                    })
+                }else{
+                    return this.clickedUser.playlists.mixes
+                }
+            }else{
+                return 'waiting'
+            }
+        },
+
+        fitleredEvents() {
+            if(this.clickedUser.Events){
+                if(this.clickedUser.Events.constructor == Array){
+                    
+                    if(this.eventSearch != null){
+                        return this.clickedUser.Events.filter(event => {
+                            return event.name.toLowerCase().includes(this.eventSearch.toLowerCase())
+                        })
+                    }else{
+                        return this.clickedUser.Events
+                    }
+                }else{
+                    return ''
+                }
+            }else{
+                    return ''
+                }
+        },
+
+        fitleredShows() {
+            if(this.clickedUser.Shows){
+                if(this.clickedUser.Shows.constructor == Array){
+                    if(this.showSearch != null){
+                        return this.clickedUser.Shows.filter(show => {
+                            return show.name.toLowerCase().includes(this.showSearch.toLowerCase())
+                        })
+                    }else{
+                        return this.clickedUser.Shows
+                    }
+                }else{
+                    return ''
+                }
+            }{
+                    return ''
+                }
+        },
+
 
     },
 
@@ -184,6 +264,10 @@ export default {
     },
     
     methods:{
+
+        isArray (value) {
+            return value && typeof value === 'object' && value.constructor === Array;
+        },
 
         follow(followingName, followeruID, followerName, follow){
             this.$store.commit('doesFollow', !this.doesFollow)
@@ -220,6 +304,7 @@ export default {
         grid-template-rows: repeat(2,1fr);
         grid-gap: .5em;
         height: 100%;
+        width: 96vw;
     }
 
     .userEmphasis{
@@ -236,6 +321,27 @@ export default {
         grid-row:2/3;
         grid-column:2/3;
 
+    }
+
+    .headerandSearch{
+        display:inline-flex;
+        width:100%;
+        
+        height:40%;
+        max-height:100px;
+    }
+
+    .userMixSearch{
+
+        float:left;
+        margin-top: 15px;
+        margin-left: 20px;
+        width: 50%;
+        height:100%;
+    }
+
+    .userMixSearchbox{
+        
     }
 
     .eventsGrid{
@@ -258,6 +364,7 @@ export default {
         margin-left: 18px;
         display: inline-flex;
         grid-gap: 1rem;
+        
     }
 
     .currentUserInfo{
@@ -347,9 +454,11 @@ export default {
 
     .userStream{
 
+        display: flex;
         background-color: greenyellow;
         grid-row:1/2;
         grid-column:2/4;
+        flex-direction: column;
 
     }
 

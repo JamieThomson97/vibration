@@ -45,24 +45,7 @@
                     </div>
                 </v-card>
             </v-fade-transition>
-            <v-combobox class='streamVComb'
-            v-if='playlistSelector'
-            clearable
-            allow-overflow
-            v-model="playlistChoice"    
-            :items="playlistOptions"
-            attach
-            label="Choose a playlist"
-            multiple
-            chips
-            small
-            selected
-            deletable-chips
-            loading
-            small-chips
             
-          >
-          </v-combobox>
           
 
         </div>

@@ -16,23 +16,39 @@
         <div class="dateHeader"> Knebworth Fields <br/></div>
         
     </div>
-   
-    <div class="eventStream">
-        <div class="header">Mixes</div>
+    <v-hover>   
+        <div class="eventStream" slot-scope="{ hover }">
+            <div class="headerandSearch">
+                <div class='header' >Mixes</div>
+                <div class='userMixSearch'>
+                    <v-fade-transition>
+                        <v-text-field v-if='hover' height='50%' color='red' v-model='mixSearch' class='eventMixSearchbox' solo-inverted clearable type="text" v-on:keyup.enter="s"  placeholder="Search"></v-text-field>
+                    </v-fade-transition>
+                </div>
+            </div>
             <div class="eventsGrid">
                 <mixTile v-for='mix in event.mixes' :object='mix' playerTracksReference='clickedUser.artists' :key='mix.mID'></mixTile>
             </div>
-    </div>
-
-    <div class="eventArtists">
+        </div>
+    </v-hover> 
+    <v-hover>   
+    <div class="eventArtists" slot-scope="{hover }">
         
         <div class='eventProducersCards'>
-            <div class="header">Artists</div>
+            <div class="headerandSearch">
+                <div class='header' >Artist</div>
+                <div class='userMixSearch'>
+                    <v-fade-transition>
+                        <v-text-field v-if='hover' height='50%' color='red' v-model='artistSearch' class='eventMixSearchbox' box clearable type="text"  placeholder="Search"></v-text-field>
+                    </v-fade-transition>
+                </div>
+            </div>
             <div class="eventsGrid">
-                <producerTile v-for='artist in event.artists' :object='artist' playerTracksReference='clickedUser.artists' :key='artist.uID'></producerTile>
+                <producerTile v-for='artist in filteredArtists' :object='artist' playerTracksReference='clickedUser.artists' :key='artist.uID'></producerTile>
             </div>
         </div>
     </div>
+    </v-hover>
         
 </div>
 
@@ -43,7 +59,6 @@
 <script>
 
 import userMixin from '../mixins/userMixin.js'
-import eventStream from '@/components/eventStream.vue'
 import {
     mapGetters
 } from 'vuex'
@@ -53,7 +68,7 @@ import producerTile from '@/components/producerTile.vue'
 export default {
 
     components:{
-        eventStream,
+       
         mixTile,
         producerTile,
     },
@@ -76,7 +91,9 @@ export default {
 
     data(){
         return{
-            options : { weekday: 'long', year: 'numeric', month: 'long', day: 'numeric' }
+            options : { weekday: 'long', year: 'numeric', month: 'long', day: 'numeric' },
+            mixSearch : '',
+            artistSearch : '',
         }       
     },
 
@@ -104,7 +121,35 @@ export default {
         },
         endDate(){
             return new Date(this.event.endDate.seconds * 1000).toLocaleDateString('en-UK', this.options)
-        }
+        },
+
+        fitleredMixes() {
+            if(this.event.mixes){
+                if(this.mixSearch != null){
+                    return this.event.mixes.filter(mix => {
+                        return mix.title.toLowerCase().includes(this.mixSearch.toLowerCase())
+                    })
+                }else{
+                    return this.event.mixes
+                }
+            }else{
+                return ''
+            }
+        },
+
+        filteredArtists() {
+            if(this.event.artists){
+                if(this.artistSearch != null){
+                    return this.event.artists.filter(artist => {
+                        return artist.name.toLowerCase().includes(this.artistSearch.toLowerCase())
+                    })
+                }else{
+                    return this.event.artists
+                }
+            }else{
+                return ''
+            }
+        },
     },
 
     created: function(){
@@ -145,6 +190,10 @@ export default {
         
         grid-column: 2/3;
         grid-row: 1/2;
+    }
+
+    .{
+        background-color: white;
     }
 
     .eventProducersCards{
