@@ -223,7 +223,7 @@ export default {
             var putAudio = audioStorageRef.put(this.audio).then(() => {
                 
                 return audioStorageRef.getDownloadURL().then(function(URL) {
-                  // mixData['streamURL'] = URL
+                  // mixData['audioURL'] = URL
                   return URL
               })
             })
@@ -277,13 +277,13 @@ export default {
                     mixPromises.push(database.collection("users").doc(producer.uID).collection('events').doc(isXCreated).collection('mixes').doc(NmID).set(mixData))
                   })
                 }else{
-                  mixPromises.push(database.collection('events').add(eventData))
                   
+                  mixPromises.push(database.collection('events').add(eventData))
                 }
               }
 
               mixPromises.push(database.collection('mixes').doc(NmID).update({
-                streamURL : storagePromisesResponse[0],
+                audioURL : storagePromisesResponse[0],
                 artworkURL : storagePromisesResponse[1],
                 producers : producers,
               }))
@@ -307,15 +307,19 @@ export default {
                   const newID = mixPromisesResponses[0].id
                   var finalPromises = []
                   if(isShow){
-                    
+                    const indexShowFunction = firebase.functions().httpsCallable('indexShow')
+                    finalPromises.push(indexShowFunction({ showData : showData , eID : newID }))
                     producers.forEach(producer=> {
                       finalPromises.push(database.collection("users").doc(producer.uID).collection('shows').doc(newID).set(showData))
                       finalPromises.push(database.collection("users").doc(producer.uID).collection('shows').doc(newID).collection('mixes').doc(NmID).set(mixData))
                     })
                     finalPromises.push(database.collection('shows').doc(newID).collection('mixes').doc(NmID).set(mixData))
+                    console.log(finalPromises.length)
                     return Promise.all(finalPromises)
                   }
                   if(isEvent){
+                    const indexEventFunction = firebase.functions().httpsCallable('indexEvent')
+                    finalPromises.push(indexEventFunction({ eventData : eventData , eID : newID }))
                     
                     producers.forEach(producer=> {
                       finalPromises.push(database.collection("users").doc(producer.uID).collection('events').doc(newID).set(eventData))

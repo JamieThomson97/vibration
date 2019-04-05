@@ -48,7 +48,7 @@ export default {
                     mID : mixData.mID,
                     artists : mixData.artists,
                     show : this.show.name,
-                    streamURL : mixData.streamURL,
+                    audioURL : mixData.audioURL,
                     title : mixData.title,
                     // uID : mixData.uID,
                     dateUploaded :  mixData.dateUploaded,

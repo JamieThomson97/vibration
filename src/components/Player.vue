@@ -116,7 +116,7 @@ export default {
         setTimeout(() => {
           
           this.player = new Howl({
-            src: nextCurrentTrack.streamURL,
+            src: nextCurrentTrack.audioURL,
             html5: true,
             volume: 1.0,
           });
