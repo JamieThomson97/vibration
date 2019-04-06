@@ -58,7 +58,7 @@
 
 <script>
 
-import userMixin from '../mixins/userMixin.js'
+import selectedUserMixin from '../mixins/selectedUserMixin.js'
 import {
     mapGetters
 } from 'vuex'
@@ -74,7 +74,7 @@ export default {
     },
 
       mixins: [
-    userMixin
+    selectedUserMixin
   ],
 
     mounted() {
@@ -99,8 +99,7 @@ export default {
 
     methods: {
         pushtoUser(name, uID){
-            this.setClickeduID(uID)
-            this.$router.push("/users/"+(name).split(' ').join('_'))
+            this.navigateUser(uID)
         }
     },
 

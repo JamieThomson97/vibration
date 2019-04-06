@@ -7,7 +7,7 @@
                 <v-flex xs5>
                     <v-img 
                     class = 'mixTileImage'
-                    @click='setClickeduID(object.id, object.name)'
+                    @click='navigateUser(object.id, object.name)'
                     :src="object.profileURL"
                     height="125px"
                     containzout
@@ -27,9 +27,9 @@
                 :class="`${hover? 'mixTileInfoHover': 'mixTileInfo'}`"
                 primary-title
                 >
-                    <div class='mixTileProducer' @click='setClickeduID(object.id, object.name)'>{{object.name}}</div>
-                    <div class='mixTileProducer' v-if='object.foldslowerCount' @click='setClickeduID(object.id, object.name)'> Followers {{object.followerCount}}</div>
-                    <div class='mixTileProducer' v-if='object.follodswingCount' @click='setClickeduID(object.id, object.name)'> Following {{object.followingCount}}</div>
+                    <div class='mixTileProducer' @click='navigateUser(object.id, object.name)'>{{object.name}}</div>
+                    <div class='mixTileProducer' v-if='object.foldslowerCount' @click='navigateUser(object.id, object.name)'> Followers {{object.followerCount}}</div>
+                    <div class='mixTileProducer' v-if='object.follodswingCount' @click='navigateUser(object.id, object.name)'> Following {{object.followingCount}}</div>
                     </v-card-title>
                 
                 </v-layout>

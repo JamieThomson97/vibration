@@ -76,7 +76,7 @@
 
 <script>
 
-import userMixin from '../mixins/userMixin.js'
+import selectedUserMixin from '../mixins/selectedUserMixin.js'
 import showMixin from '../mixins/showMixin.js'
 import mixTile from '@/components/mixTile.vue'
 import producerTile from '@/components/producerTile.vue'
@@ -94,7 +94,7 @@ export default {
     },
 
       mixins: [
-            userMixin,
+            selectedUserMixin,
             showMixin,
         ],
 
@@ -131,8 +131,7 @@ export default {
 
     methods: {
         pushtoUser(name, uID){
-            this.setClickeduID(uID)
-            this.$router.push("/users/"+(name).split(' ').join('_'))
+            this.navigateUser(uID, name)
         }
     },
 

@@ -195,7 +195,8 @@ export default {
             var name = this.firstProducers[x]
             var uID = responses[x].docs[0].id
             var object = {
-              name : name,
+              // profileURL : responses[x].docs[0].data().profileURL, //This constitutes too much work updating profile URLs in future, will have to pull the profile URL from the
+              name : name,                                            // will 'users' collection to show the profile URL in future
               uID : uID
             }
             

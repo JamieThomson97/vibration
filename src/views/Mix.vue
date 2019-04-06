@@ -1,6 +1,8 @@
 <template>
-    
-        <div class="mixWrapper" v-if='trackData'>
+        <div class="temp">
+            temp
+        </div>
+        <!-- <div class="mixWrapper" v-if='trackData'>
             <div class="mixTracklist">
                 <v-img :src="trackData.artworkURL" height=100% width=100%>
                     <div class="mixImageOverlay">
@@ -42,7 +44,7 @@
                     >
                         <img
                         class = 'playlistImages'
-                        @click='setClickeduID(x.uID , x.name)'
+                        @click='navigateUser(x.uID , x.name)'
                         :src="x.profileURL"
                         alt="Avatar"
                         >
@@ -56,8 +58,7 @@
                 </div>
                 
                 <div class="mixFollowNumbers">
-                    <!-- <v-btn v-if='!doesFollow & (uID !== clickeduID)' @click='follow(clickedmix.name ,uID , name, true)'>Follow</v-btn> -->
-                    <!-- <v-btn v-if='doesFollow & (uID !== clickeduID)' @click='follow(clickedmix.name ,uID , name, false)'>Un-Follow</v-btn> -->
+                    
                     <div class='mixFollowingCount'>
                         <div class="userPatronHeader">
                             Following
@@ -117,7 +118,7 @@
                     <mixTile v-for='mix in clickedUser.playlists.mixes' :key='mix.mID' :object='mix' playerTracksReference='show.mixes'> </mixTile>
                 </div>
             </div>
-        </div>
+        </div> -->
             
        
     
@@ -128,7 +129,7 @@
 import mixMixin from '../mixins/mixMixin'
 import createPlaylistMixin from '../mixins/createPlaylistMixin'
 import tileMixin from '../mixins/tileMixin'
-import userMixin from '../mixins/userMixin'
+import selectedUserMixin from '../mixins/selectedUserMixin'
 
 import mixTile from '@/components/mixTile.vue'
 import showTile from '@/components/showTile.vue'
@@ -174,7 +175,7 @@ export default {
     mixins: [
         mixMixin,
         createPlaylistMixin,
-        userMixin,
+        selectedUserMixin,
         tileMixin,
     ],
 
@@ -194,10 +195,10 @@ export default {
 
     watch: {
 
-        clickedMixID: function(newValue) {
-            console.log('watcher')            
-            this.fetchMixInfo(newValue)
-        },
+        // clickedMixID: function(newValue) {
+        //     console.log('watcher')            
+        //     this.fetchMixInfo(newValue)
+        // },
 
         trackData: function(newValue) {
             if(this.clickedUser.uID != newValue.uID){
@@ -240,15 +241,12 @@ export default {
 
   },
 
-  created: function(){
-    const storage = JSON.parse(localStorage.getItem('vuex'))
-    console.log(storage.clickedMixID)
-    if(storage.clickedMixID){
-         
-        this.fetchMixInfo(storage.clickedMixID)
-    }
 
-  },
+    mounted: function() {
+
+        this.fetchMixInfo(newValue)
+
+    },
 
   methods: {
     likeMix(mID, like) {

@@ -74,8 +74,7 @@ export default {
         next()
       }
     }
-
-  },
+},
 
   components: {
     
@@ -124,8 +123,7 @@ export default {
             profileURL : 'profileURL',
             uID : 'uID',
             name : 'name',
-            clickeduID : 'clickeduID',
-            clickedUser : 'clickedUser',
+            selectedUser : 'selectedUser',
             customer: 'customer',
         }),
 

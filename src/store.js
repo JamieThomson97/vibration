@@ -4,8 +4,8 @@ import * as firebase from 'firebase'
 import VuexPersistence from 'vuex-persist'
 import router from './router'
 import player from './store/modules/player';
-import user from './store/modules/user';
-// import * as _ from 'underscore'
+import selectedUser from './store/modules/selectedUser';
+import selectedMix from './store/modules/selectedMix';
 const database = firebase.firestore()
 
 Vue.use(Vuex)
@@ -18,8 +18,6 @@ const vuexLocal = new VuexPersistence({
     clickeduID : state.clickeduID,
     clickedeID : state.clickedeID,
     clickedsID : state.clickedsID,
-    clickedUser: state.clickeduser,
-    //trackData: state.trackData,
   })
 })
 
@@ -32,7 +30,8 @@ export default new Vuex.Store({
 
   modules: {
     player,
-    user,
+    selectedUser,
+    selectedMix,
   },
 
   appTitle: 'Vibration',
@@ -44,12 +43,6 @@ export default new Vuex.Store({
       followerCount: 0,
       followingCount: 0,
       playlists: { },
-    },
-    clickedUser: { 
-      Events: {},
-      Shows: {},
-      playlists: {},
-      doesFollow: false
     },
     playerCurrentTracks: {},
     showSearch: false,
@@ -77,53 +70,22 @@ export default new Vuex.Store({
       Vue.set(state, 'playerCurrentTracks' , tracks)
     },
 
-    setFollowX: (state, payload) => {
-      
-      //state.clickedUser[payload.follX] = payload.response
-      Vue.set(state.clickedUser, payload.follX , payload.response)
-    },
-
     setShowSearch(state, value){
       Vue.set(state , 'showSearch' , value)
-    },
-
-    setevents(state, value){
-      Vue.set(state.clickedUser  , 'Events' , value)
-    },
-
-    setshows(state, value){
-      Vue.set(state.clickedUser , 'Shows'  , value)
     },
 
     setSearchQuery(state, query){
       Vue.set(state , 'searchQuery' , query)
     },
 
-    setClickedPlaylist(state, payload) {
-      Vue.set(state.clickedUser.playlists, 'mixes' , payload.object)
-    },
-
-    GET_USER_PROFILE_SUCCESS: (state, data) => {
-      
-      data['playlists'] = {}
-      data['Events'] = {}
-      data['Shows'] = {}
-      state.getClickedProfileLoading = false;
-      Vue.set(state , 'clickedUser' , data)
-    },
-
-    setClickeduID(state, payload) {
-      Vue.set(state, 'clickeduID' , payload)
-    },
+    
     setClickedeID(state, payload) {
       Vue.set(state, 'clickedeID' , payload)
     },
     setClickedsID(state, payload) {
       Vue.set(state, 'clickedsID' , payload)
     },
-    setClickedmID(state, payload) {
-      Vue.set(state , 'clickedmID' , payload)
-    },
+  
 
     setuID(state, payload) {  
       state.clickedMix.uID = payload
@@ -151,7 +113,12 @@ export default new Vuex.Store({
     },
 
     setNullUser(state) {
-      Vue.delete(state, Vuex)
+      var stateArr = Object.keys(state)
+      stateArr.forEach(key => {
+        if(state.key){
+          Vue.delete(state, key)
+        }
+      })
     },
 
     setUser(state, payload) {
@@ -164,11 +131,6 @@ export default new Vuex.Store({
       
       Vue.set(state, 'customer', user.customer)
       //Vue.set( )
-    },
-
-    doesFollow(state, bool) {
-      Vue.set(state.clickedUser, 'doesFollow', bool)
-    
     },
 
     deletePlaylist(state, playlist) {
@@ -240,7 +202,7 @@ export default new Vuex.Store({
 
     actionSetSearchQuery({commit} , payload){
       commit('setSearchQuery' , payload)
-      console.log(payload.length)
+     
       if(payload.length > 3){
         commit( 'setShowSearch' , true)
       }else{
@@ -248,35 +210,29 @@ export default new Vuex.Store({
       }
     },
 
-    signUserUp({
-      commit
-    }, payload) {
-      firebase.auth().createUserWithEmailAndPassword(payload.email, payload.password)
-        .then((user) => {
-          firebase.firestore().collection('users').doc(user.user.uid).set({
-            name: payload.name,
-            followingCount: 0,
-            followersCount: 0,
-            following: [],
-            followers: [],
-            playlists: {}
-          }).then(() => {
-
-          }).catch((error) => {
-            this.$noty.error(error)
+    // eslint-disable-next-line
+    createNewUser({commit} , payload) {
+      firebase.auth().createUserWithEmailAndPassword(payload.email, payload.password).then(user => {
+        
+        firebase.firestore().collection('users').doc(user.user.uid).set({
+          dateCreated: new Date(),
+          name: payload.name,
+          followingCount: 0,
+          followerCount: 0,
+          prePlaylists: ['timeline' , 'listenLater' , 'history' , 'likes'],
+          createdPlaylists : [],
+        }).then(() => {
+            const indexUserFunction = firebase.functions().httpsCallable('indexUser')
+            indexUserFunction({ name : payload.name , uID : user.user.uid })
+            this.dispatch('signUserIn' , {email : payload.email , password : payload.password})
           })
-          commit('setuID', user.user.uid)
-        }).catch((error) => {
-          this.$noty.error(error)
-        })
+      })
     },
 
     actionSetClickeduID({ commit }, payload) {
       commit('setClickeduID' , payload)
     },
-    actionSetClickedmID({ commit }, payload) {
-      commit('setClickedmID' , payload)
-    },
+    
     actionSetClickedeID({ commit }, payload) {
       commit('setClickedeID' , payload)
     },
@@ -287,6 +243,10 @@ export default new Vuex.Store({
     signUserIn({// eslint-disable-next-line
       commit
     }, payload) {
+      console.log('email')
+      console.log(payload.email)
+      console.log('password')
+      console.log(payload.password)
       firebase.auth().signInWithEmailAndPassword(payload.email, payload.password)
         .then((user) => {
           const uID = user.user.uid
@@ -303,7 +263,7 @@ export default new Vuex.Store({
             })
           })
         }).catch((error) => {
-          this.$noty.error(error)
+          this.noty.error(error)
         })
     },
 
@@ -316,7 +276,7 @@ export default new Vuex.Store({
           router.push('/landing')
           
         }).catch((error) => {
-          this.$noty.error(error)
+          this.noty.error(error)
         })
     },
 
@@ -390,12 +350,8 @@ export default new Vuex.Store({
 
   getters: {
 
-    clickedUser(state) {
-      return state.clickedUser
-    },
-
     doesFollow(state) {
-      return state.clickedUser.doesFollow
+      return state.selectedUser.doesFollow
     },
 
 

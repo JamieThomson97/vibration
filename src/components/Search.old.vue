@@ -217,7 +217,7 @@
 <script>
 import algoliasearch from 'algoliasearch/lite';
 import createPlaylistMixin from '../mixins/createPlaylistMixin'
-import userMixin from '../mixins/userMixin'
+import selectedUserMixin from '../mixins/selectedUserMixin'
 import mixMixin from '../mixins/mixMixin'
 import { mapGetters } from 'vuex'
 
@@ -235,7 +235,7 @@ export default {
 
   mixins: [
         createPlaylistMixin,
-        userMixin,
+        selectedUserMixin,
         mixMixin
     ],
 
@@ -243,7 +243,7 @@ export default {
 
       clickedTitle(mID , producer, title){
         
-        this.setClickedmID(mID)
+        this.setSelectedmID(mID)
         this.$router.push(`/users/${(producer).split(' ').join('_')}/mixes/${(title).split(' ').join('_')}`)
         this.localsearchQuery = ''
       },

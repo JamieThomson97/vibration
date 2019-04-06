@@ -5,7 +5,7 @@
         
       </div>
       <div class="headText">
-         <v-card color="rgb(26, 50, 91,0.1)">
+         <v-card >
               <SignIn />
             </v-card>
         </div>

@@ -1,14 +1,30 @@
 <template>
-    <div class="userWrapper">
-        <div class="userImage">
-            
-             <v-img 
-                width='100%'
-                height='100%'
-                :src="clickedUser.profileURL"
-                ></v-img>
-            
-        </div>
+    <div class="userWrapper" v-if='selectedUser' >
+        in
+        <v-hover> 
+            <div class="userImage" slot-scope="{ hover }">
+                
+                <v-img 
+                    width='100%'
+                    height='100%'
+                    :src="selectedUser.profileURL"
+                    >
+                    <v-expand-transition>
+                        <div
+                            v-if="hover && isUser"
+                            class="d-flex transition-fast-in-fast-out cyan darken-2 v-card--reveal display-3 white--text"
+                            style="height: 100%;opacity: .4;"
+                        >
+                           <div class="updateText">
+                            Update Profile Picture            
+                            <input type='file' @change='changeProfilePicture' accept="image/png, image/jpeg" placeholder="Upload" class="btn">
+                           </div>
+                        </div>
+                        </v-expand-transition>
+                </v-img>
+                
+            </div>
+        </v-hover>
             <v-hover>
                 <div class="userStream" slot-scope="{ hover }">
                     <div class="headerandSearch">
@@ -20,7 +36,7 @@
                         </div>
                     </div>
                     <div class="mixTiles">
-                        <mixTile v-for='mix in fitleredMixes' :key='mix.mID' :object='mix' playerTracksReference='show.mixes'> </mixTile>
+                        <mixTile v-for='mix in filteredMixes.slice(0,20)' :key='mix.mID' :object='mix' playerTracksReference='show.mixes'> </mixTile>
                     </div>
                </div>
             </v-hover>
@@ -32,10 +48,10 @@
                     </div>
                     <div @click='trueFollowing = true' class="userPatronCount">
                         <div v-if='trueFollowing' class="userEmphasis">
-                            {{clickedUser.followingCount}}
+                            {{selectedUser.followingCount}}
                         </div>
                         <div v-if='!trueFollowing'>
-                            {{clickedUser.followingCount}}
+                            {{selectedUser.followingCount}}
                         </div>
                     </div>
                 </div>
@@ -45,10 +61,10 @@
                     </div>
                     <div @click='trueFollowing = false' class="userPatronCount">
                         <div v-if='!trueFollowing' class="userEmphasis">
-                            {{clickedUser.followerCount}}
+                            {{selectedUser.followerCount}}
                         </div>
                         <div v-if='trueFollowing'>
-                            {{clickedUser.followerCount}}
+                            {{selectedUser.followerCount}}
                         </div>                        
                     </div>
                     
@@ -56,10 +72,10 @@
             </div>
             <div class="userPatrons">
                 <div v-if='trueFollowing' class="following patronsGrid">
-                    <producerTile v-for='user in clickedUser.following' :object='user' :key='user.uID'></producerTile>    
+                    <producerTile v-for='user in selectedUser.following' :object='user' :key='user.uID'></producerTile>    
                 </div>
                 <div v-if='!trueFollowing' class="followers patronsGrid">
-                    <producerTile v-for='user in clickedUser.followers' :object='user' :key='user.uID'></producerTile>
+                    <producerTile v-for='user in selectedUser.followers' :object='user' :key='user.uID'></producerTile>
                     
                 </div> 
                 
@@ -76,7 +92,7 @@
                     </div>
                 </div>
                 <div class="eventsGrid">
-                    <eventTile v-for='event in fitleredEvents' :object='event' playerTracksReference='clickedUser.events' :key='event.eID'></eventTile>
+                    <eventTile v-for='event in filteredEvents.slice(0,8)' :object='event' playerTracksReference='selectedUser.events' :key='event.eID'></eventTile>
                 </div>
             </div>
         </v-hover>   
@@ -91,12 +107,15 @@
                     </div>
                 </div>
                 <div class="eventsGrid">
-                    <showTile v-for='show in fitleredShows' :object='show' playerTracksReference='clickedUser.events' :key='show.sID'></showTile>
+                    <showTile v-for='show in filteredShows.slice(0,8)' :object='show' playerTracksReference='selectedUser.events' :key='show.sID'></showTile>
                 </div>
             </div>
         </v-hover>
     </div>
-        
+    <!-- <div class="temp">
+        this is temp
+    </div> -->
+    
    
 </template>
 
@@ -104,7 +123,7 @@
 
 import firebase from 'firebase'
 import createPlaylistMixin from '../mixins/createPlaylistMixin'
-import userMixin from '../mixins/userMixin'
+import selectedUserMixin from '../mixins/selectedUserMixin'
 
 import mixTile from '@/components/mixTile.vue'
 import showTile from '@/components/showTile.vue'
@@ -124,8 +143,13 @@ export default {
 
 
 
-    mounted() {
+    mounted: function() {
     
+        
+        this.fetchUserDetails(this.selectedUser.uID)
+        this.getUserShowsorEvents(this.selectedUser.uID , 'events')
+        this.getUserShowsorEvents(this.selectedUser.uID , 'shows')
+       
     },
 
     components: {
@@ -150,27 +174,30 @@ export default {
             eventSearch : '',
             followingSearch : '',
             followersSearch : '',
+            newProfilePicture : null,
+            
         }
     },
 
     watch: {
-        clickeduID: function(newValue) {
-            console.log('clickeduID watcher')
-            this.fetchUserDetails(newValue)
-            this.getUserShowsorEvents(newValue , 'events')
-            this.getUserShowsorEvents(newValue , 'shows')
+        
+        // clickeduID: function(newValue) {
+        //     console.log('clickeduID watcher')
+        //     this.fetchUserDetails(newValue)
+        //     this.getUserShowsorEvents(newValue , 'events')
+        //     this.getUserShowsorEvents(newValue , 'shows')
             
-        },
+        // },
 
         followingCount: function(){
             
-            for(var a in this.clickedUser.followers){
+            for(var a in this.selectedUser.followers){
                 
-                    if(this.clickedUser.followers[a].uID == this.uID){
+                    if(this.selectedUser.followers[a].uID == this.uID){
                         this.doesFollow = true
                     }
                 }
-        }
+        },
 
   },
 
@@ -179,36 +206,41 @@ export default {
             profileURL : 'profileURL',
             uID : 'uID',
             name : 'name',
-            clickeduID : 'clickeduID',
-            clickedUser : 'clickedUser',
+            selectedUser : 'selectedUser',
             doesFollow: 'doesFollow',
             customer : 'customer',
         }),
 
-        fitleredMixes() {
-            if(this.clickedUser.playlists.mixes){
+        isUser(){
+            return (this.selectedUser.uID == this.customer.uID)
+        },
+
+        filteredMixes() {
+            
+            if(this.selectedUser.playlists){
+                
                 if(this.mixSearch != null){
-                    return this.clickedUser.playlists.mixes.filter(mix => {
+                    return this.selectedUser.playlists.mixes.filter(mix => {
                         return mix.title.toLowerCase().includes(this.mixSearch.toLowerCase())
                     })
                 }else{
-                    return this.clickedUser.playlists.mixes
-                }
+                    return this.selectedUser.playlists.mixes
+                }   
             }else{
-                return 'waiting'
+                return ''
             }
         },
 
-        fitleredEvents() {
-            if(this.clickedUser.Events){
-                if(this.clickedUser.Events.constructor == Array){
+        filteredEvents() {
+            if(this.selectedUser.Events){
+                if(this.selectedUser.Events.constructor == Array){
                     
                     if(this.eventSearch != null){
-                        return this.clickedUser.Events.filter(event => {
+                        return this.selectedUser.Events.filter(event => {
                             return event.name.toLowerCase().includes(this.eventSearch.toLowerCase())
                         })
                     }else{
-                        return this.clickedUser.Events
+                        return this.selectedUser.Events
                     }
                 }else{
                     return ''
@@ -218,15 +250,15 @@ export default {
                 }
         },
 
-        fitleredShows() {
-            if(this.clickedUser.Shows){
-                if(this.clickedUser.Shows.constructor == Array){
+        filteredShows() {
+            if(this.selectedUser.Shows){
+                if(this.selectedUser.Shows.constructor == Array){
                     if(this.showSearch != null){
-                        return this.clickedUser.Shows.filter(show => {
+                        return this.selectedUser.Shows.filter(show => {
                             return show.name.toLowerCase().includes(this.showSearch.toLowerCase())
                         })
                     }else{
-                        return this.clickedUser.Shows
+                        return this.selectedUser.Shows
                     }
                 }else{
                     return ''
@@ -242,28 +274,27 @@ export default {
 
     mixins: [
         createPlaylistMixin,
-        userMixin
+        selectedUserMixin
     ],
 
 
 
     created: function () {
 
-        const { params: { passeduID } } = this.$route;
-        if(!(passeduID.length === 28)){
-            const storage = JSON.parse(localStorage.getItem('vuex'))
-            if(storage.clickeduID){
-                
-                this.fetchUserDetails(storage.clickeduID)
-                this.getUserShowsorEvents(storage.clickeduID , 'events')
-                this.getUserShowsorEvents(storage.clickeduID , 'shows')
-            }
-        }else{
-            this.fetchUserDetails(passeduID)
-        }
     },
     
     methods:{
+
+        changeProfilePicture(e){
+        
+          if(e.target.files[0].type == 'image/jpeg' | e.target.files[0].type == 'image/png'){
+            
+            this.newProfilePicture = e.target.files[0]
+            this.updateUserImage(this.uID , this.newProfilePicture)
+          }else{
+          this.$noty.error("please upload an image")
+          }
+      },
 
         isArray (value) {
             return value && typeof value === 'object' && value.constructor === Array;
@@ -277,7 +308,7 @@ export default {
                 'followingName' : followingName,
                 'followeruID' : followeruID,
                 'followerProfileURL' : this.customer.profileURL,
-                'followingProfileURL' : this.clickedUser.profileURL,
+                'followingProfileURL' : this.selectedUser.profileURL,
                 'followerName' : followerName,
                 'follow' : follow
                 }).then(() => {
@@ -304,7 +335,7 @@ export default {
         grid-template-rows: repeat(2,1fr);
         grid-gap: .5em;
         height: 100%;
-        width: 96vw;
+        width: 95vw;
     }
 
     .userEmphasis{
@@ -316,11 +347,17 @@ export default {
 
     .userEvents{
 
-        
+        flex-wrap: wrap;
         background-color: blue;
         grid-row:2/3;
         grid-column:2/3;
 
+    }
+
+    .updateText{
+        margin: auto;
+        text-align: center;
+        width:100%;
     }
 
     .headerandSearch{
@@ -349,6 +386,7 @@ export default {
         grid-gap: 1rem;
         margin-top: 15px;
         margin-left: 15px;
+        flex-wrap: wrap;
     }
 
     .userShows{
@@ -356,6 +394,7 @@ export default {
         background-color: red;
         grid-row:2/3;
         grid-column:3/4;
+        flex-wrap: wrap;
     }
 
     .mixTiles{
@@ -364,6 +403,7 @@ export default {
         margin-left: 18px;
         display: inline-flex;
         grid-gap: 1rem;
+        flex-wrap: wrap;
         
     }
 

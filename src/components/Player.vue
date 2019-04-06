@@ -3,10 +3,10 @@
     <div class="trackDetails">
       <img :src="playerCurrentTrack.artworkURL" alt="">
       <div class="titleWrapper">
-        <v-btn align right class="title" @click='setClickedmID(playerCurrentTrack.mID)' :to="`/users/${(playerCurrentTrack.artists[0].name).split(' ').join('_')}/mixes/${(playerCurrentTrack.title).split(' ').join('_')}`">
+        <v-btn align right class="title" @click='setSelectedmID(playerCurrentTrack.mID)' :to="`/users/${(playerCurrentTrack.artists[0].name).split(' ').join('_')}/mixes/${(playerCurrentTrack.title).split(' ').join('_')}`">
           {{playerCurrentTrack.title}}
         </v-btn>
-        <v-btn align right v-for='artist in playerCurrentTrack.artists' :key='artist.uID'  class="user" @click='setClickeduID(artist.uID)' :to="`/users/${(artist.name).split(' ').join('_')}`">
+        <v-btn align right v-for='artist in playerCurrentTrack.artists' :key='artist.uID'  class="user" @click='navigateUser(artist.uID)' :to="`/users/${(artist.name).split(' ').join('_')}`">
           {{artist.name}}
         </v-btn>
         {{playerTracks.length}}
@@ -47,7 +47,7 @@ import { Howl } from 'howler';
 import _ from 'lodash';
 import { mapGetters } from 'vuex';
 import secondsToTime from '@/utils/secondsToTime';
-import userMixin from '../mixins/userMixin'
+import selectedUserMixin from '../mixins/selectedUserMixin'
 import mixMixin from '../mixins/mixMixin'
 
 export default {
@@ -58,7 +58,7 @@ export default {
   },
 
   mixins:[
-    userMixin,
+    selectedUserMixin,
     mixMixin
   ],
   computed: {
@@ -188,8 +188,8 @@ export default {
       });
     },
 
-  // setClickedmID(mID){
-  //   this.$store.dispatch('actionSetClickedmID', mID)
+  // setSelectedmID(mID){
+  //   this.$store.dispatch('actionSetSelectedmID', mID)
   // },
 
     calculateSeekOnClick(e) {

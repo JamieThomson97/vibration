@@ -34,8 +34,8 @@
                     primary-title
                     >
                             
-                            <div class='mixTileTitle' @click='setClickedmID(object.mID, object.title )'>{{object.title}}</div>
-                            <div v-for='x in object.artists' :key='x.uID' class='mixTileProducer' @click='setClickeduID(x.uID, x.name)'>{{x.name}}</div>
+                            <div class='mixTileTitle' @click='navigateMix(object.mID, object.title )'>{{object.title}}</div>
+                            <div v-for='x in object.producers' :key='x.uID' class='mixTileProducer' @click='navigateUser(x.uID, x.name)'>{{x.name}}</div>
                             <div v-if='object.show' class='mixTileDate'>
                                 {{readableDate}} - {{object.show.name}}
                                 <v-icon 

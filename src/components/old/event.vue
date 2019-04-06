@@ -1,21 +1,21 @@
 <template>
-    <div class="userShowWrapper">
-        
-        <div class='userShowsResults' v-for="Show in clickedUser.Shows" :key="Show.name">
-            <v-card color="cyan darken-2" class="userShowCard" elevation='10'>
+    <div class="userEventWrapper">
+        <div class="header eventsHeader" style='width:100%;'>Events</div>
+        <div class='userEventsResults' v-for="event in clickedUser.Events" :key="event.name">
+            <v-card color="cyan darken-2" class="userEventCard" elevation='10'>
                 <v-layout column="true">
                 <v-flex xs5>
                     <v-img 
-                    class = 'userShowImage'
+                    class = 'userEventImage'
                     
-                    :src='Show.imageURL'
+                    :src='event.imageURL'
                     height="125px"
                     contain
                     ></v-img>
                 </v-flex>
                 <v-card-title primary-title>
                     
-                        <div class='userShowInfo' @click='clickedProducer(item.uID , item.producer)'>{{Show.name}}</div>
+                        <div class='userEventInfo' @click='clickedProducer(item.uID , item.producer)'>{{event.name}}</div>
                     
                     </v-card-title>
                 
@@ -32,7 +32,7 @@ import {
     mapGetters
 } from 'vuex'
 
-import userMixin from '../mixins/userMixin'
+import selectedUserMixin from '../mixins/selectedUserMixin'
 
 export default {
     
@@ -41,7 +41,7 @@ props: [
     ],
 
       mixins: [
-    userMixin
+    selectedUserMixin
   ],
 
 computed: {
@@ -67,28 +67,27 @@ computed: {
 
 <style>
 
-.userShowWrapper{
+.userEventWrapper{
     display: grid;
     grid-gap: 1em;
-    height:23vh;
-    grid-template-rows: 1fr 1fr;
+    height:100%;
+    grid-template-rows: 1fr 5fr;
     grid-template-columns : 1fr;
 }
 
-.userShowsResults{
-    margin-top: 5vh;
-    margin-left: 2vh;
-    display: inline-flex;
+.userEventsResults{
+    margin-left: 17px;
+    display: flex;
     flex-wrap: wrap;
 }
 
-.userShowCard{
+.userEventCard{
     width: 5vw;
     height: 11vh;
 }
 
 
-.userShowInfo{
+.userEventInfo{
     margin-top: 2px;
     text-align: center !important;
     color : white;

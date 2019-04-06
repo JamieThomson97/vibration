@@ -20,6 +20,7 @@ export default {
             clickeduID : 'clickeduID',
             clickedUser : 'clickedUser',
             show : 'show',
+            showSearch : 'showSearch',
         }),
 
 
@@ -118,18 +119,29 @@ export default {
             })
         },
 
-        setClickedmID(mID, title ){
-            this.$store.dispatch('actionSetClickedmID', mID).then(() => {
+        navigateMix(mID, title){
+            console.log('navigate Mix')
+            this.$store.commit('setShowSearch' , false)
+
+
+            this.$store.dispatch('actionSetSelectedmID', mID).then(() => {
                 this.$router.push(`/mixes/${(title).split(' ').join('_')}`)
             })
             
         },
 
-        setClickeduID(uID , user) {
-            this.$store.dispatch('actionSetClickeduID', uID).then(() => {
-                this.$router.push(`/users/${(user).split(' ').join('_')}`)
+        navigateUser(uID , name) {
+            
+            
+            this.$store.commit('setShowSearch' , false)
+            console.log(this.showSearch)
+            this.$store.dispatch('actionSetSelecteduID' , uID).then(()=> {
+                console.log('pushing')
+                this.$router.push(`/users/${(name).split(' ').join('_')}`)
             })
-        },
+            
+            
+          },
 
           setClickedeID(eID, eventName){
             this.$store.dispatch('actionSetClickedeID', eID).then(() => {
@@ -161,9 +173,113 @@ export default {
             }
         },
       
-    },
-
     
+
+        // updateUserImage(uID, image){
+        // //Will receive an image file
+        // //and the uID of the user
+
+        // var imageStorageRef = storage.ref('userProfileImage/'+uID+'.jpeg')
+
+        // return imageStorageRef.put(image).then(() => {
+            
+        //     return imageStorageRef.getDownloadURL().then(function(URL) {
+                
+        //         return URL
+        //     })
+        // }).then(response => {
+
+        //     //Update the profile URL field for the user, in every location they appear, and call a function to change the profile URL in algolia
+
+        //     var updatePromises = []
+
+        //     //Get every location a user is in 
+        //         //users collection
+
+        //         const userPromise = database.collection('users').doc(uID).set({
+        //             profileURL : response
+        //         })
+                
+
+        //         //in the following subcollection
+                
+        //         var followinguIDs = []
+
+        //         database.collection('users').doc(uID).collection('following').get().then(response => {
+        //             response.forEach(user => {
+        //                 var uID = user.id
+        //                 followinguIDs.push(uID)
+        //             })
+        //         }).then(() => {
+        //             updatePromises.push(userPromise)
+        //             followinguIDs.forEach(followinguID => {
+        //                 updatePromises.push(database.collection('users').doc(followinguID).collection('followers').doc(uID).set({
+        //                     profileURL : response
+        //                 }))
+        //             })
+        //         }).then(() => {
+
+        //             // and follower subcolletions
+
+        //             var followeruIDs = []
+
+        //             database.collection('users').doc(uID).collection('followers').get().then(response => {
+        //                 response.forEach(user => {
+        //                     var uID = user.id
+        //                     followeruIDs.push(uID)
+        //                 })
+        //             }).then(() => {
+        //                 followeruIDs.forEach(followeruID => {
+        //                     updatePromises.push(database.collection('users').doc(followeruID).collection('following').doc(uID).set({
+        //                         profileURL : response
+        //                     }))
+        //                 })
+        //             }).then(() => {
+        //                 return Promise.all(updatePromises)
+        //             })
+
+        //             //any shows they are in
+        //                 //shows/[sID]/producers array of objects
+
+        //             // var showsIDs = [] //Currently profile URLs are not stored on the mix or show documents, and therefore must be retrieved upon loading of the page,
+        //                                 //Will evaluate this effect on performance and if needs changed, will change
+
+        //             // database.collection('users').doc(uID).collection('shows').get().then(response => {
+        //             //     response.forEach(show => {
+        //             //         var sID = show.id
+        //             //         showsIDs.push(sID)
+        //             //     })
+        //             // }).then(() => {
+        //             //     showsIDs.forEach(showsID => {
+        //             //         updatePromises.push(database.collection('show').doc(showsID).collection('shows').doc(uID).set({
+        //             //             profileURL : response
+        //             //         }))
+        //             //     })
+        //             // })            
+
+        //             // //any events they are in
+        //             //     //shows/[eID]/producers array of objects
+
+        //             // var eventeIDs = []
+
+        //             // database.collection('users').doc(uID).collection('events').get().then(response => {
+        //             //     response.forEach(event => {
+        //             //         var eID = event.id
+        //             //         eventeIDs.push(eID)
+        //             //     })
+        //             // }).then(() => {
+        //             //     eventeIDs.forEach(eventeID => {
+        //             //         updatePromises.push(database.collection('event').doc(eventeID).collection('shows').doc(uID).set({
+        //             //             profileURL : response
+        //             //         }))
+        //             //     })
+        //             // })
+        //         })
+                                
+        //     })
+        // },
+
+    },
 
     
     mixins: [

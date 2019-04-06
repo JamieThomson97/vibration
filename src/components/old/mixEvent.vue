@@ -1,6 +1,5 @@
 <template>
     <div class="userEventWrapper">
-        <div class="header eventsHeader" style='width:100%;'>Events</div>
         <div class='userEventsResults' v-for="event in clickedUser.Events" :key="event.name">
             <v-card color="cyan darken-2" class="userEventCard" elevation='10'>
                 <v-layout column="true">
@@ -32,7 +31,7 @@ import {
     mapGetters
 } from 'vuex'
 
-import userMixin from '../mixins/userMixin'
+import selectedUserMixin from '../mixins/selectedUserMixin'
 
 export default {
     
@@ -41,7 +40,7 @@ props: [
     ],
 
       mixins: [
-    userMixin
+    selectedUserMixin
   ],
 
 computed: {
@@ -70,14 +69,15 @@ computed: {
 .userEventWrapper{
     display: grid;
     grid-gap: 1em;
-    height:100%;
-    grid-template-rows: 1fr 5fr;
+    height:23vh;
+    grid-template-rows: 1fr 1fr;
     grid-template-columns : 1fr;
 }
 
 .userEventsResults{
-    margin-left: 17px;
-    display: flex;
+    margin-top: 5vh;
+    margin-left: 2vh;
+    display: inline-flex;
     flex-wrap: wrap;
 }
 

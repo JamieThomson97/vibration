@@ -27,8 +27,8 @@
                 primary-title
                 >
                         
-                        <div class='mixTileTitle' @click='setClickedmID(object.mID, object.title )'>{{object.name}}</div>
-                        <div v-for='x in object.artists' :key='x.uID' class='mixTileProducer' @click='setClickeduID(x.uID, x.name)'>{{x.name}}</div>
+                        <div class='mixTileTitle' @click='setSelectedmID(object.mID, object.title )'>{{object.name}}</div>
+                        <div v-for='x in object.artists' :key='x.uID' class='mixTileProducer' @click='navigateUser(x.uID, x.name)'>{{x.name}}</div>
                         
                     </v-card-title>
                 
@@ -102,7 +102,7 @@ export default {
 <style>
 
 .mixTileWrapper{
-    width: 11vh;
+    width: 9vh;
     height: 15vh;
 }
 

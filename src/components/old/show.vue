@@ -32,7 +32,7 @@ import {
     mapGetters
 } from 'vuex'
 
-import userMixin from '../mixins/userMixin'
+import selectedUserMixin from '../mixins/selectedUserMixin'
 
 export default {
     
@@ -41,7 +41,7 @@ props: [
     ],
 
       mixins: [
-    userMixin
+    selectedUserMixin
   ],
 
 computed: {

@@ -6,8 +6,8 @@
         :search-client="searchClient"
         index-name="test_mixes"
       >
-      <ais-search-box placeholder="Search here…" style='display: none;'  v-model='searchQuery' class="searchbox" />
-      <div class="header" style='padding-left:15px;'>Mixes <v-icon >
+      <ais-search-box placeholder="Search here…" style='display: none;' v-if='searchQuery' v-model='searchQuery' class="searchbox" />
+      <div class="header" style='padding-left:15px;'>Mixes{{showSearch}} <v-icon >
           expand_more
           </v-icon></div>
           <ais-hits > 
@@ -25,7 +25,7 @@
         :search-client="searchClient"
         index-name="producers"
       >
-            <ais-search-box placeholder="Search here…" style='display: none;' class="searchbox" v-model='searchQuery'/>
+            <ais-search-box placeholder="Search here…" style='display: none;' v-if='searchQuery' class="searchbox" v-model='searchQuery'/>
             <div class="producerSearchResults">
               <div class="header" style='padding-left:30px;'>Producers<v-icon >
                 expand_more
@@ -50,7 +50,7 @@
         :search-client="searchClient"
         index-name="events"
       >
-            <ais-search-box style='display: none;' placeholder="Search here…" class="searchbox" v-model='searchQuery'/>
+            <ais-search-box style='display: none;' placeholder="Search here…" class="searchbox" v-if='searchQuery' v-model='searchQuery'/>
             <div class="producerSearchResults">
               <div class="header" style='padding-left:30px;'>
                 Events
@@ -80,7 +80,7 @@
         :search-client="searchClient"
         index-name="shows"
       >
-            <ais-search-box placeholder="Search here…" style='display: none;'  class="searchbox" v-model='searchQuery'/>
+            <ais-search-box placeholder="Search here…" style='display: none;'  class="searchbox" v-if='searchQuery' v-model='searchQuery'/>
             <div class="producerSearchResults">
               <div class="header" style='padding-left:30px;'>Shows<v-icon >
                 expand_more
@@ -107,7 +107,7 @@
 <script>
 import algoliasearch from 'algoliasearch/lite';
 import createPlaylistMixin from '../mixins/createPlaylistMixin'
-import userMixin from '../mixins/userMixin'
+import selectedUserMixin from '../mixins/selectedUserMixin'
 import mixMixin from '../mixins/mixMixin'
 import { mapGetters } from 'vuex'
 import mixTile from '@/components/mixTile.vue'
@@ -136,7 +136,7 @@ export default {
 
   mixins: [
         createPlaylistMixin,
-        userMixin,
+        selectedUserMixin,
         mixMixin
     ],
 
@@ -145,15 +145,15 @@ export default {
       clickedTitle(mID , producer, title){
         
         this.$store.commit('setShowSearch' , false)
-        this.setClickedmID(mID)
+        this.setSelectedmID(mID)
         this.$router.push(`/users/${(producer).split(' ').join('_')}/mixes/${(title).split(' ').join('_')}`)
         this.searchQuery = ''
       },
 
       clickedProducer(uID, name){
         this.$store.commit('setShowSearch' , false)
-        this.setClickeduID(uID)
-        this.$router.push(`/users/${(name).split(' ').join('_')}`)
+        this.navigateUser(uID, name)
+        
         this.searchQuery = ''
       }
       

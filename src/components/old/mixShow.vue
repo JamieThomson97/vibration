@@ -1,20 +1,21 @@
 <template>
-    <div class="userEventWrapper">
-        <div class='userEventsResults' v-for="event in clickedUser.Events" :key="event.name">
-            <v-card color="cyan darken-2" class="userEventCard" elevation='10'>
+    <div class="userShowWrapper">
+        
+        <div class='userShowsResults' v-for="Show in clickedUser.Shows" :key="Show.name">
+            <v-card color="cyan darken-2" class="userShowCard" elevation='10'>
                 <v-layout column="true">
                 <v-flex xs5>
                     <v-img 
-                    class = 'userEventImage'
+                    class = 'userShowImage'
                     
-                    :src='event.imageURL'
+                    :src='Show.imageURL'
                     height="125px"
                     contain
                     ></v-img>
                 </v-flex>
                 <v-card-title primary-title>
                     
-                        <div class='userEventInfo' @click='clickedProducer(item.uID , item.producer)'>{{event.name}}</div>
+                        <div class='userShowInfo' @click='clickedProducer(item.uID , item.producer)'>{{Show.name}}</div>
                     
                     </v-card-title>
                 
@@ -31,7 +32,7 @@ import {
     mapGetters
 } from 'vuex'
 
-import userMixin from '../mixins/userMixin'
+import selectedUserMixin from '../mixins/selectedUserMixin'
 
 export default {
     
@@ -40,7 +41,7 @@ props: [
     ],
 
       mixins: [
-    userMixin
+    selectedUserMixin
   ],
 
 computed: {
@@ -66,7 +67,7 @@ computed: {
 
 <style>
 
-.userEventWrapper{
+.userShowWrapper{
     display: grid;
     grid-gap: 1em;
     height:23vh;
@@ -74,20 +75,20 @@ computed: {
     grid-template-columns : 1fr;
 }
 
-.userEventsResults{
+.userShowsResults{
     margin-top: 5vh;
     margin-left: 2vh;
     display: inline-flex;
     flex-wrap: wrap;
 }
 
-.userEventCard{
+.userShowCard{
     width: 5vw;
     height: 11vh;
 }
 
 
-.userEventInfo{
+.userShowInfo{
     margin-top: 2px;
     text-align: center !important;
     color : white;

@@ -24,7 +24,7 @@ export default {
                     }
                 })
                 
-                this.$store.dispatch('actionSetClickedmID', mID) 
+                
                 this.$store.dispatch('getTrackData', mID)
                 database.collection('mixes').doc(mID).get().then(response => {
                     
@@ -51,10 +51,6 @@ export default {
                     this.$store.dispatch('actionSetLikers', likers)
                 })
             
-        },
-      
-        setClickedmID(mID){
-            this.$store.dispatch('actionSetClickedmID', mID)
         },
         
         handleClickTrack(trackData, trackID) {
