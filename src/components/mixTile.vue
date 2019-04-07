@@ -23,6 +23,7 @@
                                 >   
                                     <v-icon color="white" style='margin-top:25px;' @click="handleClickTrack(object, playerTracksReference)" x-large>play_circle_outline</v-icon>
                                     <v-icon v-if='deletable' class="material-icons" style='position:absolute; top:0;right:0;' @click="removeFromPlaylist(object.mID , collection)">clear</v-icon>
+                                    <v-icon v-if='mixDeletable' class="material-icons" style='position:absolute; top:0;right:0;' @click="deleteMix(object.mID)">clear</v-icon>
                                 </div>
                                 
 
@@ -127,6 +128,7 @@ export default {
         'playerTracksReference',
         'deletable',
         'collection',
+        'mixDeletable'
     ],
 
     data(){

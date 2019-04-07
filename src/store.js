@@ -138,12 +138,16 @@ export default new Vuex.Store({
     },
 
     deleteFromPlaylist(state, payload){
+      console.log('delete from playlist store')
+      console.log(payload)
       const index = state.customer.playlists[payload.playlist].indexOf(payload.mID)
       state.customer.playlists[payload.playlist].splice(index, 1);
     },
 
     addToPlaylist(state, payload) {
-      Vue.set(state.customer.playlists[payload.playlistName], payload.mix.mID, payload.mix)
+      console.log('add to playlist store')
+      console.log(payload)
+      state.customer.playlists[payload.playlistName].push(payload.mix)
     },
 
     createPlaylist(state, playlistName){
@@ -158,7 +162,8 @@ export default new Vuex.Store({
     },
 
     addToHistory(state, trackData) {
-      state.customer.playlists.History.push(trackData)
+      
+      state.customer.playlists.history.push(trackData)
     },
 
 
@@ -196,7 +201,7 @@ export default new Vuex.Store({
           name: payload.name,
           followingCount: 0,
           followerCount: 0,
-          prePlaylists: ['timeline' , 'listenLater' , 'history' , 'likes'],
+          prePlaylists: ['timeline' , 'Listen Later' , 'history' , 'likes'],
           createdPlaylists : [],
         }).then(() => {
             const indexUserFunction = firebase.functions().httpsCallable('indexUser')

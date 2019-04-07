@@ -74,6 +74,25 @@ export default {
         }
     },
 
+     created: function (){
+
+         console.log(this.object)
+
+
+        if(this.object.objectID){
+            console.log('this.object.objectID')
+            this.object['eID'] = this.object.objectID
+            console.log('after')
+            console.log(this.object)
+        }
+        // if(this.object.objectID){
+        //     console.log('this.object.objectID')
+        //     this.object['uID'] = this.object.objectID
+        // }
+        
+    },
+
+
     computed:{
         ...mapGetters({
             uID : 'uID',
@@ -95,6 +114,8 @@ export default {
             return this.customer.createdPlaylists.concat(['Listen Later'])
         },
     },
+
+    
 
 }
 </script>

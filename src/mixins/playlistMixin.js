@@ -35,48 +35,48 @@ export default {
             })
         },
 
-        addToPlaylist(mixData, mID, playlistNameArray){
+        // addToPlaylist(mixData, mID, playlistNameArray){
             
-            var mixDataPass = {
+        //     var mixDataPass = {
 
-                artworkURL : mixData.artworkURL,
-                likeCount : mixData.likeCount,
-                mID : mID,
-                producer : mixData.producer,
-                series : mixData.series,
-                audioURL : mixData.audioURL,
-                title : mixData.title,
-                uID : mixData.uID,
-                dateUploaded :  mixData.dateUploaded,
-                dateAdded : new Date()
+        //         artworkURL : mixData.artworkURL,
+        //         likeCount : mixData.likeCount,
+        //         mID : mID,
+        //         producer : mixData.producer,
+        //         series : mixData.series,
+        //         audioURL : mixData.audioURL,
+        //         title : mixData.title,
+        //         uID : mixData.uID,
+        //         dateUploaded :  mixData.dateUploaded,
+        //         dateAdded : new Date()
 
-            }
-                var playlistCreated = false
-                playlistNameArray.forEach(playlistName => {
-                    playlistCreated = false
-                    this.customer.createdPlaylists.forEach(pName => {
-                        if (pName === playlistName) {
-                        playlistCreated = true
-                    }
-                })
+        //     }
+        //         var playlistCreated = false
+        //         playlistNameArray.forEach(playlistName => {
+        //             playlistCreated = false
+        //             this.customer.createdPlaylists.forEach(pName => {
+        //                 if (pName === playlistName) {
+        //                 playlistCreated = true
+        //             }
+        //         })
 
-                database.collection('users').doc(this.uID).collection(playlistName).doc(mixDataPass.mID).set(mixDataPass).then(() => {
+        //         database.collection('users').doc(this.uID).collection(playlistName).doc(mixDataPass.mID).set(mixDataPass).then(() => {
                     
-                    this.$store.commit('addToPlaylist' , {mix : mixDataPass , playlistName : playlistName})
-                }).catch(error => {
-                    this.$noty.warning(error)
-                }).then(() => {
-                    if (!playlistCreated) {
-                        if(playlistName !== "Listen Later" | "Liked Mixes")
-                            this.createPlaylist(playlistName)
-                            this.$noty.success('Successfully added to Playlist : '+playlistName)
-                    }
-                } )
+        //             this.$store.commit('addToPlaylist' , {mix : mixDataPass , playlistName : playlistName})
+        //         }).catch(error => {
+        //             this.$noty.warning(error)
+        //         }).then(() => {
+        //             if (!playlistCreated) {
+        //                 if(playlistName !== "Listen Later" | "Liked Mixes")
+        //                     this.createPlaylist(playlistName)
+        //                     this.$noty.success('Successfully added to Playlist : '+playlistName)
+        //             }
+        //         } )
                
-            })
+        //     })
 
             
-        },
+        // },
 
         deletePlaylist(playlistName) {
             
@@ -103,7 +103,7 @@ export default {
 
         addToHistory(trackData) {
             trackData['dateAdded'] = new Date()
-            database.collection('users').doc(this.uID).collection('History').doc(trackData.mID).set(trackData).then(() => {
+            database.collection('users').doc(this.uID).collection('history').doc(trackData.mID).set(trackData).then(() => {
                 this.$store.commit('addToHistory', trackData)
             })
         },

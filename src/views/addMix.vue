@@ -264,7 +264,7 @@ export default {
             return Promise.all(storagePromises).then((storagePromisesResponse) => {
               mixData['audioURL'] = storagePromisesResponse[0]
               mixData['artworkURL'] = storagePromisesResponse[1]
-              console.log('in promise')
+              
               if(isShow){
                 if(isXCreated){
                   console.log('in created')
@@ -288,7 +288,8 @@ export default {
                   mixPromises.push(database.collection('events').add(eventData))
                 }
               }
-
+              console.log('mixPLAYlists')
+              mixPromises.push(database.collection('mixPlaylists').doc(NmID).set({ dateUploaded : new Date() ,  uIDs : { } }))
               mixPromises.push(database.collection('mixes').doc(NmID).update({
                 audioURL : storagePromisesResponse[0],
                 artworkURL : storagePromisesResponse[1],
@@ -305,26 +306,38 @@ export default {
                 const indexFunction = firebase.functions().httpsCallable('indexMix')
                 
                 mixPromises.push(indexFunction({ mixData : mixData , NmID : NmID }))
+                producers.forEach(producer=> {
+                    console.log('this is new')
+                    mixPromises.push(database.collection('mixPlaylists').doc(NmID).set(
+                      { uIDs : { [producer.uID] : ['mixes'] } }
+
+                      ,{
+                        merge : true
+                      })
+                    )
+                })
                 console.log(mixPromises.length)
                 return Promise.all(mixPromises)
                 
               }).then((mixPromisesResponses) => {
+                var finalPromises = []
+                const newID = mixPromisesResponses[0].id
                 console.log(mixPromisesResponses.length)
-                if(!isXCreated){
-                  const newID = mixPromisesResponses[0].id
-                  var finalPromises = []
+                
+                if(!isXCreated){  
                   if(isShow){
                     const indexShowFunction = firebase.functions().httpsCallable('indexShow')
                     finalPromises.push(indexShowFunction({ showData : showData , eID : newID }))
                     producers.forEach(producer=> {
+                      
                       finalPromises.push(database.collection("users").doc(producer.uID).collection('shows').doc(newID).set(showData))
                       finalPromises.push(database.collection("users").doc(producer.uID).collection('shows').doc(newID).collection('mixes').doc(NmID).set(mixData))
                     })
                     finalPromises.push(database.collection('shows').doc(newID).collection('mixes').doc(NmID).set(mixData))
+                    
                     console.log(finalPromises.length)
-                    return Promise.all(finalPromises)
-                  }
-                  if(isEvent){
+                    
+                  }else if(isEvent){
                     const indexEventFunction = firebase.functions().httpsCallable('indexEvent')
                     finalPromises.push(indexEventFunction({ eventData : eventData , eID : newID }))
                     
@@ -333,9 +346,10 @@ export default {
                       finalPromises.push(database.collection("users").doc(producer.uID).collection('events').doc(newID).collection('mixes').doc(NmID).set(mixData))
                     })
                     finalPromises.push(database.collection('events').doc(newID).collection('mixes').doc(NmID).set(mixData))
-                    return Promise.all(finalPromises)
+                    
                   }
-                }
+                }                
+                return Promise.all(finalPromises)
               }).catch(error => {
                 console.log(error)
                 this.$noty.error(error)

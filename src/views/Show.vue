@@ -17,8 +17,8 @@
                                 style="height: 100%;opacity: .4;"
                             >
                             <div class="updateText">
-                                Update Profile Picture            
-                                <input type='file' @change='changeProfilePicture' accept="image/png, image/jpeg" placeholder="Upload" class="btn">
+                                Update Profile Picture   <br />           
+                                <input type='file' @change='changeProfilePicture' style="width:100%; height:100%;" accept="image/png, image/jpeg" placeholder="Upload" class="btn">
                             </div>
                             </div>
                         </v-expand-transition></v-img>
@@ -37,7 +37,7 @@
                     </div>
                     <div @click='trueFollowing = true' class="userPatronCount">
                         
-                        {{selectedShow.mixCount}}
+                        {{selectedShow.mixes.length}}
                         
                     </div>
                 </div>

@@ -19,7 +19,7 @@
     <div class="outline history">
       <div class='header'>History</div>
       <div class="historyTiles homeTiles" v-if='customer.playlists.history.length > 0'>
-        <mixTile v-for='mix in customer.playlists.history' :key='mix.mID' :object='mix' deletable='1' collection='History' playerTracksReference='customer.playlists.timeline'> </mixTile>
+        <mixTile v-for='mix in customer.playlists.history' :key='mix.mID' :object='mix' deletable='1' collection='history' playerTracksReference='customer.playlists.timeline'> </mixTile>
       </div>
       <div v-else>
           Mixes you have listened to will appear here
@@ -28,7 +28,7 @@
     <div class="outline listenLater">
       <div class='header'>Listen Later</div>
       <div class="listenLaterTiles homeTiles" v-if='customer.playlists.listenLater.length > 0'>
-        <mixTile v-for='mix in customer.playlists.listenLater' :key='mix.mID' deletable='1' collection='ListenLater' :object='mix' playerTracksReference='customer.playlists.timeline'> </mixTile>
+        <mixTile v-for='mix in customer.playlists.listenLater' :key='mix.mID' deletable='1' collection='listenLater' :object='mix' playerTracksReference='customer.playlists.timeline'> </mixTile>
       </div>
        <div v-else>
           Here is a quick access playlist for easily recording mixes you want to listen to later
@@ -155,7 +155,7 @@ export default {
               name: 'timeline'
             })  
     })
-    
+    console.log(this.allPlaylists)
     this.allPlaylists.forEach(component => {
       if(component !== 'timeline'){
         console.log(component)

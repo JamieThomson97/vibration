@@ -158,19 +158,7 @@ export default {
 
     methods: {
 
-        deleteMix(ID){
-            
-            var deleteMix = firebase.functions().httpsCallable('deleteMix' , {mID : ID , uID : this.uID})
-            var deleteFromPlaylists = firebase.functions().httpsCallable('deleteFromPlaylists' , {mID : ID})
-            var promises = [deleteMix , deleteFromPlaylists]
-            Promise.all(promises).then(() => {
-                //Delete Locally
-                this.$store.dispatch('actionDeleteMix', {'pName' : this.pagePart , 'mID' : ID} )
-            }).catch((error) => {
-                this.$noty.warning(error)
-            })
-        },
-
+    
         newPlaylist(){
             this.newPlaylistField = !this.newPlaylistField
             this.playlistChoice = null

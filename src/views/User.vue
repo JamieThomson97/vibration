@@ -32,12 +32,12 @@
                         <div class='header' >Producer's Mixes</div>
                         <div class='userMixSearch'>
                             <v-fade-transition>
-                                <v-text-field v-if='hover' height='50%' v-model='mixSearch' class='userMixSearchbox' box clearable type="text" v-on:keyup.enter="s"  placeholder="Search"></v-text-field>
+                                <v-text-field v-if='' height='50%' v-model='mixSearch' class='userMixSearchbox' box clearable type="text" v-on:keyup.enter="s"  placeholder="Search"></v-text-field>
                             </v-fade-transition>
                         </div>
                     </div>
                     <div class="mixTiles">
-                        <mixTile v-for='mix in filteredMixes.slice(0,20)' :key='mix.mID' :object='mix' playerTracksReference='show.mixes'> </mixTile>
+                        <mixTile v-for='mix in filteredMixes.slice(0,20)' :mixDeletable='isUser' collection='mixes' :key='mix.mID' :object='mix' playerTracksReference='show.mixes'> </mixTile>
                     </div>
                </div>
             </v-hover>
@@ -150,7 +150,16 @@ import {
 
 export default {
 
-
+    props: {
+        mixDeletable: {
+        type: String,
+        required: false,
+        },
+        collection: {
+        type: String,
+        required: false,
+        },
+    },
 
     mounted: function() {
     
