@@ -1,8 +1,10 @@
 import Vue from 'vue';
 import Vuex from 'vuex';
 
-import selectedUser from './modules/selectedUser';
 import selectedMix from './modules/selectedMix';
+import selectedUser from './modules/selectedUser';
+import selectedEvent from './modules/selectedEvent';
+import selectedShow from './modules/selectedShow';
 import player from './modules/player';
 
 
@@ -12,7 +14,9 @@ export default new Vuex.Store({
   modules: {
     
     player,
+    selectedShow,
     selectedMix,
     selectedUser,
+    selectedEvent
   },
 });

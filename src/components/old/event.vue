@@ -1,7 +1,7 @@
 <template>
     <div class="userEventWrapper">
         <div class="header eventsHeader" style='width:100%;'>Events</div>
-        <div class='userEventsResults' v-for="event in clickedUser.Events" :key="event.name">
+        <div class='userEventsResults' v-for="event in selectedUser.Events" :key="event.name">
             <v-card color="cyan darken-2" class="userEventCard" elevation='10'>
                 <v-layout column="true">
                 <v-flex xs5>
@@ -50,7 +50,7 @@ computed: {
             uID : 'uID',
             name : 'name',
             clickeduID : 'clickeduID',
-            clickedUser : 'clickedUser',
+            selectedUser : 'selectedUser',
             doesFollow: 'doesFollow',
             customer : 'customer',
         }),

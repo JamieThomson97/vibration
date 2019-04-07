@@ -14,12 +14,9 @@ export default {
   },
 
   GET_USER_PROFILE_SUCCESS: (state, data) => {
-      
-    data['playlists'] = {}
-    data['Events'] = {}
-    data['Shows'] = {}
-    // state.getClickedProfileLoading = false;
-    state.selectedUser = data
+    Object.keys(data).forEach(key => {
+      Vue.set(state, key, data[key])
+    })
   },
 
   GET_USER_FOLLOWINGS_SUCCESS: (state, data) => {
@@ -44,32 +41,40 @@ export default {
   },
 
   setSelecteduID : (state , uID) => {
-    Vue.set(state.selectedUser, 'uID', uID)
+    Vue.set(state, 'uID', uID)
     console.log('set')
   },
 
   setevents(state, value){
-    Vue.set(state.selectedUser  , 'Events' , value)
+    Vue.set(state , 'Events' , value)
   },
 
   setshows(state, value){
-    Vue.set(state.selectedUser , 'Shows'  , value)
+    Vue.set(state , 'Shows'  , value)
   },
 
   setClickedPlaylist(state, payload) {
-    Vue.set(state.selectedUser.playlists , 'mixes' , payload.object)
+    const playlists = {
+      mixes : payload.object
+    }
+    Vue.set(state , 'playlists' , playlists)
     
   },
 
   setFollowX: (state, payload) => {
       
-    Vue.set(state.selectedUser, payload.follX , payload.response)
+    Vue.set(state , payload.follX , payload.response)
   },
 
-  doesFollow(state, bool) {
-    Vue.set(state.selectedUser, 'doesFollow', bool)
+  doesFollow(state, payload) {
+    Vue.set(state , 'doesFollow', payload)
   
   },
   
+  setFollowCounts(state, payload){
+    Vue.set(state , 'followerCount', payload.followerCount)
+    Vue.set(state , 'followingCount', payload.followingCount)
+  }
+
 };
 

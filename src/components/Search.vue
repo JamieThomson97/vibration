@@ -7,7 +7,7 @@
         index-name="test_mixes"
       >
       <ais-search-box placeholder="Search here…" style='display: none;' v-if='searchQuery' v-model='searchQuery' class="searchbox" />
-      <div class="header" style='padding-left:15px;'>Mixes{{showSearch}} <v-icon >
+      <div class="header" style='padding-left:15px;'>Mixes<v-icon >
           expand_more
           </v-icon></div>
           <ais-hits > 
@@ -166,7 +166,7 @@ export default {
             uID : 'uID',
             name : 'name',
             clickeduID : 'clickeduID',
-            clickedUser : 'clickedUser',
+            selectedUser : 'selectedUser',
             customer: 'customer',
             searchQuery: 'searchQuery',
             showSearch : 'showSearch'

@@ -7,7 +7,7 @@
                 <v-flex xs5>
                     <v-img 
                     class = 'mixTileImage'
-                    @click='navigateUser(object.id, object.name)'
+                    @click='navigateUser(object.uID, object.name)'
                     :src="object.profileURL"
                     height="125px"
                     containzout
@@ -27,9 +27,9 @@
                 :class="`${hover? 'mixTileInfoHover': 'mixTileInfo'}`"
                 primary-title
                 >
-                    <div class='mixTileProducer' @click='navigateUser(object.id, object.name)'>{{object.name}}</div>
-                    <div class='mixTileProducer' v-if='object.foldslowerCount' @click='navigateUser(object.id, object.name)'> Followers {{object.followerCount}}</div>
-                    <div class='mixTileProducer' v-if='object.follodswingCount' @click='navigateUser(object.id, object.name)'> Following {{object.followingCount}}</div>
+                    <div class='mixTileProducer' @click='navigateUser(object.uID, object.name)'>{{object.name}}</div>
+                    <div class='mixTileProducer' v-if='object.foldslowerCount' @click='navigateUser(object.uID, object.name)'> Followers {{object.followerCount}}</div>
+                    <div class='mixTileProducer' v-if='object.follodswingCount' @click='navigateUser(object.uID, object.name)'> Following {{object.followingCount}}</div>
                     </v-card-title>
                 
                 </v-layout>
@@ -127,9 +127,13 @@ export default {
 
     created: function (){
 
+        if(this.object.id){
+            console.log('this.object.objectID')
+            this.object['uID'] = this.object.id
+        }
         if(this.object.objectID){
-            
-            this.object['id'] = this.object.objectID
+            console.log('this.object.objectID')
+            this.object['uID'] = this.object.objectID
         }
         
     },

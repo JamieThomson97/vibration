@@ -1,29 +1,43 @@
 <template>
     
-<div class='showWrapper' v-if='show'>
-    <div class="showArtwork">
-            
-             <v-img 
-                max-width='100%'
-                max-height='100%'
-                contain
-                :src="show.imageURL"
-                ></v-img>
-            
-    </div>
+<div class='showWrapper' v-if='selectedShow.producers'>
+    <v-hover> 
+        <div class="showArtwork" slot-scope="{ hover }">
+                
+                <v-img 
+                    max-width='100%'
+                    max-height='100%'
+                    contain
+                    :src="selectedShow.imageURL"
+                    >
+                    <v-expand-transition>
+                            <div
+                                v-if="hover"
+                                class="d-flex transition-fast-in-fast-out cyan darken-2 v-card--reveal display-3 white--text"
+                                style="height: 100%;opacity: .4;"
+                            >
+                            <div class="updateText">
+                                Update Profile Picture            
+                                <input type='file' @change='changeProfilePicture' accept="image/png, image/jpeg" placeholder="Upload" class="btn">
+                            </div>
+                            </div>
+                        </v-expand-transition></v-img>
+                
+        </div>
+    </v-hover> 
     <div class="showInfo">
 
-        <div class='header'>{{show.name}} </div><br/>
+        <div class='header'>{{selectedShow.name}} </div><br/>
         <div class="userFollowNumbers">
-                <!-- <v-btn v-if='!doesFollow & (uID !== clickeduID)' @click='follow(clickedUser.name ,uID , name, true)'>Follow</v-btn> -->
-                <!-- <v-btn v-if='doesFollow & (uID !== clickeduID)' @click='follow(clickedUser.name ,uID , name, false)'>Un-Follow</v-btn> -->
+                <!-- <v-btn v-if='!doesFollow & (uID !== clickeduID)' @click='follow(selectedUser.name ,uID , name, true)'>Follow</v-btn> -->
+                <!-- <v-btn v-if='doesFollow & (uID !== clickeduID)' @click='follow(selectedUser.name ,uID , name, false)'>Un-Follow</v-btn> -->
                 <div class='userFollowingCount'>
                     <div class="userPatronHeader">
                         Number of episodes
                     </div>
                     <div @click='trueFollowing = true' class="userPatronCount">
                         
-                        {{show.episodeCount}}
+                        {{selectedShow.mixCount}}
                         
                     </div>
                 </div>
@@ -34,37 +48,37 @@
                     <div class="userPatronCount">
                         
                         
-                        {{show.playCount}}
+                        {{selectedShow.playCount}}
                                                 
                     </div>
                     
                 </div>
             </div>
         <div class="showDesc">
-            {{show.description}}    
+            {{selectedShow.description}}    
         </div>        
     </div>
    
     <div class="showStream">
         <div class='header'>Other episodes</div>
         <div class="episodeTiles">
-            <mixTile v-for='mix in show.mixes' :key='mix.mID' :object='mix' playerTracksReference='show.mixes'> </mixTile>
+            <mixTile v-for='mix in selectedShow.mixes' :key='mix.mID' :object='mix' playerTracksReference='show.mixes'> </mixTile>
         </div>
         
     </div>
 
     <div class="showArtists">
-        <div class='header'>Artists</div>
+        <div class='header'>Producers</div>
         <div class='showProducersCards'>
-            <producerTile v-for="artist in show.artists" :key="artist.uID" :object='artist'></producerTile>
+            <producerTile v-for="artist in selectedShow.producers" :key="artist.uID" :object='artist'></producerTile>
              
         </div>
     </div>
     <div class="artistSuggestions">
-        <div v-if='show.artists.length > 1' class='header'>Mixes from this artist</div>
-        <div v-else class='header'>Mixes from these artists</div>
+        <div v-if='selectedShow.producers.length > 1' class='header'>Mixes from this artist</div>
+        <div v-else class='header'>Mixes from these producers</div>
         <div class="suggestionTiles">
-            <mixTile v-for='mix in show.suggestedMixes' :key='mix.mID' :object='mix' playerTracksReference='show.suggestedMixes'> </mixTile>
+            <mixTile v-for='mix in selectedShow.suggestedMixes' :key='mix.mID' :object='mix' playerTracksReference='show.suggestedMixes'> </mixTile>
         </div>
         
     </div>
@@ -110,29 +124,32 @@ export default {
   },
 
     mounted() {
-        const { params: { sID } } = this.$route;
-        console.log(sID.length)
-        if(!(sID.length === 20)){
-            const storage = JSON.parse(localStorage.getItem('vuex'))
-            if(storage.clickedsID){
-                console.log(storage.clickedsID)
-                this.getShowPageData(storage.clickedsID)
-            }
-        }else{
-            this.getShowPageData(sID)
-        }
+        
+        this.getShowPageData(this.selectedShow.sID)
+        
     },
 
     data(){
         return{
-            options : { weekday: 'long', year: 'numeric', month: 'long', day: 'numeric' }
+            options : { weekday: 'long', year: 'numeric', month: 'long', day: 'numeric' },
+            newProfilePicture : null,
         }       
     },
 
     methods: {
         pushtoUser(name, uID){
             this.navigateUser(uID, name)
-        }
+        },
+        changeProfilePicture(e){
+        
+          if(e.target.files[0].type == 'image/jpeg' | e.target.files[0].type == 'image/png'){
+            
+            this.newProfilePicture = e.target.files[0]
+            this.updateShowImage(this.selectedShow.dID , this.newProfilePicture)
+          }else{
+          this.$noty.error("please upload an image")
+          }
+      },
     },
 
     computed: {
@@ -141,19 +158,14 @@ export default {
             uID : 'uID',
             name : 'name',
             clickeduID : 'clickeduID',
-            clickedUser: 'clickedUser',
-            clickedMixID : 'clickedMixID',
+            selectedUser: 'selectedUser',
+            selectedMix : 'selectedMix',
             trackData : 'trackData',
             event : 'event' ,
             show : 'show' ,
+            selectedShow: 'selectedShow'
         }),
 
-        startDate(){
-            return new Date(this.event.startDate.seconds * 1000).toLocaleDateString('en-UK', this.options)
-        },
-        endDate(){
-            return new Date(this.event.endDate.seconds * 1000).toLocaleDateString('en-UK', this.options)
-        }
     },
 
     watch:{
@@ -276,7 +288,7 @@ export default {
         width: 100%;
         padding-left: 15px;
         flex-wrap: wrap;
-        grid-gap: 1rem;
+        grid-gap: 1.5rem;
     }
 
     .dateHeader{

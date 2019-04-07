@@ -6,6 +6,9 @@ import router from './router'
 import player from './store/modules/player';
 import selectedUser from './store/modules/selectedUser';
 import selectedMix from './store/modules/selectedMix';
+import selectedEvent from './store/modules/selectedEvent';
+import selectedShow from './store/modules/selectedShow';
+
 const database = firebase.firestore()
 
 Vue.use(Vuex)
@@ -14,7 +17,7 @@ const vuexLocal = new VuexPersistence({
   storage: window.localStorage,
   reducer: (state) => ({
     customer: state.customer,
-    clickedMixID: state.clickedmID,
+    // selectedMix.mID: state.clickedmID,
     clickeduID : state.clickeduID,
     clickedeID : state.clickedeID,
     clickedsID : state.clickedsID,
@@ -31,6 +34,8 @@ export default new Vuex.Store({
   modules: {
     player,
     selectedUser,
+    selectedEvent,
+    selectedShow,
     selectedMix,
   },
 
@@ -77,15 +82,6 @@ export default new Vuex.Store({
     setSearchQuery(state, query){
       Vue.set(state , 'searchQuery' , query)
     },
-
-    
-    setClickedeID(state, payload) {
-      Vue.set(state, 'clickedeID' , payload)
-    },
-    setClickedsID(state, payload) {
-      Vue.set(state, 'clickedsID' , payload)
-    },
-  
 
     setuID(state, payload) {  
       state.clickedMix.uID = payload
@@ -158,35 +154,16 @@ export default new Vuex.Store({
     
 
     deleteMix(state, payload) {
-      Vue.delete(state.clickedUser.playlists[payload.pName], payload.mID)      
+      Vue.delete(state.selectedUser.playlists[payload.pName], payload.mID)      
     },
 
     addToHistory(state, trackData) {
       state.customer.playlists.History.push(trackData)
     },
 
-    setTrackData(state, trackData) {
-      Vue.set(state, 'trackData', trackData)
-    },
-    
-    setLikers(state, likers){
-      Vue.set(state.trackData, 'likers', likers)
-    },
 
-    setEventData(state, eventData) {      
-      Vue.set(state, 'event' , eventData)
-    },
-    setEventMixes(state, mixes){
-      Vue.set(state.event, 'mixes', mixes )
-    },
-    setShowData(state, ShowData) {      
-      Vue.set(state, 'Show' , ShowData)
-    },
-    setShowMixes(state, mixes){
-      Vue.set(state.Show, 'mixes', mixes )
-    },
-    setSuggestedShowMixes(state, mixes){
-      Vue.set(state.Show, 'suggestedMixes', mixes )
+    setuIDWatcher(state, uID){
+      Vue.set(state , 'uIDWatcher', uID )
     },
   },
 
@@ -232,13 +209,7 @@ export default new Vuex.Store({
     actionSetClickeduID({ commit }, payload) {
       commit('setClickeduID' , payload)
     },
-    
-    actionSetClickedeID({ commit }, payload) {
-      commit('setClickedeID' , payload)
-    },
-    actionSetClickedsID({ commit }, payload) {
-      commit('setClickedsID' , payload)
-    },
+
 
     signUserIn({// eslint-disable-next-line
       commit
@@ -280,27 +251,28 @@ export default new Vuex.Store({
         })
     },
 
-    getTrackData({ commit }, mID) {
-      
-      database.collection('mixes').doc(mID).get().then(response => {
-        
-        commit('setTrackData', response.data())
-      })
-    },
 
-    getEventDetails({ commit }, eID) {
-      database.collection('events').doc(eID).get().then(response => {
-        const eventData = response.data()
-        eventData['eID'] = response.id
-        commit('setEventData', eventData)
+    getShowDetails({ commit }, showName) {
+      var mixes = []
+      database.collection('shows').where('name' , '==' , showName).get().then(response => {
+        const eventData = response.docs[0].data()
+        eventData['sID'] = response.docs[0].id
+        return eventData
+      }).then((response)=> {
+        database.collection('shows').doc(response.sID).collection('mixes').get().then(mixDocs =>{
+          mixDocs.forEach(mixDoc => {
+            mixes.push(mixDoc.data())
+          })
+          response['mixes'] = mixes
+          console.log('response')
+          console.log(response)
+          return response
+        }).then(response => {
+          commit('setShowData', response)
+        })
       })
-    },
-    getShowDetails({ commit }, sID) {
-      database.collection('shows').doc(sID).get().then(response => {
-        const eventData = response.data()
-        eventData['sID'] = response.id
-        commit('setShowData', eventData)
-      })
+      
+
     },
 
     actionDeleteMix({commit}, payload){
@@ -354,6 +326,9 @@ export default new Vuex.Store({
       return state.selectedUser.doesFollow
     },
 
+    uIDWatcher(state){
+      return state.uIDWatcher
+    },
 
     clickeduID(state) {
       return state.clickeduID
@@ -420,9 +395,6 @@ export default new Vuex.Store({
     },
     showSearch(state){
       return state.showSearch
-    },
-    clickedMixID(state){
-      return state.clickedmID
     },
     trackData(state){
       return state.trackData

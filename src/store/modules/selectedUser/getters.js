@@ -1,3 +1,3 @@
 export default {
-  selectedUser : state => state.selectedUser,
+  selectedUser : state => state,
 };

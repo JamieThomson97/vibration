@@ -55,10 +55,10 @@ export default {
             
             title : '1',
             show : '',
-            event: 'Glastonbury : ',
+            event: '',
             showBool : true,
             eventBool: false,
-            firstProducers: ['Perfect User'],
+            firstProducers: [],
             audio : null,
             artwork : null,
             numberProducers : 1,
@@ -66,14 +66,21 @@ export default {
         }
     },
 
+    mounted: function(){
+      this.firstProducers.push(this.customer.name)
+    },
+
     computed: {
 
-        ...mapGetters([
-            'uID',
-            'name',
-            'profileURL',
-            // ...
-        ]),
+        ...mapGetters({
+            profileURL : 'profileURL',
+            uID : 'uID',
+            name : 'name',
+            selectedUser : 'selectedUser',
+            doesFollow: 'doesFollow',
+            customer : 'customer',
+            uIDWatcher : 'uIDWatcher' 
+        }),
         
 
       },
@@ -92,9 +99,8 @@ export default {
     methods: {
 
       storeFile(e){
-        
-          if(e.target.files[0].type == 'audio/mpeg'){
-           
+          console.log(e.target.files[0].type)
+          if(e.target.files[0].type == 'audio/mpeg' | e.target.files[0].type == 'audio/mp4'){
             this.audio = e.target.files[0]
           }else if(e.target.files[0].type == 'image/jpeg' | e.target.files[0].type == 'image/png'){
             

@@ -26,7 +26,7 @@ export default {
       if (foll == 'followers') {
         for (var a in response.data) {
           if (response.data[a].id == customeruID) {
-            context.commit('doesFollow' , true)
+            context.commit('doesFollow' , { does : true , index : a})
           }
         }
       }

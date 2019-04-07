@@ -1,6 +1,6 @@
 
-// import * as firebase from 'firebase'
-// const database = firebase.firestore()
+import * as firebase from 'firebase'
+const database = firebase.firestore()
 
 export default {
 
@@ -42,6 +42,13 @@ export default {
 
   actionSetSelectedmID({ commit }, payload) {
     commit('setSelectedmID' , payload)
+  },
+
+  getTrackData({ commit }, mID) {
+      
+    database.collection('mixes').doc(mID).get().then(response => {
+      commit('setTrackData', response.data())
+    })
   },
 
 };

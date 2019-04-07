@@ -10,7 +10,7 @@ export default {
         uID : 'uID',
         name : 'name',
         clickeduID : 'clickeduID',
-        clickedUser : 'clickedUser',
+        selectedUser : 'selectedUser',
         customer: 'customer',
     }),
 
@@ -176,13 +176,16 @@ export default {
     },
 
     getTimeline(){
+      console.log('getTimeline')
 
       var mixesArray = []
       return new Promise(resolve => {
         database.collection('users').doc(this.uID).collection('timeline').orderBy('dateUploaded', 'asc').limit(12).get().then(response => {
           var mixes = response.docs
           mixes.forEach(mix => {
+            
             var mixInfo = mix.data()
+            console.log(mixInfo)
             mixInfo['mID'] = mix.id
             mixesArray.push(mixInfo)
           })

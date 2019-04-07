@@ -1,7 +1,7 @@
 <template>
     <div class="userShowWrapper">
         
-        <div class='userShowsResults' v-for="Show in clickedUser.Shows" :key="Show.name">
+        <div class='userShowsResults' v-for="Show in selectedUser.Shows" :key="Show.name">
             <v-card color="cyan darken-2" class="userShowCard" elevation='10'>
                 <v-layout column="true">
                 <v-flex xs5>
@@ -50,7 +50,7 @@ computed: {
             uID : 'uID',
             name : 'name',
             clickeduID : 'clickeduID',
-            clickedUser : 'clickedUser',
+            selectedUser : 'selectedUser',
             doesFollow: 'doesFollow',
             customer : 'customer',
         }),

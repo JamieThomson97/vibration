@@ -1,28 +1,38 @@
 <template>
 
-  <div class="homeWrapper">
+  <div class="homeWrapper" v-if='customer.playlists.history'>
     <div class='searchBox'>
       <v-text-field v-model='searchQuery'  box clearable type="text" v-on:keyup.enter="s"  placeholder="Search"></v-text-field>
     </div>
     <div class="outline timeline">
       <div>
         <div class='header'>Timeline</div>
-        <div class="timelineTiles homeTiles">
+        <div class="timelineTiles homeTiles" v-if='customer.playlists.timeline.length > 0'>
             <mixTile v-for='mix in customer.playlists.timeline' :key='mix.mID' :object='mix' playerTracksReference='customer.playlists.timeline'> </mixTile>
+        </div>
+        <div v-else>
+          {{customer.playlists.timeline.length }}
+          Follow some producers to see mixes in your timeline
         </div>
       </div>
     </div>
     <div class="outline history">
       <div class='header'>History</div>
-      <div class="historyTiles homeTiles">
-        <mixTile v-for='mix in customer.playlists.History' :key='mix.mID' :object='mix' deletable='1' collection='History' playerTracksReference='customer.playlists.timeline'> </mixTile>
-      </div>     
+      <div class="historyTiles homeTiles" v-if='customer.playlists.history.length > 0'>
+        <mixTile v-for='mix in customer.playlists.history' :key='mix.mID' :object='mix' deletable='1' collection='History' playerTracksReference='customer.playlists.timeline'> </mixTile>
+      </div>
+      <div v-else>
+          Mixes you have listened to will appear here
+        </div>     
     </div>
     <div class="outline listenLater">
       <div class='header'>Listen Later</div>
-      <div class="listenLaterTiles homeTiles">
+      <div class="listenLaterTiles homeTiles" v-if='customer.playlists.listenLater.length > 0'>
         <mixTile v-for='mix in customer.playlists.listenLater' :key='mix.mID' deletable='1' collection='ListenLater' :object='mix' playerTracksReference='customer.playlists.timeline'> </mixTile>
-      </div>       
+      </div>
+       <div v-else>
+          Here is a quick access playlist for easily recording mixes you want to listen to later
+        </div>         
     </div>
     <div class="outline homePlaylists">
       <div>
@@ -134,7 +144,7 @@ export default {
             
     },
 
-  created: function () {
+  mounted: function () {
     //Fetch timeline 
     const timeline = this.getTimeline()
 
@@ -147,14 +157,18 @@ export default {
     })
     
     this.allPlaylists.forEach(component => {
-      var mixes = this.getPlaylist(component , 4) //for is limit for db return 
-      mixes.then(response => {
-          //Dispatch to save in state
-          this.$store.commit("setPlaylist", {
-                    object: response,
-                    name: component
-                  })  
-          })
+      if(component !== 'timeline'){
+        console.log(component)
+
+        var mixes = this.getPlaylist(component , 4) //for is limit for db return 
+        mixes.then(response => {
+            //Dispatch to save in state
+            this.$store.commit("setPlaylist", {
+                      object: response,
+                      name: component
+                    })  
+            })
+      }
       })
 
       this.mixesHistory = this.customer.playlists.History

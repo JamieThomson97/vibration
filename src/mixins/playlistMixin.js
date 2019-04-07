@@ -15,7 +15,7 @@ export default {
             uID : 'uID',
             name : 'name',
             clickeduID : 'clickeduID',
-            clickedUser : 'clickedUser',
+            selectedUser : 'selectedUser',
             customer: 'customer',
         }),
     

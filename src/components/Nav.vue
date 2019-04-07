@@ -3,9 +3,9 @@
       <v-navigation-drawer permanent drawer="true" right app :temporary="hover && mini" slot-scope="{ hover }" :mini-variant="mini && !hover">
         <v-toolbar flat class="transparent">
             <v-list>
-                <v-list-tile @click='clickID()' :to="`/users/${(name).split(' ').join('_')}`" avatar v-if="uID">
+                <v-list-tile @click='navigateUser(customer.uID, customer.name)' :to="`/users/${(name).split(' ').join('_')}`" avatar v-if="uID">
                     <v-list-tile-avatar>
-                        <img :src=profileURL>
+                        <img :src='customer.profileURL'>
                     </v-list-tile-avatar>
 
                     <v-list-tile-content>
@@ -56,7 +56,7 @@
 <script>
 
 
-
+import tileMixin from '../mixins/tileMixin'
 import { mapGetters } from 'vuex'
 import selectedUserMixin from '../mixins/selectedUserMixin'
 
@@ -76,6 +76,7 @@ export default {
     },
 
  mixins: [
+    tileMixin,
     selectedUserMixin,
   ],
 
@@ -85,6 +86,7 @@ export default {
             'uID',
             'name',
             'profileURL',
+            'customer'
             // ...
         ]),
 
@@ -99,7 +101,7 @@ export default {
         },
 
         clickID(){
-            this.navigateUsers(this.uID)
+            this.navigateUser(this.customer.uID , this.customer.name)
         },
     },
 

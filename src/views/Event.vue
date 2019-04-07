@@ -1,18 +1,18 @@
 <template>
     
 <div class='eventWrapper'>
-    <div class="eventImage">
+    <div class="eventImage" vi>
             
              <v-img 
                 width='100%'
                 height='100%'
-                :src="event.imageURL"
+                :src="selectedEvent.imageURL"
                 ></v-img>
             
     </div>
     <div class="eventInfo">
-        <div class='header'>{{event.name}} </div><br/> 
-        <div class="dateHeader">{{startDate}} - {{endDate}} <br/></div>
+        <!-- <div class='header'>{{selectedEvent.name}} </div><br/> 
+        <div class="dateHeader">{{startDate}} - {{endDate}} <br/></div> -->
         <div class="dateHeader"> Knebworth Fields <br/></div>
         
     </div>
@@ -27,7 +27,7 @@
                 </div>
             </div>
             <div class="eventsGrid">
-                <mixTile v-for='mix in event.mixes' :object='mix' playerTracksReference='clickedUser.artists' :key='mix.mID'></mixTile>
+                <mixTile v-for='mix in fitleredMixes' :object='mix' playerTracksReference='selectedUser.artists' :key='mix.mID'></mixTile>
             </div>
         </div>
     </v-hover> 
@@ -35,8 +35,8 @@
     <div class="eventArtists" slot-scope="{hover }">
         
         <div class='eventProducersCards'>
-            <div class="headerandSearch">
-                <div class='header' >Artist</div>
+            <div class="headerandSearch" style='min-height:100px;'>
+                <div class='header' >Producers</div>
                 <div class='userMixSearch'>
                     <v-fade-transition>
                         <v-text-field v-if='hover' height='50%' color='red' v-model='artistSearch' class='eventMixSearchbox' box clearable type="text"  placeholder="Search"></v-text-field>
@@ -44,14 +44,16 @@
                 </div>
             </div>
             <div class="eventsGrid">
-                <producerTile v-for='artist in filteredArtists' :object='artist' playerTracksReference='clickedUser.artists' :key='artist.uID'></producerTile>
+                <producerTile v-for='artist in filteredArtists' :object='artist' playerTracksReference='selectedUser.artists' :key='artist.uID'></producerTile>
             </div>
         </div>
     </div>
     </v-hover>
         
 </div>
-
+<!-- <div class="temp">
+    temp
+</div> -->
 
 </template>
 
@@ -78,15 +80,16 @@ export default {
   ],
 
     mounted() {
-    // const { params: { eID } } = this.$route;
-    const eID = 'TtjuzgP8TTY9JIFQEG3Y'
-    this.$store.dispatch('getEventDetails', eID).then(() => {
-    var mixes = this.getEventMixes('TtjuzgP8TTY9JIFQEG3Y') 
-        mixes.then(response => {
-          //Dispatch to save in state
-          this.$store.commit("setEventMixes", response)  
-          })
-    })
+        
+        const eID = this.selectedEvent.eID
+        console.log(eID)
+        this.$store.dispatch('getEventDetailsID', eID).then(() => {
+        var mixes = this.getEventMixes(eID) 
+            mixes.then(response => {
+            //Dispatch to save in state
+            this.$store.commit("setEventMixes", response)  
+            })
+        })
     },
 
     data(){
@@ -99,7 +102,7 @@ export default {
 
     methods: {
         pushtoUser(name, uID){
-            this.navigateUser(uID)
+            this.navigateUser(uID , name)
         }
     },
 
@@ -109,27 +112,52 @@ export default {
             uID : 'uID',
             name : 'name',
             clickeduID : 'clickeduID',
-            clickedUser: 'clickedUser',
-            clickedMixID : 'clickedMixID',
+            selectedUser: 'selectedUser',
+            selectedMix : 'selectedMix',
             trackData : 'trackData',
-            event : 'event' ,
+            selectedEvent : 'selectedEvent' ,
         }),
 
+        // inEvent(){
+            
+        //     if(this.selectedEvent.mixes){
+        //         console.log('in')
+        //         var inEvent = false
+        //         console.log('in event')
+        //         console.log()
+        //         this.selectedEvent.mixes[0].producers.forEach(producer => {
+        //             console.log('producer')
+        //             console.log(producer)
+        //             if(producer.uID == this.uID){
+        //                 return true
+        //             }
+        //         })
+        //         return isEvent
+        //     }else{
+                
+        //         return 'waiting'
+        //     }
+        // },
+
         startDate(){
-            return new Date(this.event.startDate.seconds * 1000).toLocaleDateString('en-UK', this.options)
+            return new Date(this.selectedEvent.startDate.seconds * 1000).toLocaleDateString('en-UK', this.options)
         },
         endDate(){
-            return new Date(this.event.endDate.seconds * 1000).toLocaleDateString('en-UK', this.options)
+            return new Date(this.selectedEvent.endDate.seconds * 1000).toLocaleDateString('en-UK', this.options)
         },
 
         fitleredMixes() {
-            if(this.event.mixes){
-                if(this.mixSearch != null){
-                    return this.event.mixes.filter(mix => {
-                        return mix.title.toLowerCase().includes(this.mixSearch.toLowerCase())
-                    })
+            if(this.selectedEvent.mixes){
+                if(this.selectedEvent.mixes.constructor == Array){
+                    if(this.mixSearch != null){
+                        return this.selectedEvent.mixes.filter(mix => {
+                            return mix.title.toLowerCase().includes(this.mixSearch.toLowerCase())
+                        })
+                    }else{
+                        return this.event.mixes
+                    }
                 }else{
-                    return this.event.mixes
+                    return ''
                 }
             }else{
                 return ''
@@ -137,9 +165,9 @@ export default {
         },
 
         filteredArtists() {
-            if(this.event.artists){
+            if(this.selectedEvent.producers){
                 if(this.artistSearch != null){
-                    return this.event.artists.filter(artist => {
+                    return this.selectedEvent.producers.filter(artist => {
                         return artist.name.toLowerCase().includes(this.artistSearch.toLowerCase())
                     })
                 }else{
@@ -191,9 +219,6 @@ export default {
         grid-row: 1/2;
     }
 
-    .{
-        background-color: white;
-    }
 
     .eventProducersCards{
         margin-left:15px;

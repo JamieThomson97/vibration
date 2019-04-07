@@ -18,7 +18,7 @@ export default {
             uID : 'uID',
             name : 'name',
             clickeduID : 'clickeduID',
-            clickedUser : 'clickedUser',
+            selectedUser : 'selectedUser',
             show : 'show',
             showSearch : 'showSearch',
         }),
@@ -132,9 +132,8 @@ export default {
 
         navigateUser(uID , name) {
             
-            
             this.$store.commit('setShowSearch' , false)
-            console.log(this.showSearch)
+            this.$store.commit('setuIDWatcher' , uID )
             this.$store.dispatch('actionSetSelecteduID' , uID).then(()=> {
                 console.log('pushing')
                 this.$router.push(`/users/${(name).split(' ').join('_')}`)
@@ -143,14 +142,18 @@ export default {
             
           },
 
-          setClickedeID(eID, eventName){
-            this.$store.dispatch('actionSetClickedeID', eID).then(() => {
+          navigateEvent(eID, eventName){
+            console.log('eID')
+            console.log(eID)
+            this.$store.commit('setShowSearch' , false)
+            this.$store.dispatch('actionSetSelectedeID', eID).then(() => {
                 this.$router.push(`/events/${(eventName).split(' ').join('_')}`)
             })
         },
 
-        setClickedsID(sID , showName) {
-            this.$store.dispatch('actionSetClickedsID', sID).then(() => {
+        navigateShow(sID , showName) {
+            this.$store.commit('setShowSearch' , false)
+            this.$store.dispatch('actionSetSelectedsID', sID).then(() => {
                 this.$router.push(`/shows/${(showName).split(' ').join('_')}`)
             })
           },

@@ -1,6 +1,6 @@
 <template>
     <div class="follWrapper">
-        <div class="card" @click='setClickeduID(user.id)' router :to="`/users/${(user.name).split(' ').join('_')}`" v-for="user in clickedUser[XXX]" :key="user.uID">
+        <div class="card" @click='setClickeduID(user.id)' router :to="`/users/${(user.name).split(' ').join('_')}`" v-for="user in selectedUser[XXX]" :key="user.uID">
             <v-card color="cyan darken-2" class="userFollowXCard" elevation='10'>
                 <v-layout column="true">
                 <v-flex xs5>
@@ -50,7 +50,7 @@ computed:{
             'uID',
             'name',
             'clickeduID',
-            'clickedUser',
+            'selectedUser',
         ]),
     
     

@@ -1,7 +1,6 @@
 import Vue from 'vue'
 import Router from 'vue-router'
 import Home from './views/Home.vue'
-import Home_Template from './views/Home_Template.vue'
 
 import Landing from './views/Landing.vue'
 import User from './views/User.vue'
@@ -43,11 +42,7 @@ export default new Router({
       name: 'mix',
       component: mix
     },
-    {
-      path: '/homeTemp',
-      name: 'homeTemp',
-      component: Home_Template
-    },
+   
     {
       path: '/events/:eID',
       name: 'Event',

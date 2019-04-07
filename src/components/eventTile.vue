@@ -7,7 +7,7 @@
                 <v-flex xs5>
                     <v-img 
                     class = 'mixTileImage'
-                    @click='setClickedeID(object.eID, object.name)'
+                    @click='navigateEvent(object.eID, object.name)'
                     :src="object.imageURL"
                     height="125px"
                     containzout
@@ -27,7 +27,7 @@
                 :class="`${hover? 'mixTileInfoHover': 'mixTileInfo'}`"
                 primary-title
                 >
-                    <div class='mixTileProducer' @click='setClickedeID(object.eID, object.name)'>{{object.name}}</div>
+                    <div class='mixTileProducer' @click='navigateEvent(object.eID, object.name)'>{{object.name}}</div>
                     </v-card-title>
                 
                 </v-layout>

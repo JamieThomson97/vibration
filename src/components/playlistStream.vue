@@ -106,7 +106,7 @@ export default {
     
         stream(){
 
-            if(this.passedUser === 'clickedUser'){                
+            if(this.passedUser === 'selectedUser'){                
                 return this.$store.getters[this.passedUser].playlists[this.pagePart]
             }else{
                 if(this.$store.getters.playlists(this.pagePart , this.passedUser)){

@@ -1,6 +1,6 @@
 <template>
-    <div class="userWrapper" v-if='selectedUser' >
-        in
+    <div class="userWrapper" v-if='selectedUser.followers' >
+        
         <v-hover> 
             <div class="userImage" slot-scope="{ hover }">
                 
@@ -8,19 +8,20 @@
                     width='100%'
                     height='100%'
                     :src="selectedUser.profileURL"
+                    class='userVImage'
                     >
                     <v-expand-transition>
                         <div
                             v-if="hover && isUser"
-                            class="d-flex transition-fast-in-fast-out cyan darken-2 v-card--reveal display-3 white--text"
-                            style="height: 100%;opacity: .4;"
+                            class="transition-fast-in-fast-out cyan darken-2 display-3 white--text"
+                            style="height:100%;opacity: .4;max-width:100%!important;"
                         >
                            <div class="updateText">
-                            Update Profile Picture            
-                            <input type='file' @change='changeProfilePicture' accept="image/png, image/jpeg" placeholder="Upload" class="btn">
+                            Update Profile Picture <br />           
+                            <input type='file' @change='changeProfilePicture' style='width:100%;' accept="image/png, image/jpeg" placeholder="Upload" class="btn">
                            </div>
                         </div>
-                        </v-expand-transition>
+                    </v-expand-transition>
                 </v-img>
                 
             </div>
@@ -42,7 +43,7 @@
             </v-hover>
         <div class="currentUserInfo">
             <div class="userFollowNumbers">
-                    <div class='userFollowingCount'>
+                <div class='userFollowingCount'>
                     <div class="userPatronHeader">
                         Following
                     </div>
@@ -54,6 +55,14 @@
                             {{selectedUser.followingCount}}
                         </div>
                     </div>
+                </div>
+                <div class="followButton" v-if='selectedUser.uID !== customer.uID '>
+                    <v-btn v-if='doesFollow.does' @click='follow(selectedUser , customer , true)' >
+                        Un-Follow
+                    </v-btn>
+                    <v-btn v-else @click='follow(selectedUser, customer ,false)'>
+                        Follow
+                    </v-btn>
                 </div>
                 <div class='userFollowerCount'>
                     <div class="userPatronHeader">
@@ -175,7 +184,9 @@ export default {
             followingSearch : '',
             followersSearch : '',
             newProfilePicture : null,
+            followIndex : null,
             
+                       
         }
     },
 
@@ -194,10 +205,21 @@ export default {
             for(var a in this.selectedUser.followers){
                 
                     if(this.selectedUser.followers[a].uID == this.uID){
-                        this.doesFollow = true
+                        this.doesFollow.index = a
+                        this.doesFollow.does = true
                     }
                 }
         },
+
+        uIDWatcher : function(newValue){
+            
+            this.fetchUserDetails(newValue)
+            this.getUserShowsorEvents(newValue , 'events')
+            this.getUserShowsorEvents(newValue , 'shows')
+
+        }
+
+
 
   },
 
@@ -209,6 +231,7 @@ export default {
             selectedUser : 'selectedUser',
             doesFollow: 'doesFollow',
             customer : 'customer',
+            uIDWatcher : 'uIDWatcher' 
         }),
 
         isUser(){
@@ -300,22 +323,33 @@ export default {
             return value && typeof value === 'object' && value.constructor === Array;
         },
 
-        follow(followingName, followeruID, followerName, follow){
-            this.$store.commit('doesFollow', !this.doesFollow)
+        follow(following, follower, follow){
+            this.$store.commit('doesFollow', { does : (!this.doesFollow.does) , index : this.doesFollow.index})
+            
             const callFunctions = functions.httpsCallable('followUser')
+            if(follow){
+                console.log('splicing')
+                this.selectedUser.followers.splice(this.doesFollow.index , 1)
+                this.selectedUser.followerCount --
+            }
             
             callFunctions({
-                'followingName' : followingName,
-                'followeruID' : followeruID,
-                'followerProfileURL' : this.customer.profileURL,
-                'followingProfileURL' : this.selectedUser.profileURL,
-                'followerName' : followerName,
+                'following' : following,
+                'follower' : follower,
                 'follow' : follow
                 }).then(() => {
-                    this.$noty.success("User Followed")
+                    if(!follow){
+                        this.$noty.success("User Followed")
+                        this.selectedUser.followers.push(this.customer)
+                        this.selectedUser.followerCount ++
+                    }else{
+                        this.$noty.success("User un-followed")
+                        
+                    }
+                    
                 })
 
-            this.$store.dispatch('actionDeletePlaylist' , 'timeline')
+            //this.$store.dispatch('actionDeletePlaylist' , 'timeline')
                 
         }, 
         
@@ -334,8 +368,8 @@ export default {
         grid-template-columns: repeat(3, 1fr);
         grid-template-rows: repeat(2,1fr);
         grid-gap: .5em;
-        height: 100%;
-        width: 95vw;
+        height: 100vh;
+        width: 97vw;
     }
 
     .userEmphasis{
@@ -357,7 +391,7 @@ export default {
     .updateText{
         margin: auto;
         text-align: center;
-        width:100%;
+        max-width:100%;
     }
 
     .headerandSearch{
@@ -438,22 +472,28 @@ export default {
     .userFollowNumbers{
     
         display:grid;
-        grid-template-columns: 1fr 1fr;
+        grid-template-columns: 1fr 1fr 1fr;
         grid-template-rows: 1fr;
         background-color: red;
         grid-row:1/2;
         grid-column:1/3;
 
     }
-
+    
     .userFollowingCount{
         grid-row:1/2;
         grid-column:1/2; 
     }
+    
+    .followButton{
+        grid-row:1/1;
+        grid-column:2/3; 
+        margin: auto;
+    }
 
     .userFollowerCount{
         grid-row:1/2;
-        grid-column:2/3; 
+        grid-column:3/4; 
     }
 
     .userPatrons{
@@ -474,9 +514,14 @@ export default {
     
 
     .userImage{
-        
+        max-width:100%;
+        max-height:100%;
         grid-column: 1/2;
         grid-row: 1/2;
+    }
+    .userVImage{
+        max-width:100%;
+        max-height:100%;
     }
 
     

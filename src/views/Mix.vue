@@ -1,8 +1,8 @@
 <template>
-        <div class="temp">
+        <!-- <div class="temp">
             temp
-        </div>
-        <!-- <div class="mixWrapper" v-if='trackData'>
+        </div> -->
+        <div class="mixWrapper" v-if='trackData'>
             <div class="mixTracklist">
                 <v-img :src="trackData.artworkURL" height=100% width=100%>
                     <div class="mixImageOverlay">
@@ -23,10 +23,10 @@
             </div>
             <div class="mixInfo">
                 
-                <div class="header mixInfoTitle">{{trackData.title}} - Girl Trapz</div>
+                <div class="header mixInfoTitle">{{trackData.title}} - {{trackData.show}} {{trackData.event}}</div>
                 <div class="mixLikeButton">
-                    <v-btn v-if='!doesLike' @click='likeMix(clickedMixID, true)'>like</v-btn>
-                    <v-btn v-if='doesLike' @click='likeMix(clickedMixID, false)'>unlike</v-btn>
+                    <v-btn v-if='!doesLike' @click='likeMix(selectedMix.mID, true)'>like</v-btn>
+                    <v-btn v-if='doesLike' @click='likeMix(selectedMix.mID, false)'>unlike</v-btn>
                 </div>
                 <div class="mixPlays">
                     <div class="smallPlays">Plays</div>
@@ -54,7 +54,7 @@
             </div>
             <div class="mixProducerInfo">
                 <div class="header mixProducerName">
-                    {{trackData.producer}}
+                    {{trackData.producers[0].name}}
                 </div>
                 
                 <div class="mixFollowNumbers">
@@ -66,7 +66,7 @@
                         <div  class="userPatronCount">
                             
                             <div >
-                                {{clickedUser.followingCount}}
+                                {{selectedUser.followingCount}}
                             </div>
                         </div>
                     </div>
@@ -78,7 +78,7 @@
                         <div class="userPatronCount">
                             
                             <div >
-                                {{clickedUser.followerCount}}
+                                {{selectedUser.followerCount}}
                             </div>                        
                         </div>
                         
@@ -86,39 +86,46 @@
                 </div>
                 <div class="mixUserShows">
                     <div class="mixSubHeader">Shows</div>
-                    <div class="eventsGrid">
-                        <showTile v-for='show in clickedUser.Shows' :object='show' playerTracksReference='clickedUser.events' :key='show.sID'></showTile>
+                    <div class="eventsGrid" v-if='selectedUser.Shows'>
+                        <showTile v-for='show in selectedUser.Shows.slice(0,5)' :object='show' playerTracksReference='selectedUser.events' :key='show.sID'></showTile>
                     </div>
                 </div>
                 <div class="mixUserEvents">
                     <div class="mixSubHeader">Events</div>
-                    <div class="eventsGrid">
-                        <eventTile v-for='event in clickedUser.Events' :object='event' playerTracksReference='clickedUser.events' :key='event.eID'></eventTile>
+                    <div class="eventsGrid" v-if='selectedUser.Events'>
+                        <eventTile v-for='event in selectedUser.Events.slice(0,5)' :object='event' playerTracksReference='selectedUser.events' :key='event.eID'></eventTile>
                     </div>
                 </div>
             </div>
             <div class="mixEventorShowSuggested">
-                <div class="mixEvent" v-if="event">
+                <div class="mixEvent" >
                     <div class='header'>From the same event</div>
-                    <div class="mixTiles">
+                    <div class="mixTiles" v-if="event">
                         <mixTile v-for='mix in event.mixes' :key='mix.mID' :object='mix' playerTracksReference='show.mixes'> </mixTile>
-                    </div>   
-                </div>
-                <div class="mixShow" v-if="show">
-                    <div class='header'>From the same show</div>
-                    <div class="mixTiles">
-                        <mixTile v-for='mix in show.mixes' :key='mix.mID' :object='mix' playerTracksReference='show.mixes'> </mixTile>
-                    </div>   
+                    </div>
+                    <div v-else class="noneFound">
+                       no mixes found from same event
+                    </div>
                 </div>
                 
-            </div>
-            <div class="mixProducerSuggested">
+                <div class="mixShow">
+                    <div class='header'>From the same show</div>
+                    <div class="mixTiles"  v-if="show">
+                        <mixTile v-for='mix in show.mixes' :key='mix.mID' :object='mix' playerTracksReference='show.mixes'> </mixTile>
+                    </div>  
+                    <div v-else class="noneFound">
+                        no mixes found from same show
+                    </div> 
+                </div>
+                
+           </div>
+            <!-- <div class="mixProducerSuggested">
                 <div class='header'>By the same producer</div>
                 <div class="mixTiles">
-                    <mixTile v-for='mix in clickedUser.playlists.mixes' :key='mix.mID' :object='mix' playerTracksReference='show.mixes'> </mixTile>
-                </div>
-            </div>
-        </div> -->
+                    <mixTile v-for='mix in selectedUser.playlists.mixes' :key='mix.mID' :object='mix' playerTracksReference='show.mixes'> </mixTile>
+                </div> 
+            </div> -->
+        </div>
             
        
     
@@ -185,12 +192,15 @@ export default {
             uID : 'uID',
             name : 'name',
             clickeduID : 'clickeduID',
-            clickedUser: 'clickedUser',
-            clickedMixID : 'clickedMixID',
-            trackData : 'trackData',
+            selectedUser: 'selectedUser',
+            selectedMix : 'selectedMix',
             event : 'event' ,
             show : 'show'
         }),
+
+        trackData(){
+            return this.selectedMix.trackData
+        }
     },
 
     watch: {
@@ -200,42 +210,20 @@ export default {
         //     this.fetchMixInfo(newValue)
         // },
 
-        trackData: function(newValue) {
-            if(this.clickedUser.uID != newValue.uID){
-                this.fetchUserDetails(newValue.uID)
-            }
-            console.log(newValue)
-            if(newValue.event){
-                console.log('event')
-                var event = newValue.event
-                console.log(event)
-                this.$store.dispatch('getEventDetails', event).then(() => {
-                var mixes = this.getEventMixes(event) 
-                    mixes.then(response => {
-                    //Dispatch to save in state
-                    this.$store.commit("setEventMixes", response)  
-                    })
-                })
-            }
-            if(newValue.show){
-                console.log('show')
-                var show = newValue.show
-                this.$store.dispatch('getShowDetails', show).then(() => {
-                var mixes = this.getShowMixes(show) 
-                    mixes.then(response => {
-                    //Dispatch to save in state
-                    this.$store.commit("setShowMixes", response)  
-                    })
-                })
-            }
-        },
+        // trackData: function(newValue) {
+        //     if(this.selectedUser.uID != newValue.uID){
+        //         this.fetchUserDetails(newValue.uID)
+        //     }
+        //     console.log(newValue)
+        
+        // },
 
-        clickedUser: function(newValue) {
-            if(newValue.uID){
-                this.getUserShowsorEvents(newValue.uID , 'events')
-                this.getUserShowsorEvents(newValue.uID  , 'shows')
-            }
-        }
+        // selectedUser: function(newValue) {
+        //     if(newValue.uID){
+        //         this.getUserShowsorEvents(newValue.uID , 'events')
+        //         this.getUserShowsorEvents(newValue.uID  , 'shows')
+        //     }
+        // }
 
         //If event or stream, set the event . mixes object in state to equal the mixes in that event or mix
 
@@ -244,7 +232,10 @@ export default {
 
     mounted: function() {
 
-        this.fetchMixInfo(newValue)
+        
+        
+        this.fetchMixInfo(this.selectedMix.mID)
+        
 
     },
 
@@ -270,21 +261,20 @@ export default {
             }
             this.likeCount = this.likeCount - 1
         }
-        this.trackData.likers.push()
+        // this.trackData.likers.push()
         this.doesLike = !this.doesLike
         var callFunction = firebase.functions().httpsCallable('likeMix')
         callFunction({
             mID: mID,
             likeruID : this.uID,
-            produceruID : this.trackData.uID,
             likerName : this.name, 
             mixName : this.trackData.title,
             liked : like,
             profileURL : this.profileURL,
-            producerName : this.trackData.producer,
+            producers : this.trackData.producers,
             artworkURL : this.trackData.artworkURL,
-            likes: this.likeCount,
-            plays: this.trackData.plays 
+            likeCount: this.trackData.likeCount,
+            playCount: this.trackData.playCount
         }).catch(error => {
             this.$noty.warning(error)
         })
@@ -305,7 +295,7 @@ export default {
     grid-template-rows: 1fr 1fr 1fr 1fr;
     grid-gap: 0.5rem;
     height:100vh;
-    width:96.4vw;
+    width:95.8vw;
 }
 
 .mixTracklist{
@@ -336,13 +326,9 @@ export default {
     background-color: rgba(0,0,0, 0.6);
 }
 
-.mixShow{
-    margin-top: 15px;
-}
-
 .mixInfo{
     grid-column: 2/3;
-    grid-row:1/2;
+    grid-row:1/3;
     background-color: darkblue;
     display:grid;
     grid-template-rows: 1fr 1fr 1fr;
@@ -452,10 +438,26 @@ export default {
 
 
 .mixEventorShowSuggested{
-    grid-column: 2/3;
+    grid-column: 2/4;
     grid-row:3/5;
     background-color: darkgreen;
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    grid-template-rows: 1fr;
 }
+
+.mixEvent{
+    grid-column: 1/2;
+    grid-row:1/1;
+    background-color :red
+}
+
+.mixShow{
+    grid-column: 2/3;
+    grid-row:1/1;
+    background-color :powderblue;
+}
+    
     
 
 .mixProducerSuggested{
