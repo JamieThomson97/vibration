@@ -219,11 +219,6 @@ export default {
     
 }
 
-.tileActionsIcons{
-
-    
-}
-
 .mixTileProducer{
     margin-left: 8px;
     cursor:pointer;

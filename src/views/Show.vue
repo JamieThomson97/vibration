@@ -17,7 +17,7 @@
                                 style="height: 100%;opacity: .4;"
                             >
                             <div class="updateText">
-                                Update Profile Picture   <br />           
+                                Update Show Image<br />           
                                 <input type='file' @change='changeProfilePicture' style="width:100%; height:100%;" accept="image/png, image/jpeg" placeholder="Upload" class="btn">
                             </div>
                             </div>
@@ -132,7 +132,7 @@ export default {
     data(){
         return{
             options : { weekday: 'long', year: 'numeric', month: 'long', day: 'numeric' },
-            newProfilePicture : null,
+            newShowImage : null,
         }       
     },
 
@@ -140,16 +140,18 @@ export default {
         pushtoUser(name, uID){
             this.navigateUser(uID, name)
         },
+
         changeProfilePicture(e){
         
           if(e.target.files[0].type == 'image/jpeg' | e.target.files[0].type == 'image/png'){
             
-            this.newProfilePicture = e.target.files[0]
-            this.updateShowImage(this.selectedShow.dID , this.newProfilePicture)
+            this.newShowImage = e.target.files[0]
+            this.newupdateShowImage(this.selectedShow , this.newShowImage)
           }else{
           this.$noty.error("please upload an image")
           }
       },
+
     },
 
     computed: {

@@ -125,6 +125,7 @@ export default {
           title: this.title,
           dateUploaded: new Date(),
           show: this.show,
+          event: this.event,
           likeCount : 0,
           playCount : 0,
         }
@@ -200,12 +201,16 @@ export default {
             
             var name = this.firstProducers[x]
             var uID = responses[x].docs[0].id
+            
             var object = {
               // profileURL : responses[x].docs[0].data().profileURL, //This constitutes too much work updating profile URLs in future, will have to pull the profile URL from the
               name : name,                                            // will 'users' collection to show the profile URL in future
               uID : uID
             }
             
+            if(responses[x].docs[0].data().profileURL){
+              object['profileURL'] = responses[x].docs[0].data().profileURL
+            }
             producers.push(object)  
           }
         }).then(() => {
@@ -303,6 +308,7 @@ export default {
                   mixPromises.push(database.collection("users").doc(producer.uID).collection('mixes').doc(NmID).set(mixData))
                 })
                 console.log('above indexMix')
+                console.log(mixData)
                 const indexFunction = firebase.functions().httpsCallable('indexMix')
                 
                 mixPromises.push(indexFunction({ mixData : mixData , NmID : NmID }))
@@ -326,8 +332,8 @@ export default {
                 
                 if(!isXCreated){  
                   if(isShow){
-                    //const indexShowFunction = firebase.functions().httpsCallable('indexShow')
-                   // finalPromises.push(indexShowFunction({ showData : showData , eID : newID }))
+                    const indexShowFunction = firebase.functions().httpsCallable('indexShow')
+                    finalPromises.push(indexShowFunction({ showData : showData , eID : newID }))
                     producers.forEach(producer=> {
                       
                       finalPromises.push(database.collection("users").doc(producer.uID).collection('shows').doc(newID).set(showData))

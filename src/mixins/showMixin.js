@@ -87,15 +87,18 @@ export default {
                 this.$store.commit('setShowMixes' , mixesObj)
             })
 
-        }
+        },
 
-    },
+        
 
-    updateShowImage(sID, image){
+        newupdateShowImage(show, image){
         //Will receive an image file
-        //and the uID of the user
+        //and the sID of the user
+        const sID = show.sID
+        console.log(show)
+        const producers = show.producers
 
-        var imageStorageRef = storage.ref('userShowImage/'+sID+'.jpeg')
+        var imageStorageRef = storage.ref('showImage/'+sID+'.jpeg')
 
         return imageStorageRef.put(image).then(() => {
             
@@ -105,112 +108,120 @@ export default {
             })
         }).then(response => {
 
-            //Update the profile URL field for the user, in every location they appear, and call a function to change the profile URL in algolia
 
-            var updatePromises = []
-
-            //Get every location a user is in 
-                //users collection
-
-                const userPromise = database.collection('shows').doc(sID).update({
+                const showPromise = database.collection('shows').doc(sID).update({
                     imageURL : response
                 })
-                
 
-                //in the following subcollection
-                
-               
+                var producersPromises = [showPromise]
 
-                database.collection('shows').doc(sID).get().then(response => {
-                    const producers = response.data().producers
-                    updatePromises.push(userPromise)
+                producers.forEach(producer => {
+                    var uID = producer.uID
+                    producersPromises.push(database.collection('users').doc(uID).collection('shows').doc(sID).update({
+                        imageURL : response
+                    }))
+                })
+                const updateShowIndex = firebase.functions().httpsCallable('updateShowIndex')
+                const callFunction =  updateShowIndex({ imageURL : response , objectID : sID })
+                producersPromises.push(callFunction)
+                return producersPromises
+
+            }).then((producersPromises) => { 
+                return Promise.all(producersPromises).then(response =>{
+                    console.log(response)
+                })
+            })
+        },
+
+        updateEventImage(event, image){
+            //Will receive an image file
+            //and the sID of the user
+            const eID = event.eID
+            console.log(event)
+            const producers = event.producers
+    
+            var imageStorageRef = storage.ref('eventImage/'+eID+'.jpeg')
+    
+            return imageStorageRef.put(image).then(() => {
+                
+                return imageStorageRef.getDownloadURL().then(function(URL) {
+                    
+                    return URL
+                })
+            }).then(response => {
+    
+    
+                    const eventPromise = database.collection('events').doc(eID).update({
+                        imageURL : response
+                    })
+    
+                    var producersPromises = [eventPromise]
+    
                     producers.forEach(producer => {
-                        updatePromises.push(database.collection('users').doc(producer.uID).collection('shows').doc(sID).update({
+                        var uID = producer.uID
+                        producersPromises.push(database.collection('users').doc(uID).collection('events').doc(eID).update({
                             imageURL : response
                         }))
                     })
-                    
-                }).then(() => {
-                    return Promise.all(updatePromises)
+                    const updateEventIndex = firebase.functions().httpsCallable('updateEventIndex')
+                    const callFunction =  updateEventIndex({ imageURL : response , objectID : eID })
+                    producersPromises.push(callFunction)
+                    return producersPromises
+    
+                }).then((producersPromises) => { 
+                    return Promise.all(producersPromises).then(response =>{
+                        console.log(response)
+                    })
                 })
+            },
 
-                // database.collection('users').doc(sID).collection('following').get().then(response => {
-                //     response.forEach(user => {
-                //         var sID = user.id
-                //         followingsIDs.push(sID)
-                //     })
-                // }).then(() => {
-                //     updatePromises.push(userPromise)
-                //     followingsIDs.forEach(followingsID => {
-                //         updatePromises.push(database.collection('users').doc(followingsID).collection('followers').doc(sID).update({
-                //             profileURL : response
-                //         }))
-                //     })
-                // }).then(() => {
-
-                //     // and follower subcolletions
-
-                //     var followersIDs = []
-
-                //     database.collection('users').doc(sID).collection('followers').get().then(response => {
-                //         response.forEach(user => {
-                //             var sID = user.id
-                //             followersIDs.push(sID)
-                //         })
-                //     }).then(() => {
-                //         followersIDs.forEach(followersID => {
-                //             updatePromises.push(database.collection('users').doc(followersID).collection('following').doc(sID).update({
-                //                 profileURL : response
-                //             }))
-                //         })
-                //     }).then(() => {
-                //         return Promise.all(updatePromises).then(()=>{
-                //             const indexNewProfile = firebase.functions().httpsCallable('updateUserProfile')
-                //             return indexNewProfile({ profileURL : response , sID : sID })
-                            
-                //         })
-                //     })
-
-                    //any shows they are in
-                        //shows/[sID]/producers array of objects
-
-                    // var showsIDs = [] //Currently profile URLs are not stored on the mix or show documents, and therefore must be retrieved upon loading of the page,
-                                        //Will evaluate this effect on performance and if needs changed, will change
-
-                    // database.collection('users').doc(uID).collection('shows').get().then(response => {
-                    //     response.forEach(show => {
-                    //         var sID = show.id
-                    //         showsIDs.push(sID)
-                    //     })
-                    // }).then(() => {
-                    //     showsIDs.forEach(showsID => {
-                    //         updatePromises.push(database.collection('show').doc(showsID).collection('shows').doc(uID).set({
-                    //             profileURL : response
-                    //         }))
-                    //     })
-                    // })            
-
-                    // //any events they are in
-                    //     //shows/[eID]/producers array of objects
-
-                    // var eventeIDs = []
-
-                    // database.collection('users').doc(uID).collection('events').get().then(response => {
-                    //     response.forEach(event => {
-                    //         var eID = event.id
-                    //         eventeIDs.push(eID)
-                    //     })
-                    // }).then(() => {
-                    //     eventeIDs.forEach(eventeID => {
-                    //         updatePromises.push(database.collection('event').doc(eventeID).collection('shows').doc(uID).set({
-                    //             profileURL : response
-                    //         }))
-                    //     })
-                    // })
-                // })
-                                
+        updateShowImage(sID, image){
+            //Will receive an image file
+            //and the uID of the user
+    
+            var imageStorageRef = storage.ref('userShowImage/'+sID+'.jpeg')
+    
+            return imageStorageRef.put(image).then(() => {
+                
+                return imageStorageRef.getDownloadURL().then(function(URL) {
+                    
+                    return URL
+                })
+            }).then(response => {
+    
+                //Update the profile URL field for the user, in every location they appear, and call a function to change the profile URL in algolia
+    
+                var updatePromises = []
+    
+                //Get every location a user is in 
+                    //users collection
+    
+                    const userPromise = database.collection('shows').doc(sID).update({
+                        imageURL : response
+                    })
+                    
+    
+                    //in the following subcollection
+                    
+                   
+    
+                    database.collection('shows').doc(sID).get().then(response => {
+                        const producers = response.data().producers
+                        updatePromises.push(userPromise)
+                        producers.forEach(producer => {
+                            updatePromises.push(database.collection('users').doc(producer.uID).collection('shows').doc(sID).update({
+                                imageURL : response
+                            }))
+                        })
+                        
+                    }).then(() => {
+                        return Promise.all(updatePromises)
+                    })
             })
+
         },
+
+    },
 
     
 

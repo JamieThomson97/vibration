@@ -211,7 +211,7 @@ export default {
     },
 
     getEventMixes(eID){
-
+      console.log('get event mixes')
       var mixesArray = []
       return new Promise(resolve => {
         database.collection('events').doc(eID).collection('mixes').limit(12).get().then(response => {
@@ -219,6 +219,8 @@ export default {
           mixes.forEach(mix => {
             var mixInfo = mix.data()
             mixInfo['mID'] = mix.id
+            console.log('mixInfo')
+            console.log(mixInfo)
             mixesArray.push(mixInfo)
           })
           resolve (mixesArray)

@@ -1,30 +1,59 @@
 <template>
   <div class="playerWrapper" v-if="!!playerCurrentTrack">
-    <div class="trackDetails">
-      <img :src="playerCurrentTrack.artworkURL" alt="">
-      <div class="titleWrapper">
-        <v-btn align right class="title" @click='setSelectedmID(playerCurrentTrack.mID)' :to="`/users/${(playerCurrentTrack.artists[0].name).split(' ').join('_')}/mixes/${(playerCurrentTrack.title).split(' ').join('_')}`">
+    <div class="playerTrackDetails">
+      <div class="playerMixArtwork">
+        <v-img 
+          :src="playerCurrentTrack.artworkURL" 
+          max-height='100%' 
+          cover
+          alt=""
+          gradient="to top right, rgba(100,115,201,.6), rgba(25,32,72,.7)"
+        >
+        </v-img>
+      </div>
+      <div class="playerMixInfo">
+        <div align right class="playerTitle" @click='navigateMix(playerCurrentTrack.mID , playerCurrentTrack.title)' :to="`/users/${(playerCurrentTrack.producers[0].name).split(' ').join('_')}/mixes/${(playerCurrentTrack.title).split(' ').join('_')}`">
           {{playerCurrentTrack.title}}
-        </v-btn>
-        <v-btn align right v-for='artist in playerCurrentTrack.artists' :key='artist.uID'  class="user" @click='navigateUser(artist.uID)' :to="`/users/${(artist.name).split(' ').join('_')}`">
-          {{artist.name}}
-        </v-btn>
-        {{playerTracks.length}}
+        </div>
+        <div align right class="playerProducer" @click='navigateUser(playerCurrentTrack.producers[0].uID , playerCurrentTrack.producers[0].name)' :to="`/users/${(playerCurrentTrack.producers[0].name).split(' ').join('_')}`">
+          {{displayProducers}}
+        </div>       
       </div>
     </div>
     <div class="mainButtons">
       <button :disabled="playerTracks.length === 0" @click="handleChangeTrack('previous')">
-        <img src="../assets/icons/previous.svg" />
+        <v-icon x-large color='white'>
+          skip_previous
+        </v-icon>
       </button>
       <button @click="$store.dispatch(isPlay ? 'pause' : 'play')" class="playButton">
-        <img
-          :src="isPlay ?require('../assets/icons/pause.svg') :require('../assets/icons/play.svg')"
-        />
+        
+        <v-icon x-large v-if='!isPlay' color='white'> 
+          play_arrow
+        </v-icon>
+        <v-icon x-large v-else color='white'>
+          pause
+        </v-icon>
       </button>
       <button :disabled="playerTracks.length === 0" @click="handleChangeTrack('next')">
-        <img src="../assets/icons/next.svg" />
+        <v-icon x-large color='white'>
+          skip_next
+        </v-icon>
+        
       </button>
     </div>
+    <div class="playerTrackDetailsRight">
+      <div align right class="playerDate">
+        {{playerCurrentTrack.dateUploaded.seconds}}
+      </div>
+      <div align right class="playerGig" v-if='hover'  >
+        {{playerCurrentTrack.show}}Radio Wonderland
+      </div>
+      <div align right class="playerGig" v-if='playerCurrentTrack.event'  >
+        {{playerCurrentTrack.event}}
+      </div>
+    </div>
+    
     <div class="seekbarWrapper">
       <span class="currentTime">{{secondsToTime(playerCurrentTime)}}</span>
       <div class="seekbar" @click="calculateSeekOnClick">
@@ -37,6 +66,7 @@
           :style="{ left: `calc(${(((playerCurrentTime / playerDuration) * 100) || 0)}% - 7px)` }"
         />
       </div>
+      
       <span class="durationTime">{{secondsToTime(playerDuration)}}</span>
     </div>
   </div>
@@ -48,7 +78,8 @@ import _ from 'lodash';
 import { mapGetters } from 'vuex';
 import secondsToTime from '@/utils/secondsToTime';
 import selectedUserMixin from '../mixins/selectedUserMixin'
-import mixMixin from '../mixins/mixMixin'
+import mixMixin from '../mixins/mixMixin';
+import tileMixin from '../mixins/tileMixin';
 
 export default {
   data() {
@@ -59,6 +90,7 @@ export default {
 
   mixins:[
     selectedUserMixin,
+    tileMixin,
     mixMixin
   ],
   computed: {
@@ -70,6 +102,25 @@ export default {
       playerCurrentTrack: 'playerCurrentTrack',
       playerSeeking: 'playerSeeking',
     }),
+
+    displayProducers(){
+    
+      switch (this.playerCurrentTrack.producers.length){
+        case 1 :
+          return this.playerCurrentTrack.producers[0].name
+        case 2 :
+          return (this.playerCurrentTrack.producers[0].name+','+this.playerCurrentTrack.producers[1].name)
+        case 3: 
+          return (this.playerCurrentTrack.producers[0].name+','+this.playerCurrentTrack.producers[1].name+','+this.playerCurrentTrack.producers[2].name)
+
+        case 3,4,5,6,7,8,9,10:
+          return (this.playerCurrentTrack.producers[0].name+','+this.playerCurrentTrack.producers[1].name+','+this.playerCurrentTrack.producers[2].name+'...')
+         
+        default:
+          return this.playerCurrentTrack.producers[0].name
+      }
+    }
+
   },
   watch: {
     isPlay(nextIsPlay, prevIsPlay) {
@@ -94,8 +145,6 @@ export default {
             if (nextIndex < Object.values(self.playerTracks).length) {
               Object.values(self.playerTracks)[nextIndex]['mID'] = Object.keys(this.playerTracks)[nextIndex]
               this.$store.dispatch('setPlayerCurrentTrack', Object.values(self.playerTracks)[nextIndex]);
-            }else{
-              this.$noty.warning("Tracklist finished")
             }
           }
         });
@@ -220,39 +269,65 @@ export default {
     bottom: 0;
     left: 0;
     width: 100%;
-    height: 10vh;
-    background: #fff;
+    height: 11vh;
+    background: rgb(56, 157, 170);
     display: flex;
     z-index: 99999;
     flex-direction: column;
     align-items: center;
     justify-content: center;
   }
-  .trackDetails {
+  .playerTrackDetails {
     position: absolute;
-    left: 15px;
+    left: 0px;
     top: 0;
-    height: 85px;   
-    width: 400px;
-    display: flex;
+    
+    height: 100%;   
+    width: 50%;
+    display: grid;
+    grid-template-columns: 1fr 2fr;
+    grid-template-rows: 1fr 1fr 1fr 1fr;
     align-items: center;
     justify-content: center;
+    font-size : 24px;
+    color:beige
+    
   }
-  .trackDetails img {
-    width: 60px;
-    background: #eee;
-    object-fit: cover;
+  .playerTrackDetailsRight{
+    position: absolute;
+    right: 0px;
+    top: 0;
+    height: 100%;
+    font-size : 24px;
+    color:beige;
+    margin-right: 20px; 
+    
   }
-  .trackDetails .titleWrapper {
-    display: flex;
-    flex-direction: column;
-    align-items: flex-start;
+
+  .playerDate{
+    width:100%!important;
+  }
+  .playerGig{
+    text-align: right;
+    width:100%!important;
+  }
+  
+  .playerMixArtwork{
+    max-height: 100%; 
+    grid-row: 1/5;
+    grid-column: 1/2;
+    
+  }
+
+  .playerMixInfo{
+    grid-row: 1/5;
+    grid-column: 2/3;
+    height: 100%;
     margin-left: 10px;
-    font-size: 12px;
-    width: 200px;
-    overflow: hidden;
-    text-align: left;
+    display:flex;
+    flex-direction: column;
   }
+
   .trackDetails .titleWrapper * {
     white-space: nowrap;
     text-overflow: ellipsis;
@@ -264,16 +339,19 @@ export default {
   }
   .mainButtons {
     margin: 5px auto 0;
-    display: table;
+    display: flex;
+    margin-top:15px;
+    grid-gap: 20px;
     align-self: center;
+    position:absolute;
+    height:50%;
+    top: 0px;
   }
   .mainButtons button {
     float: left;
     border-radius: 20px;
-    width: 35px;
-    height: 35px;
-    margin: 0 10px;
-    padding: 5px;
+    width: 45px;
+    height: 45px;
     transition: all ease .1s;
     box-sizing: border-box;
   }
@@ -291,19 +369,20 @@ export default {
   }
   .mainButtons button.playButton {
     display: flex;
-    align-items: center;
-    justify-content: center;
+    
   }
   .mainButtons button.playButton img {
-    width: 20px;
+    width: 25px;
   }
   .mainButtons button img {
     width: 14px;
     opacity: .4;
   }
   .seekbarWrapper {
+    position: absolute;
+    top: 60%;
     margin-top: 5px;
-    width: 600px;
+    width: 98vw;
     display: flex;
     justify-content: stretch;
     align-items: center;
@@ -344,9 +423,11 @@ export default {
     pointer-events: none;
   }
   .currentTime {
-    font-size: 12px;
+    font-size: 16px;
+    color: white;
   }
   .durationTime {
-    font-size: 12px;
+    font-size: 16px;
+    color: white;
   }
 </style>

@@ -44,8 +44,8 @@
             </div>
         </div> <br />  
         <div v-if='reset' class="show"> 
-            <div class="listenLaterTiles homeTiles">
-                <mixTile v-for='mix in customer.playlists[customer.createdPlaylists[iteration]]' :collection='customer.createdPlaylists[iteration]' deletable='1' :key='mix.mID' :object='mix' playerTracksReference='customer.playlists.timeline'> </mixTile>
+            <div class="homeTiles">
+                <mixTile v-for='mix in customer.playlists[customer.createdPlaylists[iteration]]' :collection='customer.createdPlaylists[iteration]' deletable='1' :key='mix.mID' :object='mix' :playerTracksReference='customer.createdPlaylists[iteration]'> </mixTile>
             </div> 
         </div>
             

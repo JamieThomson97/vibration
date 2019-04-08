@@ -32,7 +32,7 @@
                         <div class='header' >Producer's Mixes</div>
                         <div class='userMixSearch'>
                             <v-fade-transition>
-                                <v-text-field v-if='' height='50%' v-model='mixSearch' class='userMixSearchbox' box clearable type="text" v-on:keyup.enter="s"  placeholder="Search"></v-text-field>
+                                <v-text-field v-if='hover' height='50%' v-model='mixSearch' class='userMixSearchbox' box clearable type="text" v-on:keyup.enter="s"  placeholder="Search"></v-text-field>
                             </v-fade-transition>
                         </div>
                     </div>
@@ -57,7 +57,7 @@
                     </div>
                 </div>
                 <div class="followButton" v-if='selectedUser.uID !== customer.uID '>
-                    <v-btn v-if='doesFollow.does' @click='follow(selectedUser , customer , true)' >
+                    <v-btn v-if='doesFollow && doesFollow.does' @click='follow(selectedUser , customer , true)' >
                         Un-Follow
                     </v-btn>
                     <v-btn v-else @click='follow(selectedUser, customer ,false)'>
@@ -120,6 +120,7 @@
                 </div>
             </div>
         </v-hover>
+        <Player />
     </div>
     <!-- <div class="temp">
         this is temp
@@ -138,6 +139,7 @@ import mixTile from '@/components/mixTile.vue'
 import showTile from '@/components/showTile.vue'
 import eventTile from '@/components/eventTile.vue'
 import producerTile from '@/components/producerTile.vue'
+import Player from '@/components/Player.vue'
 //const database = firebase.firestore()
 const functions = firebase.functions()
 
@@ -175,6 +177,7 @@ export default {
         mixTile,
         showTile,
         eventTile,
+        Player,
         producerTile,
     },
 
@@ -322,7 +325,7 @@ export default {
           if(e.target.files[0].type == 'image/jpeg' | e.target.files[0].type == 'image/png'){
             
             this.newProfilePicture = e.target.files[0]
-            this.updateUserImage(this.uID , this.newProfilePicture)
+            this.updateUserImage(this.selectedUser , this.newProfilePicture)
           }else{
           this.$noty.error("please upload an image")
           }
@@ -375,7 +378,7 @@ export default {
     .userWrapper{
         display: grid;
         grid-template-columns: repeat(3, 1fr);
-        grid-template-rows: repeat(2,1fr);
+        grid-template-rows: 4fr 4fr 1fr;
         grid-gap: .5em;
         height: 100vh;
         width: 97vw;
@@ -418,10 +421,6 @@ export default {
         margin-left: 20px;
         width: 50%;
         height:100%;
-    }
-
-    .userMixSearchbox{
-        
     }
 
     .eventsGrid{
@@ -555,8 +554,6 @@ export default {
         flex-direction: column;
 
     }
-
-    .forMargin{}
 
     .followers{
         color: red;

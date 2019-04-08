@@ -7,7 +7,7 @@
                 <v-flex xs5>
                     <v-img 
                     class = 'mixTileImage'
-                    @click='navigateShow(object.eID, object.name )'
+                    @click='navigateShow(object.sID, object.name )'
                     :src="object.imageURL"
                     height="125px"
                     containzout
@@ -27,7 +27,7 @@
                 primary-title
                 >
                         
-                        <div class='mixTileTitle' @click='navigateShow(object.eID, object.name )'>{{object.name}}</div>
+                        <div class='mixTileTitle' @click='navigateShow(object.sID, object.name )'>{{object.name}}</div>
                         <div v-for='x in object.artists' :key='x.uID' class='mixTileProducer' @click='navigateUser(x.uID, x.name)'>{{x.name}}</div>
                         
                     </v-card-title>
@@ -148,11 +148,6 @@ export default {
 .tileActions{
     background-color: rgb(34, 177, 177);
     display: flex;
-    
-}
-
-.tileActionsIcons{
-
     
 }
 

@@ -50,6 +50,8 @@ export default {
   },
 
   setshows(state, value){
+    console.log('setSHo')
+    console.log(value)
     Vue.set(state , 'Shows'  , value)
   },
 

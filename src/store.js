@@ -140,7 +140,16 @@ export default new Vuex.Store({
     deleteFromPlaylist(state, payload){
       console.log('delete from playlist store')
       console.log(payload)
-      const index = state.customer.playlists[payload.playlist].indexOf(payload.mID)
+      var index = 0
+      state.customer.playlists[payload.playlist].forEach(function (mix , i)  {
+        console.log(i)
+        console.log(mix)
+        if(mix.mID == payload.mID){
+            index = i
+        }
+      })
+      console.log('index')
+      console.log(index)
       state.customer.playlists[payload.playlist].splice(index, 1);
     },
 

@@ -10,8 +10,7 @@
         <div class="timelineTiles homeTiles" v-if='customer.playlists.timeline.length > 0'>
             <mixTile v-for='mix in customer.playlists.timeline' :key='mix.mID' :object='mix' playerTracksReference='customer.playlists.timeline'> </mixTile>
         </div>
-        <div v-else>
-          {{customer.playlists.timeline.length }}
+        <div v-else style='margin-left:15px;'>
           Follow some producers to see mixes in your timeline
         </div>
       </div>
@@ -19,28 +18,35 @@
     <div class="outline history">
       <div class='header'>History</div>
       <div class="historyTiles homeTiles" v-if='customer.playlists.history.length > 0'>
-        <mixTile v-for='mix in customer.playlists.history' :key='mix.mID' :object='mix' deletable='1' collection='history' playerTracksReference='customer.playlists.timeline'> </mixTile>
+        <mixTile v-for='mix in customer.playlists.history' :key='mix.mID' :object='mix' deletable='1' collection='history' playerTracksReference='history'> </mixTile>
       </div>
-      <div v-else>
+      <div v-else style='margin-left:15px;'>
           Mixes you have listened to will appear here
         </div>     
     </div>
     <div class="outline listenLater">
       <div class='header'>Listen Later</div>
       <div class="listenLaterTiles homeTiles" v-if='customer.playlists.listenLater.length > 0'>
-        <mixTile v-for='mix in customer.playlists.listenLater' :key='mix.mID' deletable='1' collection='listenLater' :object='mix' playerTracksReference='customer.playlists.timeline'> </mixTile>
+        <mixTile v-for='mix in customer.playlists.listenLater' :key='mix.mID' deletable='1' collection='listenLater' :object='mix' playerTracksReference='listenLater'> </mixTile>
       </div>
-       <div v-else>
+       <div v-else style='margin-left:15px;'>
           Here is a quick access playlist for easily recording mixes you want to listen to later
         </div>         
     </div>
     <div class="outline homePlaylists">
-      <div>
+      <div v-if='customer.createdPlaylists.length > 0' >
         <playlists />
       </div> 
-
+      <div v-else>
+        <div class='header playlistHeader'>
+          Playlists    
+        </div>
+        <div style='margin-left:15px;'>
+          Create some playlists !
+        </div> 
+      </div>
     </div>
-    
+    <Player />    
   </div>
 
   
@@ -65,6 +71,7 @@ import createPlaylistMixin from '../mixins/createPlaylistMixin'
 import { mapGetters } from 'vuex'
 
 import playlists from '@/components/playlists.vue'
+import Player from '@/components/Player.vue'
 import 'vuejs-noty/dist/vuejs-noty.css'
 import mixTile from '@/components/mixTile.vue'
 
@@ -88,6 +95,7 @@ export default {
 
   components: {
     
+    Player,
     playlists,
     mixTile,
     
@@ -158,6 +166,9 @@ export default {
     console.log(this.allPlaylists)
     this.allPlaylists.forEach(component => {
       if(component !== 'timeline'){
+        if(component == 'Listen Later'){
+          component = 'listenLater'
+        }
         console.log(component)
 
         var mixes = this.getPlaylist(component , 4) //for is limit for db return 
@@ -195,13 +206,13 @@ export default {
     .homeWrapper{
       display: grid;
       grid-template-columns: 1.5fr 1.5fr 1.5fr;
-      grid-template-rows: repeat(12, 1fr);
-      grid-gap: 4em;
+      grid-template-rows: repeat(13, 1fr);
+      grid-gap: 1em;
       height: 100vh;
       background-color:rgb(232, 225, 225);
       padding-left: 1rem;
       padding-right: 1rem;
-      max-width: 97%;
+      max-width: 96%;
     }
 
     .homeTiles{

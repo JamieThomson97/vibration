@@ -43,7 +43,13 @@ export default {
                 var docs = response.docs
                 docs.forEach(doc => {
                     var info = doc.data()
-                    info['eID'] = doc.id 
+                    if(type == 'events'){
+                        info['eID'] = doc.id 
+                    }
+                    if(type == 'shows'){
+                        info['sID'] = doc.id
+                    }
+                    
                     entries.push(info)
                     
                 })
@@ -52,10 +58,16 @@ export default {
 
           },
 
-          updateUserImage(uID, image){
+          updateUserImage(user, image){
             //Will receive an image file
             //and the uID of the user
-    
+            const uID = user.uID
+            var events =  false
+            var shows = false
+            console.log(user)
+            shows = user.Shows
+            events = user.Events
+            
             var imageStorageRef = storage.ref('userProfileImage/'+uID+'.jpeg')
     
             return imageStorageRef.put(image).then(() => {
@@ -65,10 +77,69 @@ export default {
                     return URL
                 })
             }).then(response => {
+
+                var updatePromises = []
+                
+                events.forEach(event => {
+                    console.log('in event loop')
+                    var eID = event.eID
+                    database.collection('events').doc(eID).get().then(eventDoc => {
+                        var index = -1
+                        const eventData = eventDoc.data()
+                        const producers = eventData.producers
+                        console.log('producers')
+                        console.log(producers)
+                        producers.forEach(function (producer,i){
+                            if(producer.uID == uID){
+                                index = i
+                            }
+                        })
+                        
+                        producers[index]['profileURL'] = response
+                        console.log('new producers')
+                        console.log(producers)
+                    
+                        return producers
+                    }).then(producers => {
+                        updatePromises.push(database.collection('events').doc(eID).update({
+                            producers : producers
+                        }))
+                    })
+                })  
+            
+            
+            
+                shows.forEach(show => {
+                    console.log('in show loop')
+                    var eID = show.eID
+                    database.collection('shows').doc(eID).get().then(showDoc => {
+                        var index = -1
+                        const showData = showDoc.data()
+                        const producers = showData.producers
+                        console.log('producers')
+                        console.log(producers)
+                        producers.forEach(function (producer,i){
+                            if(producer.uID == uID){
+                                index = i
+                            }
+                        })
+                        
+                        producers[index]['profileURL'] = response
+                        console.log('new producers')
+                        console.log(producers)
+                    
+                        return producers
+                    }).then(producers => {
+                        updatePromises.push(database.collection('shows').doc(eID).update({
+                            producers : producers
+                        }))
+                    })
+                })                
+                    
     
                 //Update the profile URL field for the user, in every location they appear, and call a function to change the profile URL in algolia
     
-                var updatePromises = []
+                
     
                 //Get every location a user is in 
                     //users collection
@@ -77,7 +148,7 @@ export default {
                         profileURL : response
                     })
                     
-    
+                    
                     //in the following subcollection
                     
                     var followinguIDs = []
@@ -114,7 +185,7 @@ export default {
                         }).then(() => {
                             return Promise.all(updatePromises).then(()=>{
                                 const indexNewProfile = firebase.functions().httpsCallable('updateUserProfile')
-                                return indexNewProfile({ profileURL : response , uID : uID })
+                                return indexNewProfile({ profileURL : response , objectID : uID })
                                 
                             })
                         })

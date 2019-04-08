@@ -4,7 +4,7 @@
      <div class="mixSearch">
       <ais-instant-search
         :search-client="searchClient"
-        index-name="test_mixes"
+        index-name="mixes"
       >
       <ais-search-box placeholder="Search here…" style='display: none;' v-if='searchQuery' v-model='searchQuery' class="searchbox" />
       <div class="header" style='padding-left:15px;'>Mixes<v-icon >
@@ -127,8 +127,8 @@ export default {
   data() {
     return {
       searchClient: algoliasearch(
-        'P37603ZCU7',
-        '77a30f217b5763c36e99ed23dcf0e555'
+        'A86V2VQNIW',
+        '61c79176d7f5afdda01825fd663f521b'
       ),
       stream : [],
     };

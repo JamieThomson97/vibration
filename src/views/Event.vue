@@ -1,15 +1,29 @@
 <template>
     
 <div class='eventWrapper'>
-    <div class="eventImage" vi>
-            
-             <v-img 
-                width='100%'
-                height='100%'
-                :src="selectedEvent.imageURL"
-                ></v-img>
-            
-    </div>
+    <v-hover>
+        <div class="eventImage" slot-scope="{ hover }">
+                
+                <v-img 
+                    width='100%'
+                    height='100%'
+                    :src="selectedEvent.imageURL"
+                    >
+                    <v-expand-transition>
+                            <div
+                                v-if="hover"
+                                class="transition-fast-in-fast-out cyan darken-2 display-3 white--text"
+                                style="height:100%;opacity: .4;max-width:100%!important;"
+                            >
+                            <div class="updateText">
+                                Update Event Image <br />           
+                                <input type='file' @change='changeEventImage' style='width:100%;' accept="image/png, image/jpeg" placeholder="Upload" class="btn">
+                            </div>
+                            </div>
+                        </v-expand-transition></v-img>
+                
+        </div>
+    </v-hover>
     <div class="eventInfo">
         <!-- <div class='header'>{{selectedEvent.name}} </div><br/> 
         <div class="dateHeader">{{startDate}} - {{endDate}} <br/></div> -->
@@ -61,6 +75,7 @@
 <script>
 
 import selectedUserMixin from '../mixins/selectedUserMixin.js'
+import showMixin from '../mixins/showMixin.js'
 import {
     mapGetters
 } from 'vuex'
@@ -76,7 +91,8 @@ export default {
     },
 
       mixins: [
-    selectedUserMixin
+    showMixin, 
+    selectedUserMixin,
   ],
 
     mounted() {
@@ -84,10 +100,14 @@ export default {
         const eID = this.selectedEvent.eID
         console.log(eID)
         this.$store.dispatch('getEventDetailsID', eID).then(() => {
-        var mixes = this.getEventMixes(eID) 
+            
+        }).then(() => {
+            var mixes = this.getEventMixes(eID) 
             mixes.then(response => {
-            //Dispatch to save in state
-            this.$store.commit("setEventMixes", response)  
+                console.log('Mounted resonse')
+                console.log(response)
+                //Dispatch to save in state
+                this.$store.commit("setEventMixes", response)  
             })
         })
     },
@@ -97,13 +117,25 @@ export default {
             options : { weekday: 'long', year: 'numeric', month: 'long', day: 'numeric' },
             mixSearch : '',
             artistSearch : '',
+            newEventImage : null,
         }       
     },
 
     methods: {
         pushtoUser(name, uID){
             this.navigateUser(uID , name)
-        }
+        },
+
+        changeEventImage(e){
+        
+          if(e.target.files[0].type == 'image/jpeg' | e.target.files[0].type == 'image/png'){
+            
+            this.newEventImage = e.target.files[0]
+            this.updateEventImage(this.selectedEvent , this.newEventImage)
+          }else{
+          this.$noty.error("please upload an image")
+          }
+      },
     },
 
     computed: {

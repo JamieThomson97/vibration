@@ -41,7 +41,9 @@ export default {
     }).then((response)=> {
       database.collection('events').doc(eID).collection('mixes').get().then(mixDocs =>{
         mixDocs.forEach(mixDoc => {
-          mixes.push(mixDoc.data())
+          var mix = mixDoc.data()
+          mix['mID'] = mixDoc.id
+          mixes.push(mix)
         })
         response['mixes'] = mixes
         console.log('response')

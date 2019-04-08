@@ -15,7 +15,7 @@ export default {
     
   },
   setEventMixes(state, mixes){
-    console.log('middle')
+    console.log('set event mixes')
     console.log(mixes)
     Vue.set(state , 'mixes', mixes )
   },

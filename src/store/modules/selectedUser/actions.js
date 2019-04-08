@@ -22,10 +22,10 @@ export default {
   const array = payload.array
   array.forEach(foll => {
     var callFunction = firebase.functions().httpsCallable('getFollowX')
-    callFunction({ uID: uID, followX: foll }).then(response => {
+    callFunction({ uID: uID , followX: foll }).then(response => {
       if (foll == 'followers') {
         for (var a in response.data) {
-          if (response.data[a].id == customeruID) {
+          if (response.data[a].uID == customeruID) {
             context.commit('doesFollow' , { does : true , index : a})
           }
         }
