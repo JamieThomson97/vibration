@@ -30,7 +30,9 @@ export default {
     methods: {
 
         deleteMix(ID){
-            
+            const passmID = ID
+            console.log('passmID')
+            console.log(passmID)
             var index = 0
             const mixes = this.selectedUser.playlists.mixes
             var gig = false
@@ -56,14 +58,14 @@ export default {
 
             if(gig){
                 const callGigFunction = firebase.functions().httpsCallable('deleteFromShowEvent')
-                promises.push(callGigFunction({type : gig , gatherName : gigName , mID : ID}))
+                promises.push(callGigFunction({type : gig , gatherName : gigName , mID : passmID}))
             }
             console.log('index')
             console.log(index)
             mixes.splice(index , 1)
             this.$store.dispatch('actionDeleteMix', {'pName' : this.collection , 'mID' : ID} )
             const callFunction = firebase.functions().httpsCallable('deleteMix')   
-            promises.push(callFunction({mID : ID , uID : [this.customer.uID]}))
+            promises.push(callFunction({mID : passmID , uID : this.customer.uID}))
             console.log('promises.length')
             console.log(promises.length)
             return Promise.all(promises).then(()=>{

@@ -326,8 +326,8 @@ export default {
                 
                 if(!isXCreated){  
                   if(isShow){
-                    const indexShowFunction = firebase.functions().httpsCallable('indexShow')
-                    finalPromises.push(indexShowFunction({ showData : showData , eID : newID }))
+                    //const indexShowFunction = firebase.functions().httpsCallable('indexShow')
+                   // finalPromises.push(indexShowFunction({ showData : showData , eID : newID }))
                     producers.forEach(producer=> {
                       
                       finalPromises.push(database.collection("users").doc(producer.uID).collection('shows').doc(newID).set(showData))
@@ -350,6 +350,8 @@ export default {
                   }
                 }                
                 return Promise.all(finalPromises)
+              }).then(() =>{
+                console.log('done')
               }).catch(error => {
                 console.log(error)
                 this.$noty.error(error)
