@@ -18,9 +18,10 @@ const vuexLocal = new VuexPersistence({
   reducer: (state) => ({
     customer: state.customer,
     // selectedMix.mID: state.clickedmID,
-    clickeduID : state.clickeduID,
-    clickedeID : state.clickedeID,
-    clickedsID : state.clickedsID,
+    selectedUseruID : state.selectedUser.uID,
+    selectedMixmID : state.selectedMix.mID,
+    selectedEventeID : state.selectedEvent.eID,
+    selectedShowsID : state.selectedShow.sID,
   })
 })
 

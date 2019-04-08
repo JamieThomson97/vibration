@@ -37,7 +37,7 @@
                         </div>
                     </div>
                     <div class="mixTiles">
-                        <mixTile v-for='mix in filteredMixes.slice(0,20)' :mixDeletable='isUser' collection='mixes' :key='mix.mID' :object='mix' playerTracksReference='show.mixes'> </mixTile>
+                        <mixTile v-for='mix in filteredMixes.slice(0,20)' :mixDeletable='isUser' collection='mixes' :key='mix.mID' :object='mix' playerTracksReference='producer.mixes'> </mixTile>
                     </div>
                </div>
             </v-hover>
@@ -120,7 +120,7 @@
                 </div>
             </div>
         </v-hover>
-        <Player />
+        
     </div>
     <!-- <div class="temp">
         this is temp
@@ -139,7 +139,7 @@ import mixTile from '@/components/mixTile.vue'
 import showTile from '@/components/showTile.vue'
 import eventTile from '@/components/eventTile.vue'
 import producerTile from '@/components/producerTile.vue'
-import Player from '@/components/Player.vue'
+
 //const database = firebase.firestore()
 const functions = firebase.functions()
 
@@ -164,11 +164,17 @@ export default {
     },
 
     mounted: function() {
-    
+        if(this.selectedUser.uID){
+            var passuID = this.selectedUser.uID
+        }else{
+            passuID  = JSON.parse(localStorage.getItem('vuex')).selectedUseruID
+            console.log('passuID')
+            console.log(passuID)
+        }
         
-        this.fetchUserDetails(this.selectedUser.uID)
-        this.getUserShowsorEvents(this.selectedUser.uID , 'events')
-        this.getUserShowsorEvents(this.selectedUser.uID , 'shows')
+        this.fetchUserDetails(passuID)
+        this.getUserShowsorEvents(passuID , 'events')
+        this.getUserShowsorEvents(passuID , 'shows')
        
     },
 
@@ -177,7 +183,7 @@ export default {
         mixTile,
         showTile,
         eventTile,
-        Player,
+       
         producerTile,
     },
 

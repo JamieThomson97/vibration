@@ -10,6 +10,7 @@ export default {
     database.collection('events').where('name' , '==' , eventName).get().then(response => {
       const eventData = response.docs[0].data()
       eventData['sID'] = response.docs[0].id
+      eventData['eID'] = response.docs[0].id
       return eventData
     }).then((response)=> {
       database.collection('events').doc(response.eID).collection('mixes').get().then(mixDocs =>{

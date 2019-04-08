@@ -124,8 +124,15 @@ export default {
   },
 
     mounted() {
-        
-        this.getShowPageData(this.selectedShow.sID)
+        if(this.selectedShow.sID){
+            var passsID = this.selectedShow.sID
+        }else{
+            passsID  = JSON.parse(localStorage.getItem('vuex')).selectedShowsID
+            console.log('passsID')
+            console.log(passsID)
+        }
+
+        this.getShowPageData(passsID)
         
     },
 

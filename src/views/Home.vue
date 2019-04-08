@@ -46,7 +46,6 @@
         </div> 
       </div>
     </div>
-    <Player />    
   </div>
 
   
@@ -71,7 +70,6 @@ import createPlaylistMixin from '../mixins/createPlaylistMixin'
 import { mapGetters } from 'vuex'
 
 import playlists from '@/components/playlists.vue'
-import Player from '@/components/Player.vue'
 import 'vuejs-noty/dist/vuejs-noty.css'
 import mixTile from '@/components/mixTile.vue'
 
@@ -95,7 +93,7 @@ export default {
 
   components: {
     
-    Player,
+   
     playlists,
     mixTile,
     

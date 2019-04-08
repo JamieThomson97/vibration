@@ -3,24 +3,44 @@
             temp
         </div> -->
         <div class="mixWrapper" v-if='trackData'>
+           
             <div class="mixTracklist">
-                <v-img :src="trackData.artworkURL" height=100% width=100%>
+                <v-img :src="trackData.artworkURL" height=100% width=100% class='tracklistButton'>
+                    
                     <div class="mixImageOverlay">
                         <div class="header mixTracklistHeader">Tracklist</div>
-                            <div class="mixTracklistTable">
-                                <tr class="mixTrackistTableRow" v-for='x in 5' :key='x'>  
-                                    <td class="mixTrackistTableColumn mixTracklistNumber">
-                                        {{x}}.
-                                    </td>
-                                    <td style='padding-left:10px;' class="mixTrackistTableColumn mixTracklistSong">
-                                        Leaving - Illenium
-                                    </td>
-                                </tr>
-                            </div>
-                        
+                        <div class="mixTracklistTable">
+                            <tr class="mixTrackistTableRow" v-for='x in 5' :key='x'>  
+                                <td class="mixTrackistTableColumn mixTracklistNumber">
+                                    {{x}}.
+                                </td>
+                                <td style='padding-left:10px;' class="mixTrackistTableColumn mixTracklistSong">
+                                    Leaving - Illenium
+                                </td>
+                            </tr>
+                        </div>
+                        <div class="mixButton" v-if='false'>
+                            <v-icon class='mixPlayButton' x-large="" v-if='!playerCurrentTrack.mID !== trackData.mID' @click="handleClickTrack(trackData, 'history') , isPlay = true , trackData.playCount++">
+                                play_arrow
+                            </v-icon>
+                            <v-icon class='mixPlayButton' x-large="" v-else-if='!isPlay && playerCurrentTrack.mID !== trackData.mID' @click="handleClickTrack(trackData, 'history') , isPlay = true , trackData.playCount++">
+                                play_arrow
+                            </v-icon>
+                            <v-icon class='mixPlayButton' x-large="" v-else-if='!isPlay && playerCurrentTrack.mID == trackData.mID' @click="handleClickTrack(trackData, 'history') , isPlay = true , trackData.playCount++">
+                                play_arrow
+                            </v-icon>
+                            <v-icon class='mixPlayButton' x-large="" v-else-if='isPlay && playerCurrentTrack.mID !== trackData.mID'  @click="handleClickTrack(trackData, 'history') , isPlay = true">
+                                play_arrow
+                            </v-icon>
+                            <v-icon class='mixPlayButton' x-large="" v-else-if='isPlay && playerCurrentTrack.mID == trackData.mID' @click="handleClickTrack(trackData, 'history') , isPlay = false">
+                                pause
+                            </v-icon>
+                        </div>
                     </div>
                 </v-img>
             </div>
+            
+            
             <div class="mixInfo">
                 
                 <div class="header mixInfoTitle">{{trackData.title}} - {{trackData.show}} {{trackData.event}}</div>
@@ -30,7 +50,7 @@
                 </div>
                 <div class="mixPlays">
                     <div class="smallPlays">Plays</div>
-                    <div class="largePlays">{{trackData.plays}}0</div>
+                    <div class="largePlays">{{trackData.playCount}}</div>
                 </div>
                 <div class="mixLikes">
                     <div class="smallPlays">Likes</div>
@@ -195,7 +215,9 @@ export default {
             selectedUser: 'selectedUser',
             selectedMix : 'selectedMix',
             event : 'event' ,
-            show : 'show'
+            show : 'show',
+            playerCurrentTrack: 'playerCurrentTrack',
+            isPlay : 'isPlay'
         }),
 
         trackData(){
@@ -233,8 +255,15 @@ export default {
     mounted: function() {
 
         
-        
-        this.fetchMixInfo(this.selectedMix.mID)
+        if(this.selectedMix.mID){
+            var passmID = this.selectedMix.mID
+        }else{
+            passmID  = JSON.parse(localStorage.getItem('vuex')).selectedMixmID
+            console.log('passmID')
+            console.log(passmID)
+        }
+        console.log(passmID)
+        this.fetchMixInfo(passmID)
         
 
     },
@@ -322,8 +351,27 @@ export default {
 }
 
 .mixImageOverlay{
+    grid-column: 1/2;
+    grid-row:1/1;
     height: 100%;
     background-color: rgba(0,0,0, 0.6);
+}
+
+.tracklistButton{
+    display:inline-flex;
+    flex-direction: row;
+    grid-template-columns: 1fr 1fr;
+    grid-template-rows: 1fr
+}
+
+.mixButton{
+    position: absolute;
+    top: 100px;
+    right: 100px;
+}
+
+.mixPlayButton{
+    transform: scale(8)
 }
 
 .mixInfo{
@@ -465,14 +513,6 @@ export default {
     grid-row:3/5;
     background-color: powderblue;
 }   
-
-
-
-
-.user {
-    border: 1px solid fuchsia;
-    width: 250px;
-}
 
 
 </style>

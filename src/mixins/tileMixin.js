@@ -212,11 +212,11 @@ export default {
                             return transaction.update(ref, {
                                 uIDs : uIDs
                             })
-                            })
                         })
                     })
-                    
                 })
+                
+            })
         }
     },
 
@@ -241,6 +241,7 @@ export default {
         },
 
         addToHistory(trackData) {
+            
             const passedmID = trackData.mID
             var inHistory = false
             this.customer.playlists.history.forEach(mix =>{
@@ -250,9 +251,11 @@ export default {
             })
             if(!inHistory){
                 console.log('add to history')
+                console.log(trackData)
+                console.log(this.customer.uID)
                 trackData['dateAdded'] = new Date()
                 
-                database.collection('users').doc(this.uID).collection('history').doc(trackData.mID).set(trackData).then(() => {
+                database.collection('users').doc(this.customer.uID).collection('history').doc(passedmID).set(trackData).then(() => {
                     this.$store.commit('addToHistory', trackData)
                 })
             }else{
@@ -263,9 +266,8 @@ export default {
 
         navigateMix(mID, title){
             console.log('navigate Mix')
+            console.log(mID)
             this.$store.commit('setShowSearch' , false)
-
-
             this.$store.dispatch('actionSetSelectedmID', mID).then(() => {
                 this.$router.push(`/mixes/${(title).split(' ').join('_')}`)
             })
@@ -309,7 +311,7 @@ export default {
                 this.$store.dispatch('setPlayerCurrentTrack', null);
             } else {
                 this.$store.dispatch('setPlayerCurrentTrack', trackData);
-
+              
                 switch (reference){
                     case 'show.mixes':
                         console.log('in showixes')
@@ -319,6 +321,12 @@ export default {
                         console.log('in showixes')
                         this.$store.dispatch('setPlayerTracks', this.show.suggestedMixes)
                         break ;
+                    case 'producer.mixes':
+                        this.$store.dispatch('setPlayerTracks', this.selectedUser.playlists.mixes)
+                        break;
+                    case 'events.mixes':
+                        this.$store.dispatch('setPlayerTracks', this.selectedEvent.mixes)
+                        break;
                     case 'listenLater':
                         this.$store.dispatch('setPlayerTracks', this.customer.playlists.listenLater)
                         break;
@@ -329,8 +337,29 @@ export default {
                     this.$store.dispatch('setPlayerTracks', this.customer.playlists[reference])
                 }
                 this.addToHistory(trackData)
+                this.addPlay(trackData)
             }
         },
+
+        addPlay(trackData){
+            const mID = trackData.mID
+            const ref = database.collection('mixes').doc(mID)
+            return database.runTransaction(transaction => {
+                return transaction.get(ref).then(mixDoc => {
+                    
+                    const mixData = mixDoc.data()
+                    console.log(mixData)
+                    const playCount = mixData.playCount
+                    
+                    const newPlayCount = playCount + 1                  
+
+                
+                return transaction.update(ref, {
+                    playCount : newPlayCount
+                })
+            })
+        })
+        }
       
     
 

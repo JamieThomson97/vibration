@@ -44,10 +44,10 @@
     </div>
     <div class="playerTrackDetailsRight">
       <div align right class="playerDate">
-        {{playerCurrentTrack.dateUploaded.seconds}}
+        {{readableDate}}
       </div>
-      <div align right class="playerGig" v-if='hover'  >
-        {{playerCurrentTrack.show}}Radio Wonderland
+      <div align right class="playerGig" v-if='playerCurrentTrack.show'  >
+        {{playerCurrentTrack.show}}
       </div>
       <div align right class="playerGig" v-if='playerCurrentTrack.event'  >
         {{playerCurrentTrack.event}}
@@ -85,6 +85,7 @@ export default {
   data() {
     return {
       player: null,
+      options : { year: 'numeric', month: 'numeric', day: 'numeric' },
     };
   },
 
@@ -119,7 +120,18 @@ export default {
         default:
           return this.playerCurrentTrack.producers[0].name
       }
-    }
+    },
+
+     readableDate(){
+            
+            if(this.playerCurrentTrack.dateUploaded){
+                var seconds = this.playerCurrentTrack.dateUploaded.seconds
+                var date = new Date(seconds * 1000).toLocaleDateString('en-UK', this.options)
+                return date
+            }else{
+                return 'not sure'
+            }
+        },
 
   },
   watch: {
@@ -179,6 +191,7 @@ export default {
                 }
               }
             }, 100);
+            this.addPlay(this.nextCurrentTrack)
           });
         }, 100);
       } else if (prevCurrentTrack && !nextCurrentTrack) {
@@ -289,6 +302,7 @@ export default {
     grid-template-rows: 1fr 1fr 1fr 1fr;
     align-items: center;
     justify-content: center;
+    font-weight: bold;
     font-size : 24px;
     color:beige
     
@@ -298,6 +312,7 @@ export default {
     right: 0px;
     top: 0;
     height: 100%;
+    font-weight: bold;
     font-size : 24px;
     color:beige;
     margin-right: 20px; 

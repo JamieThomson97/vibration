@@ -96,17 +96,6 @@ export default {
             
         },
         
-        handleClickTrack(trackData, trackID) {
-            
-            if (this.playerCurrentTrack && this.playerCurrentTrack.title === trackData.title) {
-                this.$store.dispatch('setPlayerCurrentTrack', null);
-            } else {
-                trackData['mID'] = trackID 
-                this.$store.dispatch('setPlayerCurrentTrack', trackData);
-                this.$store.dispatch('setPlayerTracks', this.stream)
-                this.addToHistory(trackData)
-            }
-        },
 
     }
 

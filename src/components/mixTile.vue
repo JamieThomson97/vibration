@@ -38,15 +38,15 @@
                             <div class='mixTileTitle' @click='navigateMix(object.mID, object.title )'>{{object.title}}</div>
                             <div v-for='x in object.producers' :key='x.uID' class='mixTileProducer' @click='navigateUser(x.uID, x.name)'>{{x.name}}</div>
                             <div v-if='object.show' class='mixTileDate'>
-                                {{readableDate}} - {{object.show.name}}
+                                {{readableDate}} - {{object.show}}
                                 <v-icon 
                                 style='position: absolute;   right: 0;   bottom: 0;' 
                                 v-if='playlistSelector' 
                                 class='tileActionsIcons' 
                                 @click='addToPlaylist(object , playlistChoice)'>done</v-icon>
                             </div>
-                            <div v-else-if='object.event' class='mixTileDate' @click='setClickedeID(object.event.eID, object.event.name )'>
-                                {{readableDate}} - {{object.event.name}}
+                            <div v-else-if='object.event' class='mixTileDate' @click='nagivateEvent(object.eID, object.name )'>
+                                {{readableDate}} - {{object.event}}
                                 <v-icon 
                                 style='position: absolute;   right: 0;   bottom: 0;' 
                                 v-if='playlistSelector' 
@@ -160,8 +160,6 @@ export default {
             }else{
                 return 'not sure'
             }
-                
-            
         },
 
     playlistOptions(){

@@ -41,7 +41,7 @@
                 </div>
             </div>
             <div class="eventsGrid">
-                <mixTile v-for='mix in fitleredMixes' :object='mix' playerTracksReference='selectedUser.artists' :key='mix.mID'></mixTile>
+                <mixTile v-for='mix in fitleredMixes' :object='mix' playerTracksReference='events.mixes' :key='mix.mID'></mixTile>
             </div>
         </div>
     </v-hover> 
@@ -97,8 +97,13 @@ export default {
 
     mounted() {
         
-        const eID = this.selectedEvent.eID
-        console.log(eID)
+        if(this.selectedEvent.eID){
+            var eID = this.selectedEvent.eID
+        }else{
+            eID  = JSON.parse(localStorage.getItem('vuex')).selectedEventeID
+            console.log('eID')
+            console.log(eID)
+        }
         this.$store.dispatch('getEventDetailsID', eID).then(() => {
             
         }).then(() => {

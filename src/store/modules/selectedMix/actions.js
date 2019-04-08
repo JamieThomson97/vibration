@@ -41,13 +41,19 @@ export default {
 //   },
 
   actionSetSelectedmID({ commit }, payload) {
+    console.log('actionSetSelectedmID')
+    console.log(payload)
     commit('setSelectedmID' , payload)
   },
 
   getTrackData({ commit }, mID) {
       
     database.collection('mixes').doc(mID).get().then(response => {
-      commit('setTrackData', response.data())
+      const trackData = response.data()
+      trackData['mID'] = response.id
+      console.log('trackData')
+      console.log(trackData)
+      commit('setTrackData', trackData)
     })
   },
 
