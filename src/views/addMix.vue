@@ -100,8 +100,12 @@ export default {
 
       storeFile(e){
           console.log(e.target.files[0].type)
+          console.log('e.currentTarget')
+          console.log(e.currentTarget.duration)
           if(e.target.files[0].type == 'audio/mpeg' | e.target.files[0].type == 'audio/mp4'){
             this.audio = e.target.files[0]
+            console.log('this.audio')
+            console.log(this.audio)
           }else if(e.target.files[0].type == 'image/jpeg' | e.target.files[0].type == 'image/png'){
             
             this.artwork = e.target.files[0]
