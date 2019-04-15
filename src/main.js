@@ -8,6 +8,10 @@ import '@/components/firebaseConfig.js'
 import VueFire from 'vuefire'
 import InstantSearch from 'vue-instantsearch';
 import VueNoty from 'vuejs-noty';
+import VueCollapse from 'vue2-collapse'
+
+// Loading the plugin into the Vue.
+Vue.use(VueCollapse)
 
 
 Vue.use(VueFire)

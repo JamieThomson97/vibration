@@ -15,14 +15,14 @@ export default {
 
     computed: {
         ...mapGetters({
-            profileURL : 'profileURL',
-            uID : 'uID',
-            name : 'name',
-            clickeduID : 'clickeduID',
-            selectedUser : 'selectedUser',
-            show : 'show',
-            showSearch : 'showSearch',
-            customer : 'customer',
+            profileURL: 'profileURL',
+            uID: 'uID',
+            name: 'name',
+            clickeduID: 'clickeduID',
+            selectedUser: 'selectedUser',
+            show: 'show',
+            showSearch: 'showSearch',
+            customer: 'customer',
         }),
 
 
@@ -30,7 +30,7 @@ export default {
 
     methods: {
 
-        deleteMix(ID){
+        deleteMix(ID) {
             const passmID = ID
             console.log('passmID')
             console.log(passmID)
@@ -39,48 +39,61 @@ export default {
             var gig = false
             var gigName = null
             var promises = []
-           for(var x in mixes){
-              var mID = mixes[x].mID
-              if(mID == ID){
-                  if(mixes[x].show){
-                    gig = 'shows'
-                    gigName = mixes[x].show
-                  }
-                  if(mixes[x].event){
-                    gig = 'events'
-                    gigName = mixes[x].event
-                  }  
-                  index = x
-              }
+            for (var x in mixes) {
+                var mID = mixes[x].mID
+                if (mID == ID) {
+                    if (mixes[x].show) {
+                        gig = 'shows'
+                        gigName = mixes[x].show
+                    }
+                    if (mixes[x].event) {
+                        gig = 'events'
+                        gigName = mixes[x].event
+                    }
+                    index = x
+                }
             }
             console.log('gig')
             console.log(gig)
             console.log(gigName)
 
-            if(gig){
+            if (gig) {
                 const callGigFunction = firebase.functions().httpsCallable('deleteFromShowEvent')
-                promises.push(callGigFunction({type : gig , gatherName : gigName , mID : passmID}))
+                promises.push(callGigFunction({
+                    type: gig,
+                    gatherName: gigName,
+                    mID: passmID
+                }))
             }
             console.log('index')
             console.log(index)
-            mixes.splice(index , 1)
-            this.$store.dispatch('actionDeleteMix', {'pName' : this.collection , 'mID' : ID} )
-            const callFunction = firebase.functions().httpsCallable('deleteMix')   
-            promises.push(callFunction({mID : passmID , uID : this.customer.uID}))
+            mixes.splice(index, 1)
+            this.$store.dispatch('actionDeleteMix', {
+                'pName': this.collection,
+                'mID': ID
+            })
+            const callFunction = firebase.functions().httpsCallable('deleteMix')
+            promises.push(callFunction({
+                mID: passmID,
+                uID: this.customer.uID
+            }))
             console.log('promises.length')
             console.log(promises.length)
-            return Promise.all(promises).then(()=>{
+            return Promise.all(promises).then(() => {
                 console.log('done')
-            })        
+            })
         },
 
 
-        removeFromPlaylist(mID , collection){
+        removeFromPlaylist(mID, collection) {
             console.log(collection)
             //database.collection('mixPlaylists').doc(mID).get()  // see commented below
             database.collection('users').doc(this.uID).collection(collection).doc(mID).delete().then(() => {
-                this.$store.commit('deleteFromPlaylist' , {mID : mID , playlist : collection})
-                this.$noty.success('Mix removed from : '+collection)
+                this.$store.commit('deleteFromPlaylist', {
+                    mID: mID,
+                    playlist: collection
+                })
+                this.$noty.success('Mix removed from : ' + collection)
             })
 
             // .then(response => {
@@ -93,234 +106,242 @@ export default {
             // ])
         },
 
-        addToPlaylist(mixData , playlists){
+        addToPlaylist(mixData, playlists) {
             console.log('mixData')
             console.log(mixData)
-            
+
             this.playlistSelector = false
             this.playlistChoice = null
             console.log(mixData)
             console.log(playlists)
-            if(playlists == null){
+            if (playlists == null) {
                 this.$noty.warning('Please select atleast one playlist')
-            }else{
+            } else {
 
                 var mixDataPass = {
 
-                    artworkURL : mixData.artworkURL,
-                    audioURL : mixData.audioURL,
-                    mID : mixData.mID,
-                    producers : mixData.producers,
-                    title : mixData.title,
+                    artworkURL: mixData.artworkURL,
+                    audioURL: mixData.audioURL,
+                    mID: mixData.mID,
+                    producers: mixData.producers,
+                    title: mixData.title,
                     // uID : mixData.uID,
-                    dateUploaded :  mixData.dateUploaded,
-                    dateAdded : new Date()
-    
-                }                
+                    dateUploaded: mixData.dateUploaded,
+                    dateAdded: new Date()
+
+                }
                 const createdPlaylists = this.customer.createdPlaylists
                 //const customer = this.customer
 
-                playlists.forEach( (playlistName) => {
+                playlists.forEach((playlistName) => {
                     var next = false
-                    if(playlistName  == 'Listen Later'){
+                    if (playlistName == 'Listen Later') {
                         playlistName = 'listenLater'
                     }
-                    if(playlistName  == 'Liked Mixes'){
-                        playlistName = 'likedMixes'
+                    if (playlistName == 'Liked Mixes') {
+
+                        playlistName = 'liked'
                     }
                     var playlistCreated = false
                     createdPlaylists.forEach(pName => {
 
                         if (pName == playlistName) {
-                        playlistCreated = true
+                            playlistCreated = true
                         }
                     })
-                    console.log(playlistName)
+                    console.log('this.customer.playlists[playlistName]')
+                    console.log(this.customer.playlists[playlistName])
 
-                    if(this.customer.playlists[playlistName]){
-                        this.customer.playlists[playlistName].forEach( (mix) => {
-                            if(mix.mID == mixData.mID){
-                                console.log('track already in '+playlistName)
+                    if (this.customer.playlists[playlistName]) {
+                        this.customer.playlists[playlistName].forEach((mix) => {
+                            if (mix.mID == mixData.mID) {
+                                console.log('track already in ' + playlistName)
                                 next = true;
                                 return
                             }
                         })
-                        if(next){
+                        if (next) {
                             return;
                         }
                     }
-                    
 
-                    
+
+                    console.log('above DB Call')
                     const uID = this.uID
                     const mID = mixData.mID
                     database.collection('users').doc(uID).collection(playlistName).doc(mixDataPass.mID).set(mixDataPass).then(() => {
                         if (!playlistCreated) {
-                            if(playlistName !== "listenLater" | "Liked Mixes"){
-                                
+                            if (playlistName !== "listenLater" | "liked") {
+
                                 database.collection('users').doc(uID).update({
-                                        createdPlaylists: firebase.firestore.FieldValue.arrayUnion(playlistName)
-                                    }).then(() => {
-                                        this.$store.dispatch('actionCreatePlaylist', playlistName)
-                                    }).then(() => {
-                                        this.$store.commit('addToPlaylist' , {mix : mixDataPass , playlistName : playlistName})
-                                        this.$noty.success(playlistName+' created')
+                                    createdPlaylists: firebase.firestore.FieldValue.arrayUnion(playlistName)
+                                }).then(() => {
+                                    this.$store.dispatch('actionCreatePlaylist', playlistName)
+                                }).then(() => {
+                                    this.$store.commit('addToPlaylist', {
+                                        mix: mixDataPass,
+                                        playlistName: playlistName
                                     })
+                                    this.$noty.success(playlistName + ' created')
+                                })
                             }
-                            this.$store.commit('addToPlaylist' , {mix : mixDataPass , playlistName : playlistName})
+                            this.$store.commit('addToPlaylist', {
+                                mix: mixDataPass,
+                                playlistName: playlistName
+                            })
                         }
                         // else{
                         //     this.$store.commit('addToPlaylist' , {mix : mixDataPass , playlistName : playlistName})                                                                                                                                                                             
                         // }
-                    
-                        
+
+
                     }).catch(error => {
-                        console.log(error)                                          
+                        console.log(error)
                     }).then(() => {
-                        
-                        
+
+
                         const ref = database.collection('mixPlaylists').doc(mID)
                         return database.runTransaction(transaction => {
                             return transaction.get(ref).then(mixDoc => {
-                                
+
                                 const mixData = mixDoc.data()
                                 console.log(mixData)
                                 const uIDs = mixData.uIDs
                                 var isIn = false
-                                
+
                                 Object.keys(uIDs).forEach(key => {
-                                    if(key == uID){
+                                    if (key == uID) {
                                         isIn = true
                                     }
                                 })
-                                
-                                if(!isIn){
 
-                                    var addObject =  [playlistName]     
+                                if (!isIn) {
+
+                                    var addObject = [playlistName]
                                     // //if not 
                                     uIDs[uID] = (addObject)
-                                    
-                                }else{
-                                    if(!uIDs[uID].includes(playlistName)){
-                                        uIDs[uID].push(playlistName)
-                                    }else{
-                                        console.log('already in playlist')
-                                    }                                
-                                }                        
 
-                            
-                            return transaction.update(ref, {
-                                uIDs : uIDs
+                                } else {
+                                    if (!uIDs[uID].includes(playlistName)) {
+                                        uIDs[uID].push(playlistName)
+                                    } else {
+                                        console.log('already in playlist')
+                                    }
+                                }
+
+
+                                return transaction.update(ref, {
+                                    uIDs: uIDs
+                                })
                             })
                         })
                     })
-                })
-                
-            })
-        }
-    },
 
-        createPlaylist(playlistName){
+                })
+            }
+        },
+
+        createPlaylist(playlistName) {
 
             const playlistNames = this.customer.playlistNames
-            
-            for(var a in playlistNames){
-                    var name = playlistNames[a]
-                    if(name === playlistName){
-                        return 'Playlist aready created'
-                    }  
+
+            for (var a in playlistNames) {
+                var name = playlistNames[a]
+                if (name === playlistName) {
+                    return 'Playlist aready created'
+                }
             }
 
             database.collection('users').doc(this.uID).update({
                 createdPlaylists: firebase.firestore.FieldValue.arrayUnion(playlistName)
             }).then(() => {
                 this.$store.commit('createPlaylist', playlistName)
-                this.$noty.success(playlistName+' created')
+                this.$noty.success(playlistName + ' created')
             })
 
         },
 
         addToHistory(trackData) {
-            
+
             const passedmID = trackData.mID
             var inHistory = false
-            this.customer.playlists.history.forEach(mix =>{
-                if(mix.mID == passedmID){
+            this.customer.playlists.history.forEach(mix => {
+                if (mix.mID == passedmID) {
                     inHistory = true
                 }
             })
-            if(!inHistory){
+            if (!inHistory) {
                 console.log('add to history')
                 console.log(trackData)
                 console.log(this.customer.uID)
                 trackData['dateAdded'] = new Date()
-                
+
                 database.collection('users').doc(this.customer.uID).collection('history').doc(passedmID).set(trackData).then(() => {
                     this.$store.commit('addToHistory', trackData)
                 })
-            }else{
+            } else {
                 console.log('mix already in history')
             }
-            
+
         },
 
-        navigateMix(mID, title){
+        navigateMix(mID, title) {
             console.log('navigate Mix')
             console.log(mID)
-            this.$store.commit('setShowSearch' , false)
+            this.$store.commit('setShowSearch', false)
             this.$store.dispatch('actionSetSelectedmID', mID).then(() => {
                 this.$router.push(`/mixes/${(title).split(' ').join('_')}`)
             })
-            
+
         },
 
-        navigateUser(uID , name) {
-            
-            this.$store.commit('setShowSearch' , false)
-            this.$store.commit('setuIDWatcher' , uID )
-            this.$store.dispatch('actionSetSelecteduID' , uID).then(()=> {
+        navigateUser(uID, name) {
+
+            this.$store.commit('setShowSearch', false)
+            this.$store.commit('setuIDWatcher', uID)
+            this.$store.dispatch('actionSetSelecteduID', uID).then(() => {
                 console.log('pushing')
                 this.$router.push(`/users/${(name).split(' ').join('_')}`)
             })
-            
-            
-          },
 
-          navigateEvent(eID, eventName){
+
+        },
+
+        navigateEvent(eID, eventName) {
             console.log('eID')
             console.log(eID)
-            this.$store.commit('setShowSearch' , false)
+            this.$store.commit('setShowSearch', false)
             this.$store.dispatch('actionSetSelectedeID', eID).then(() => {
                 this.$router.push(`/events/${(eventName).split(' ').join('_')}`)
             })
         },
 
-        navigateShow(sID , showName) {
-            this.$store.commit('setShowSearch' , false)
+        navigateShow(sID, showName) {
+            this.$store.commit('setShowSearch', false)
             this.$store.dispatch('actionSetSelectedsID', sID).then(() => {
                 this.$router.push(`/shows/${(showName).split(' ').join('_')}`)
             })
-          },
-        
+        },
+
         handleClickTrack(trackData, reference) {
             console.log('trackData')
-            console.log(trackData)   
+            console.log(trackData)
             console.log('reference')
-            console.log(reference)          
+            console.log(reference)
             if (this.playerCurrentTrack && this.playerCurrentTrack.mID === trackData.mID) {
                 this.$store.dispatch('setPlayerCurrentTrack', null);
             } else {
                 this.$store.dispatch('setPlayerCurrentTrack', trackData);
-              
-                switch (reference){
+
+                switch (reference) {
                     case 'show.mixes':
                         console.log('in showixes')
                         this.$store.dispatch('setPlayerTracks', this.show.mixes)
-                        break ;
+                        break;
                     case 'show.suggestedMixes':
                         console.log('in showixes')
                         this.$store.dispatch('setPlayerTracks', this.show.suggestedMixes)
-                        break ;
+                        break;
                     case 'producer.mixes':
                         this.$store.dispatch('setPlayerTracks', this.selectedUser.playlists.mixes)
                         break;
@@ -334,34 +355,34 @@ export default {
                         this.$store.dispatch('setPlayerTracks', this.customer.playlists.history)
                         break;
                     default:
-                    this.$store.dispatch('setPlayerTracks', this.customer.playlists[reference])
+                        this.$store.dispatch('setPlayerTracks', this.customer.playlists[reference])
                 }
                 this.addToHistory(trackData)
                 this.addPlay(trackData)
             }
         },
 
-        addPlay(trackData){
+        addPlay(trackData) {
             const mID = trackData.mID
             const ref = database.collection('mixes').doc(mID)
             return database.runTransaction(transaction => {
                 return transaction.get(ref).then(mixDoc => {
-                    
+
                     const mixData = mixDoc.data()
                     console.log(mixData)
                     const playCount = mixData.playCount
-                    
-                    const newPlayCount = playCount + 1                  
 
-                
-                return transaction.update(ref, {
-                    playCount : newPlayCount
+                    const newPlayCount = playCount + 1
+
+
+                    return transaction.update(ref, {
+                        playCount: newPlayCount
+                    })
                 })
             })
-        })
         }
-      
-    
+
+
 
         // updateUserImage(uID, image){
         // //Will receive an image file
@@ -370,9 +391,9 @@ export default {
         // var imageStorageRef = storage.ref('userProfileImage/'+uID+'.jpeg')
 
         // return imageStorageRef.put(image).then(() => {
-            
+
         //     return imageStorageRef.getDownloadURL().then(function(URL) {
-                
+
         //         return URL
         //     })
         // }).then(response => {
@@ -387,10 +408,10 @@ export default {
         //         const userPromise = database.collection('users').doc(uID).set({
         //             profileURL : response
         //         })
-                
+
 
         //         //in the following subcollection
-                
+
         //         var followinguIDs = []
 
         //         database.collection('users').doc(uID).collection('following').get().then(response => {
@@ -463,13 +484,13 @@ export default {
         //             //     })
         //             // })
         //         })
-                                
+
         //     })
         // },
 
     },
 
-    
+
     mixins: [
         createPlaylistMixin
     ],
