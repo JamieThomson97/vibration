@@ -1,6 +1,7 @@
 //import firebase from 'firebase'
 //const database = firebase.firestore()
 import createPlaylistMixin from '../mixins/createPlaylistMixin'
+import mixMixin from '../mixins/mixMixin'
 import {
     mapGetters
 } from 'vuex'
@@ -12,6 +13,12 @@ const database = firebase.firestore()
 export default {
 
 
+
+
+    mixins: [
+        mixMixin,
+        createPlaylistMixin
+    ],
 
     computed: {
         ...mapGetters({
@@ -288,7 +295,8 @@ export default {
         navigateMix(mID, title) {
             console.log('navigate Mix')
             console.log(mID)
-            this.$store.commit('setShowSearch', false)
+            this.fetchMixInfo(mID)
+            // this.$store.commit('setShowSearch', false)
             this.$store.dispatch('actionSetSelectedmID', mID).then(() => {
                 this.$router.push(`/mixes/${(title).split(' ').join('_')}`)
             })
@@ -489,10 +497,5 @@ export default {
         // },
 
     },
-
-
-    mixins: [
-        createPlaylistMixin
-    ],
 
 }

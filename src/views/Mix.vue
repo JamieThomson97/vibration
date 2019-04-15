@@ -7,15 +7,24 @@
       <v-img :src="trackData.artworkURL" height="100%" width="100%" class="tracklistButton">
         <div class="mixImageOverlay">
           <div class="header mixTracklistHeader">Tracklist</div>
-          <div class="mixTracklistTable">
-            <tr class="mixTrackistTableRow" v-for="x in 5" :key="x">
-              <td class="mixTrackistTableColumn mixTracklistNumber">{{x}}.</td>
+          <div class="mixTracklistTable" v-if="selectedMix.trackData.tracklist">
+            <tr
+              class="mixTrackistTableRow"
+              v-for="(song , x) in selectedMix.trackData.tracklist"
+              :key="song"
+            >
+              <td class="mixTrackistTableColumn mixTracklistNumber">{{x+1}}.</td>
               <td
                 style="padding-left:10px;"
                 class="mixTrackistTableColumn mixTracklistSong"
-              >Leaving - Illenium</td>
+              >{{song}}</td>
             </tr>
           </div>
+          <div v-else class="noTracklist">
+            A tracklist has not been uploaded, please update if possible
+            <tracklistPopup/>
+          </div>
+
           <div class="mixButton" v-if="false">
             <v-icon
               class="mixPlayButton"
@@ -134,7 +143,7 @@
         </div>
       </div>
     </div>
-    <div class="mixEventorShowSuggested">
+    <!-- <div class="mixEventorShowSuggested">
       <div class="mixEvent">
         <div class="header">From the same event</div>
         <div class="mixTiles" v-if="event">
@@ -160,13 +169,18 @@
         </div>
         <div v-else class="noneFound">no mixes found from same show</div>
       </div>
-    </div>
-    <!-- <div class="mixProducerSuggested">
-                <div class='header'>By the same producer</div>
-                <div class="mixTiles">
-                    <mixTile v-for='mix in selectedUser.playlists.mixes' :key='mix.mID' :object='mix' playerTracksReference='show.mixes'> </mixTile>
-                </div> 
     </div>-->
+    <div class="mixProducerSuggested">
+      <div class="header">By the same producers</div>
+      <div class="mixTiles">
+        <mixTile
+          v-for="mix in selectedMix.suggestedMixes"
+          :key="mix.mID"
+          :object="mix"
+          playerTracksReference="show.mixes"
+        ></mixTile>
+      </div>
+    </div>
   </div>
 </template>
 
@@ -177,6 +191,7 @@ import tileMixin from "../mixins/tileMixin";
 import selectedUserMixin from "../mixins/selectedUserMixin";
 
 import mixTile from "@/components/mixTile.vue";
+import tracklistPopup from "@/components/tracklistPopup.vue";
 import showTile from "@/components/showTile.vue";
 import eventTile from "@/components/eventTile.vue";
 import producerTile from "@/components/producerTile.vue";
@@ -187,6 +202,7 @@ import firebase from "firebase";
 
 export default {
   components: {
+    tracklistPopup,
     mixTile,
     showTile,
     producerTile,
@@ -221,7 +237,7 @@ export default {
       profileURL: "profileURL",
       uID: "uID",
       name: "name",
-      clickeduID: "clickeduID",
+      // selectedMixmID: "selectedMixmID",
       selectedUser: "selectedUser",
       selectedMix: "selectedMix",
       event: "event",
@@ -236,22 +252,22 @@ export default {
   },
 
   watch: {
-    // clickedMixID: function(newValue) {
-    //     console.log('watcher')
-    //     this.fetchMixInfo(newValue)
-    // },
-    // trackData: function(newValue) {
-    //     if(this.selectedUser.uID != newValue.uID){
-    //         this.fetchUserDetails(newValue.uID)
-    //     }
-    //     console.log(newValue)
-    // },
-    // selectedUser: function(newValue) {
-    //     if(newValue.uID){
-    //         this.getUserShowsorEvents(newValue.uID , 'events')
-    //         this.getUserShowsorEvents(newValue.uID  , 'shows')
-    //     }
-    // }
+    selectedMix: function(newValue) {
+      console.log("watcher");
+      // this.fetchMixInfo(newValue);
+    },
+    trackData: function(newValue) {
+      if (this.selectedUser.uID != newValue.uID) {
+        this.fetchUserDetails(newValue.uID);
+      }
+      console.log(newValue);
+    },
+    selectedUser: function(newValue) {
+      if (newValue.uID) {
+        this.getUserShowsorEvents(newValue.uID, "events");
+        this.getUserShowsorEvents(newValue.uID, "shows");
+      }
+    }
     //If event or stream, set the event . mixes object in state to equal the mixes in that event or mix
   },
 
@@ -320,13 +336,13 @@ export default {
 
 .mixTracklist {
   grid-column: 1/2;
-  grid-row: 1/3;
+  grid-row: 1/4;
   background-color: rgb(12, 35, 56);
 }
 
 .mixProducers {
   grid-column: 1/2;
-  grid-row: 3/5;
+  grid-row: 4/5;
   background-color: rgb(12, 35, 56);
 }
 
@@ -335,14 +351,20 @@ export default {
   margin-left: 20px;
 }
 
+.noTracklist {
+  color: white;
+  font-size: 20px;
+  margin-left: 20px;
+}
+
 .mixTracklistNumber {
-  color: rgb(40, 106, 168);
+  color: white;
   font-size: 16px;
 }
 
 .mixTracklistSong {
   font-weight: bold;
-  color: rgb(40, 106, 168);
+  color: white;
   font-size: 26px;
 }
 
@@ -472,7 +494,7 @@ export default {
 }
 
 .mixEvent {
-  grid-column: 1/2;
+  grid-column: 2/3;
   grid-row: 1/1;
   background-color: red;
 }
@@ -484,7 +506,7 @@ export default {
 }
 
 .mixProducerSuggested {
-  grid-column: 3/4;
+  grid-column: 2/4;
   grid-row: 3/5;
   background-color: powderblue;
 }

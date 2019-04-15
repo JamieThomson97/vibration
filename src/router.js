@@ -8,14 +8,14 @@ import addMix from './views/addMix.vue'
 import mix from './views/Mix.vue'
 import Event from './views/Event.vue'
 import Show from './views/Show.vue'
+import Playlists from './views/Playlists.vue'
 
 Vue.use(Router)
 
 export default new Router({
   mode: 'history',
   base: process.env.BASE_URL,
-  routes: [
-    {
+  routes: [{
       path: '/',
       name: 'home',
       component: Home
@@ -24,9 +24,9 @@ export default new Router({
       path: '/landing',
       name: 'landing',
       component: Landing,
-            
+
     },
-    
+
     {
       path: '/users/:passeduID',
       name: 'User',
@@ -42,7 +42,7 @@ export default new Router({
       name: 'mix',
       component: mix
     },
-   
+
     {
       path: '/events/:eID',
       name: 'Event',
@@ -52,6 +52,11 @@ export default new Router({
       path: '/shows/:sID',
       name: 'Show',
       component: Show
+    },
+    {
+      path: '/playlists',
+      name: 'playlists',
+      component: Playlists
     },
   ]
 })

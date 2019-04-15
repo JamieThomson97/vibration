@@ -12,6 +12,7 @@
                     class="d-flex artworkHover transition-fast-in-fast-out v-card--reveal"
                     style="height: 100%;"
                   >
+                    <div class="duration" v-if="object.duration">{{object.duration}}</div>
                     <v-icon
                       color="white"
                       style="margin-top:25px;"
@@ -222,6 +223,14 @@ export default {
 .tileActions {
   background-color: rgb(34, 177, 177);
   display: flex;
+}
+
+.duration {
+  padding-right: 5px;
+  color: black;
+  position: absolute;
+  bottom: 0;
+  right: 0;
 }
 
 .mixTileProducer {

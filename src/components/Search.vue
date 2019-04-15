@@ -5,7 +5,8 @@
         :class="{'mixSearch': divExpands[0]==0 , 'expandedDiv': divExpands[0]==1, 'hiddenDiv': divExpands[0]==-1 }"
       >
         <ais-instant-search :search-client="searchClient" index-name="mixes">
-          <ais-configure :hitsPerPage="{'10' : divExpands[0]==0 , '25' : divExpands[0]==0 }"/>
+          <ais-configure v-if="divExpands[0]==0" :hitsPerPage="10"/>
+          <ais-configure v-if="divExpands[0]==1" :hitsPerPage="25"/>
           <ais-search-box
             placeholder="Search here…"
             style="display: none;"
@@ -33,7 +34,8 @@
         :class="{'producerSearch': divExpands[1]==0 , 'expandedDiv': divExpands[1]==1, 'hiddenDiv': divExpands[1]==-1 }"
       >
         <ais-instant-search :search-client="searchClient" index-name="producers">
-          <ais-configure :hitsPerPage="{'10' : divExpands[1]==0 , '25' : divExpands[1]==0 }"/>
+          <ais-configure v-if="divExpands[1]==0" :hitsPerPage="10"/>
+          <ais-configure v-if="divExpands[1]==1" :hitsPerPage="25"/>
           <ais-search-box
             placeholder="Search here…"
             style="display: none;"
@@ -61,7 +63,8 @@
         :class="{'eventSearch': divExpands[2]==0 , 'expandedDiv': divExpands[2]==1, 'hiddenDiv': divExpands[2]==-1 }"
       >
         <ais-instant-search :search-client="searchClient" index-name="events">
-          <ais-configure :hitsPerPage="{'10' : divExpands[2]==0 , '25' : divExpands[2]==0 }"/>
+          <ais-configure v-if="divExpands[2]==0" :hitsPerPage="10"/>
+          <ais-configure v-if="divExpands[2]==1" :hitsPerPage="25"/>
           <ais-search-box
             style="display: none;"
             placeholder="Search here…"
@@ -89,7 +92,8 @@
         :class="{'seriesSearch': divExpands[3]==0 , 'expandedDiv': divExpands[3]==1, 'hiddenDiv': divExpands[3]==-1 }"
       >
         <ais-instant-search :search-client="searchClient" index-name="shows">
-          <ais-configure :hitsPerPage="{'10' : divExpands[3]==0 , '25' : divExpands[3]==0 }"/>
+          <ais-configure v-if="divExpands[3]==0" :hitsPerPage="10"/>
+          <ais-configure v-if="divExpands[3]==1" :hitsPerPage="25"/>
           <ais-search-box
             placeholder="Search here…"
             style="display: none;"
