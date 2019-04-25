@@ -29,7 +29,7 @@
             <v-hover>
                 <div class="userStream" slot-scope="{ hover }">
                     <div class="headerandSearch">
-                        <div class='header' >Producer's Mixes</div>
+                        <div class='mixHeader' >Producer's Mixes</div>
                         <div class='userMixSearch'>
                             <v-fade-transition>
                                 <v-text-field v-if='hover' height='50%' v-model='mixSearch' class='userMixSearchbox' box clearable type="text" v-on:keyup.enter="s"  placeholder="Search"></v-text-field>
@@ -93,7 +93,7 @@
         <v-hover>   
             <div class="userEvents" slot-scope="{ hover }" >
                 <div class="headerandSearch">
-                    <div class='header' >Events</div>
+                    <div class='eventHeader' >Events</div>
                     <div class='userMixSearch'>
                         <v-fade-transition>
                             <v-text-field v-if='hover' height='50%' v-model='eventSearch' class='userMixSearchbox' box clearable type="text" v-on:keyup.enter="s"  placeholder="Search"></v-text-field>
@@ -108,7 +108,7 @@
         <v-hover>
             <div class="userShows" slot-scope="{ hover }" >
                 <div class="headerandSearch">
-                    <div class='header' >Shows</div>
+                    <div class='showHeader' >Shows</div>
                     <div class='userMixSearch'>
                         <v-fade-transition>
                             <v-text-field v-if='hover' height='50%' v-model='showSearch' class='userMixSearchbox' box clearable type="text" v-on:keyup.enter="s"  placeholder="Search"></v-text-field>
@@ -354,7 +354,7 @@ export default {
             callFunctions({
                 'following' : following,
                 'follower' : follower,
-                'follow' : follow
+                'follow' : !follow
                 }).then(() => {
                     if(!follow){
                         this.$noty.success("User Followed")
@@ -388,19 +388,21 @@ export default {
         grid-gap: .5em;
         height: 100vh;
         width: 97vw;
+        background-color:  white;
     }
 
     .userEmphasis{
+        color:  #CFD8DC;
         margin: auto;
         width: 3vw;
-        background-color: aquamarine;
+        background-color: rgb(216, 67, 21);
 
     }
 
     .userEvents{
 
         flex-wrap: wrap;
-        background-color: blue;
+        background-color: #CFD8DC;
         grid-row:2/3;
         grid-column:2/3;
 
@@ -439,7 +441,7 @@ export default {
 
     .userShows{
 
-        background-color: red;
+        background-color: #CFD8DC;
         grid-row:2/3;
         grid-column:3/4;
         flex-wrap: wrap;
@@ -459,7 +461,7 @@ export default {
         display:grid;
         grid-template-columns: 1fr 1fr;
         grid-template-rows: 1fr 5fr;
-        background-color: peru;
+        background-color: #CFD8DC;
         grid-row:2/3;
         grid-column:1/2; 
     }
@@ -472,13 +474,21 @@ export default {
     .userPatronHeader{
         margin-top: 10px;
         text-align: center;
-        color : white;
+        color :  #D84315;
         
     }
 
+     .userHeader{
+        margin-left : 10px;
+        color :  #D84315;
+        font-size: 50px;
+        
+    }
+
+
     .userPatronCount{
         text-align: center;
-        color : white;
+        color :  #D84315;
         font-size: 50px;
         font-weight: bold;
     }
@@ -488,7 +498,7 @@ export default {
         display:grid;
         grid-template-columns: 1fr 1fr 1fr;
         grid-template-rows: 1fr;
-        background-color: red;
+        background-color: #CFD8DC;
         grid-row:1/2;
         grid-column:1/3;
 
@@ -514,7 +524,7 @@ export default {
        
         padding-top:10px;
         padding-left:10px;
-        background-color: green;
+        background-color: #CFD8DC;
         grid-row:2/3;
         grid-column:1/3;
         display: flex;
@@ -554,7 +564,7 @@ export default {
     .userStream{
 
         display: flex;
-        background-color: greenyellow;
+        background-color: #CFD8DC;
         grid-row:1/2;
         grid-column:2/4;
         flex-direction: column;
@@ -562,7 +572,7 @@ export default {
     }
 
     .followers{
-        color: red;
+        color: #D84315;
     }
 
 </style>

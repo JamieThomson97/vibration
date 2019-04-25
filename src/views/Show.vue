@@ -2,13 +2,14 @@
     
 <div class='showWrapper' v-if='selectedShow.producers'>
     <v-hover> 
-        <div class="showArtwork" slot-scope="{ hover }">
+        <div class="showImage" slot-scope="{ hover }">
                 
                 <v-img 
                     max-width='100%'
                     max-height='100%'
                     contain
                     :src="selectedShow.imageURL"
+
                     >
                     <v-expand-transition>
                             <div
@@ -27,25 +28,25 @@
     </v-hover> 
     <div class="showInfo">
 
-        <div class='header'>{{selectedShow.name}} </div><br/>
+        <div class='showHeader'>{{selectedShow.name}} </div><br/>
         <div class="userFollowNumbers">
                 <!-- <v-btn v-if='!doesFollow & (uID !== clickeduID)' @click='follow(selectedUser.name ,uID , name, true)'>Follow</v-btn> -->
                 <!-- <v-btn v-if='doesFollow & (uID !== clickeduID)' @click='follow(selectedUser.name ,uID , name, false)'>Un-Follow</v-btn> -->
                 <div class='userFollowingCount'>
-                    <div class="userPatronHeader">
+                    <div class="showPatronHeader">
                         Number of episodes
                     </div>
-                    <div @click='trueFollowing = true' class="userPatronCount">
+                    <div @click='trueFollowing = true' class="showPatronCount">
                         
                         {{selectedShow.mixes.length}}
                         
                     </div>
                 </div>
                 <div class='userFollowerCount'>
-                    <div class="userPatronHeader">
+                    <div class="showPatronHeader">
                         Number of plays 
                     </div>
-                    <div class="userPatronCount">
+                    <div class="showPatronCount">
                         
                         
                         {{selectedShow.playCount}}
@@ -60,7 +61,7 @@
     </div>
    
     <div class="showStream">
-        <div class='header'>Other episodes</div>
+        <div class='mixHeader'>Other episodes</div>
         <div class="episodeTiles">
             <mixTile v-for='mix in selectedShow.mixes' :key='mix.mID' :object='mix' playerTracksReference='show.mixes'> </mixTile>
         </div>
@@ -68,7 +69,7 @@
     </div>
 
     <div class="showArtists">
-        <div class='header'>Producers</div>
+        <div class='userHeader'>Producers</div>
         <div class='showProducersCards'>
             <producerTile v-for="artist in selectedShow.producers" :key="artist.uID" :object='artist'></producerTile>
              
@@ -76,7 +77,7 @@
     </div>
     <div class="artistSuggestions">
         <div v-if='selectedShow.producers.length > 1' class='header'>Mixes from this artist</div>
-        <div v-else class='header'>Mixes from these producers</div>
+        <div v-else class='mixHeader'>Mixes from these producers</div>
         <div class="suggestionTiles">
             <mixTile v-for='mix in selectedShow.suggestedMixes' :key='mix.mID' :object='mix' playerTracksReference='show.suggestedMixes'> </mixTile>
         </div>
@@ -199,7 +200,8 @@ export default {
         grid-template-rows: 1fr 1fr;
         height: 100%;
         width:96.2vw;
-        background-color: #e0a99a
+        background-color: white;
+        grid-gap: 0.5rem;
     }
 
     .showInfo{
@@ -208,13 +210,12 @@ export default {
         overflow: auto;
         grid-column: 2/3;
         grid-row: 1/2;
-        background-color: blue;
+        background-color: #CFD8DC;
         color:#e0a99a;
-        margin-bottom:5px;
     }
 
     .showImage{
-        margin-top:5px;
+      
         
         grid-column: 1/2;
         grid-row: 1/2;
@@ -241,16 +242,34 @@ export default {
     }   
 
     .showStream{
-        margin-top:5px;
-        margin-bottom:5px;
-        margin-left:5px;
-        margin-right:3px;
         display: block;
         overflow: auto;
         grid-column: 3/4;
-        grid-row: 1/3;
-        background-color: rgb(126, 85, 85);
+        grid-row: 1/2;
+        background-color: #CFD8DC;
         color:#e0a99a;
+    }
+
+    .showPatronHeader{
+        margin-top: 10px;
+        text-align: center;
+        color :  #4DD0E1;
+        
+    }
+
+
+    .showPatronCount{
+        text-align: center;
+        color :  #4DD0E1;
+        font-size: 50px;
+        font-weight: bold;
+    }
+
+    .showHeader {
+        margin-left: 15px;
+        font-size: 50px;
+        color : #4DD0E1;
+        flex-basis: 100%;
     }
 
     .episodeTiles{
@@ -261,15 +280,12 @@ export default {
     }
 
     .showArtists{
-        margin-top:5px;
-        margin-bottom:5px;
-        margin-left:3px;
-        margin-right:5px;
+      
         display: block;
         overflow: auto;
         grid-column: 1/2;
         grid-row: 2/3;
-        background-color: green;
+        background-color: #CFD8DC;
         
         color:#e0a99a;
     }
@@ -287,7 +303,7 @@ export default {
         width: 100%;
         grid-column: 2/4;
         grid-row: 2/3;
-        background-color:rgb(85, 2, 2)
+        background-color: #CFD8DC;
         
     }
 

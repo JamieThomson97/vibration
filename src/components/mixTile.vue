@@ -2,7 +2,7 @@
   <transition name="fade">
     <v-hover>
       <div class="mixTileWrapper" slot-scope="{ hover }">
-        <v-card color="cyan darken-2" class="mixTileCard" :class="`elevation-${hover ? 15 : 8}`">
+        <v-card color="red darken-4" class="mixTileCard" :class="`elevation-${hover ? 15 : 8}`">
           <v-layout column="true">
             <v-flex xs5>
               <v-img class="mixTileImage" :src="object.artworkURL" height="125px" containzout>
@@ -82,9 +82,9 @@
         </v-card>
         <v-fade-transition>
           <v-card
-            color="cyan darken-2"
+            color="red darken-4"
             v-if="hover"
-            class="tileActions"
+            class="mixTileActions"
             :class="`elevation-${hover ? 15 : 8}`"
           >
             <div
@@ -220,8 +220,8 @@ export default {
   cursor: pointer;
 }
 
-.tileActions {
-  background-color: rgb(34, 177, 177);
+.mixTileActions {
+  background-color: #b71c1c;
   display: flex;
 }
 

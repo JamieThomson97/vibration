@@ -6,7 +6,7 @@
     <div class="mixTracklist">
       <v-img :src="trackData.artworkURL" height="100%" width="100%" class="tracklistButton">
         <div class="mixImageOverlay">
-          <div class="header mixTracklistHeader">Tracklist</div>
+          <div class="mixHeader mixTracklistHeader">Tracklist</div>
           <div class="mixTracklistTable" v-if="selectedMix.trackData.tracklist">
             <tr
               class="mixTrackistTableRow"
@@ -61,7 +61,7 @@
       </v-img>
     </div>
     <div class="mixProducers">
-      <div class="header">Producers</div>
+      <div class="userHeader">Producers</div>
       <div class="showProducersCards">
         <producerTile
           v-for="producer in trackData.producers"
@@ -72,10 +72,10 @@
     </div>
 
     <div class="mixInfo">
-      <div class="header mixInfoTitle">{{trackData.title}} - {{trackData.show}} {{trackData.event}}</div>
+      <div class="mixHeader mixInfoTitle">{{trackData.title}} - {{trackData.show}} {{trackData.event}}</div>
       <div class="mixLikeButton">
-        <v-btn v-if="!doesLike" @click="likeMix(selectedMix.mID, true)">like</v-btn>
-        <v-btn v-if="doesLike" @click="likeMix(selectedMix.mID, false)">unlike</v-btn>
+        <v-btn style='color:white;' color='deep-orange darken-4' v-if="!doesLike" @click="likeMix(selectedMix.mID, true)">like</v-btn>
+        <v-btn style='color:white;'  color='deep-orange darken-4' v-if="doesLike" @click="likeMix(selectedMix.mID, false)">unlike</v-btn>
       </div>
       <div class="mixPlays">
         <div class="smallPlays">Plays</div>
@@ -103,7 +103,7 @@
       </div>
     </div>
     <div class="mixProducerInfo">
-      <div class="header mixProducerName">{{trackData.producers[0].name}}</div>
+      <div class="mixHeader mixProducerName">{{trackData.producers[0].name}}</div>
 
       <div class="mixFollowNumbers">
         <div class="mixFollowingCount">
@@ -171,7 +171,7 @@
       </div>
     </div>-->
     <div class="mixProducerSuggested">
-      <div class="header">By the same producers</div>
+      <div class="mixHeader">By the same producers</div>
       <div class="mixTiles">
         <mixTile
           v-for="mix in selectedMix.suggestedMixes"
@@ -337,13 +337,13 @@ export default {
 .mixTracklist {
   grid-column: 1/2;
   grid-row: 1/4;
-  background-color: rgb(12, 35, 56);
+  background-color: #CFD8DC;
 }
 
 .mixProducers {
   grid-column: 1/2;
   grid-row: 4/5;
-  background-color: rgb(12, 35, 56);
+  background-color: #CFD8DC;
 }
 
 .mixTracklistTable {
@@ -352,19 +352,19 @@ export default {
 }
 
 .noTracklist {
-  color: white;
+  color: #BF360C;
   font-size: 20px;
   margin-left: 20px;
 }
 
 .mixTracklistNumber {
-  color: white;
+  color: #BF360C;
   font-size: 16px;
 }
 
 .mixTracklistSong {
   font-weight: bold;
-  color: white;
+  color: #BF360C;
   font-size: 26px;
 }
 
@@ -372,7 +372,7 @@ export default {
   grid-column: 1/2;
   grid-row: 1/1;
   height: 100%;
-  background-color: rgba(0, 0, 0, 0.6);
+  background-color: rgb(207, 216, 220, 0.3);
 }
 
 .tracklistButton {
@@ -395,7 +395,7 @@ export default {
 .mixInfo {
   grid-column: 2/3;
   grid-row: 1/3;
-  background-color: darkblue;
+  background-color: #CFD8DC;
   display: grid;
   grid-template-rows: 1fr 1fr 1fr;
   grid-template-columns: 1fr 1fr;
@@ -417,13 +417,13 @@ export default {
 
 .smallPlays {
   font-size: 20px;
-  color: white;
+  color: #BF360C;
   text-align: center;
 }
 
 .largePlays {
   font-size: 60px;
-  color: white;
+  color: #BF360C;
   text-align: center;
 }
 
@@ -444,7 +444,7 @@ export default {
   display: grid;
   grid-column: 3/4;
   grid-row: 1/3;
-  background-color: salmon;
+  background-color: #CFD8DC;
   grid-template-rows: 0.5fr 1fr 1fr;
   grid-template-columns: 1fr 1fr;
 }
@@ -458,7 +458,7 @@ export default {
 .mixSubHeader {
   font-size: 20px;
   margin-left: 15px;
-  color: white;
+  color: #BF360C;
 }
 
 .mixUserShows {
@@ -487,7 +487,7 @@ export default {
 .mixEventorShowSuggested {
   grid-column: 2/4;
   grid-row: 3/5;
-  background-color: darkgreen;
+  background-color: #CFD8DC;
   display: grid;
   grid-template-columns: 1fr 1fr;
   grid-template-rows: 1fr;
@@ -502,12 +502,12 @@ export default {
 .mixShow {
   grid-column: 2/3;
   grid-row: 1/1;
-  background-color: powderblue;
+  background-color: #CFD8DC;
 }
 
 .mixProducerSuggested {
   grid-column: 2/4;
   grid-row: 3/5;
-  background-color: powderblue;
+  background-color: #CFD8DC;
 }
 </style>

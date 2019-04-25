@@ -2,7 +2,7 @@
     <v-hover>
         <div class='mixTileWrapper' slot-scope="{ hover }">
             
-            <v-card color="orange darken-2" class="mixTileCard" :class="`elevation-${hover ? 15 : 8}`" >
+            <v-card color="purple darken-1" class="mixTileCard" :class="`elevation-${hover ? 15 : 8}`" >
                 <v-layout column="true">
                 <v-flex xs5>
                     <v-img 

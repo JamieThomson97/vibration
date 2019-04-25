@@ -18,10 +18,10 @@ const vuexLocal = new VuexPersistence({
   reducer: (state) => ({
     customer: state.customer,
     // selectedMix.mID: state.clickedmID,
-    selectedUseruID : state.selectedUser.uID,
-    selectedMixmID : state.selectedMix.mID,
-    selectedEventeID : state.selectedEvent.eID,
-    selectedShowsID : state.selectedShow.sID,
+    selectedUseruID: state.selectedUser.uID,
+    selectedMixmID: state.selectedMix.mID,
+    selectedEventeID: state.selectedEvent.eID,
+    selectedShowsID: state.selectedShow.sID,
   })
 })
 
@@ -48,11 +48,12 @@ export default new Vuex.Store({
       profileURL: null,
       followerCount: 0,
       followingCount: 0,
-      playlists: { },
+      playlists: {},
     },
+
     playerCurrentTracks: {},
     showSearch: false,
-    searchQuery : '',
+    searchQuery: '',
     clickedMix: {},
     user: null,
     error: null,
@@ -65,26 +66,26 @@ export default new Vuex.Store({
 
   mutations: {
 
-    setPlaylist(state, payload){
-      if(payload.name == "Listen Later"){
+    setPlaylist(state, payload) {
+      if (payload.name == "Listen Later") {
         payload.name = "listenLater"
       }
-      Vue.set(state.customer.playlists, payload.name , payload.object)
+      Vue.set(state.customer.playlists, payload.name, payload.object)
     },
 
     setCurrentPlayerTracks(state, tracks) {
-      Vue.set(state, 'playerCurrentTracks' , tracks)
+      Vue.set(state, 'playerCurrentTracks', tracks)
     },
 
-    setShowSearch(state, value){
-      Vue.set(state , 'showSearch' , value)
+    setShowSearch(state, value) {
+      Vue.set(state, 'showSearch', value)
     },
 
-    setSearchQuery(state, query){
-      Vue.set(state , 'searchQuery' , query)
+    setSearchQuery(state, query) {
+      Vue.set(state, 'searchQuery', query)
     },
 
-    setuID(state, payload) {  
+    setuID(state, payload) {
       state.clickedMix.uID = payload
     },
     setError(state, payload) {
@@ -110,22 +111,19 @@ export default new Vuex.Store({
     },
 
     setNullUser(state) {
-      var stateArr = Object.keys(state)
-      stateArr.forEach(key => {
-        if(state.key){
-          Vue.delete(state, key)
-        }
-      })
+
+      Vue.delete(state, ['customer'])
+
     },
 
     setUser(state, payload) {
       var user = {}
       user.customer = payload.user
       user.customer.uID = payload.uID
-      user.customer.playlists = {} 
+      user.customer.playlists = {}
       user.customer.followerCount = 0
       user.customer.followingCount = 0
-      
+
       Vue.set(state, 'customer', user.customer)
       //Vue.set( )
     },
@@ -135,18 +133,18 @@ export default new Vuex.Store({
       const index = state.customer.createdPlaylists.indexOf(playlist);
       state.customer.createdPlaylists.splice(index, 1);
       Vue.delete(state.customer.playlists, playlist)
-    
+
     },
 
-    deleteFromPlaylist(state, payload){
+    deleteFromPlaylist(state, payload) {
       console.log('delete from playlist store')
       console.log(payload)
       var index = 0
-      state.customer.playlists[payload.playlist].forEach(function (mix , i)  {
+      state.customer.playlists[payload.playlist].forEach(function (mix, i) {
         console.log(i)
         console.log(mix)
-        if(mix.mID == payload.mID){
-            index = i
+        if (mix.mID == payload.mID) {
+          index = i
         }
       })
       console.log('index')
@@ -160,73 +158,90 @@ export default new Vuex.Store({
       state.customer.playlists[payload.playlistName].push(payload.mix)
     },
 
-    createPlaylist(state, playlistName){
+    createPlaylist(state, playlistName) {
       state.customer.createdPlaylists.push(playlistName)
       Vue.set(state.customer.playlists, playlistName, {})
     },
 
-    
+
 
     deleteMix(state, payload) {
-      Vue.delete(state.selectedUser.playlists[payload.pName], payload.mID)      
+      Vue.delete(state.selectedUser.playlists[payload.pName], payload.mID)
     },
 
     addToHistory(state, trackData) {
-      
+
       state.customer.playlists.history.push(trackData)
     },
 
 
-    setuIDWatcher(state, uID){
-      Vue.set(state , 'uIDWatcher', uID )
+    setuIDWatcher(state, uID) {
+      Vue.set(state, 'uIDWatcher', uID)
     },
   },
 
   actions: {
 
-    actionSetLikers({commit}, likers){
-      commit('setLikers' , likers)
+    actionSetLikers({
+      commit
+    }, likers) {
+      commit('setLikers', likers)
     },
 
-    actionDeletePlaylist({commit}, playlist) {
-      commit('deletePlaylist' , playlist)    
+    actionDeletePlaylist({
+      commit
+    }, playlist) {
+      commit('deletePlaylist', playlist)
     },
 
-    actionSetSearchQuery({commit} , payload){
-      commit('setSearchQuery' , payload)
-     
-      if(payload.length > 3){
-        commit( 'setShowSearch' , true)
-      }else{
-        commit( 'setShowSearch' , false)
+    actionSetSearchQuery({
+      commit
+    }, payload) {
+      commit('setSearchQuery', payload)
+
+      if (payload.length > 3) {
+        commit('setShowSearch', true)
+      } else {
+        commit('setShowSearch', false)
       }
     },
 
     // eslint-disable-next-line
-    createNewUser({commit} , payload) {
+    createNewUser({
+      // eslint-disable-next-line
+      commit
+    }, payload) {
       firebase.auth().createUserWithEmailAndPassword(payload.email, payload.password).then(user => {
-        
+
         firebase.firestore().collection('users').doc(user.user.uid).set({
           dateCreated: new Date(),
           name: payload.name,
           followingCount: 0,
           followerCount: 0,
-          prePlaylists: ['timeline' , 'Listen Later' , 'history' , 'likes'],
-          createdPlaylists : [],
+          prePlaylists: ['timeline', 'Listen Later', 'history', 'likes'],
+          createdPlaylists: [],
         }).then(() => {
-            const indexUserFunction = firebase.functions().httpsCallable('indexUser')
-            indexUserFunction({ name : payload.name , uID : user.user.uid })
-            this.dispatch('signUserIn' , {email : payload.email , password : payload.password})
+          const indexUserFunction = firebase.functions().httpsCallable('indexUser')
+          indexUserFunction({
+            name: payload.name,
+            uID: user.user.uid
           })
+          this.dispatch('signUserIn', {
+            email: payload.email,
+            password: payload.password
+          })
+        })
       })
     },
 
-    actionSetClickeduID({ commit }, payload) {
-      commit('setClickeduID' , payload)
+    actionSetClickeduID({
+      commit
+    }, payload) {
+      commit('setClickeduID', payload)
     },
 
 
-    signUserIn({// eslint-disable-next-line
+    signUserIn({ // eslint-disable-next-line
       commit
     }, payload) {
       console.log('email')
@@ -239,9 +254,9 @@ export default new Vuex.Store({
           const ref = firebase.firestore().collection('users').doc(user.user.uid)
           ref.get().then((snapshot) => {
             this.dispatch("actionSetUser", {
-              
-              user : snapshot.data(),
-              uID : uID
+
+              user: snapshot.data(),
+              uID: uID
             }).then(() => {
               router.push({
                 name: 'home'
@@ -256,25 +271,29 @@ export default new Vuex.Store({
     logUserOut({
       commit
     }) {
+      console.log('sigin out')
       firebase.auth().signOut()
         .then(() => {
+
           commit('setNullUser')
-          router.push('/landing')
-          
+
+
         }).catch((error) => {
           this.noty.error(error)
         })
     },
 
 
-    getShowDetails({ commit }, showName) {
+    getShowDetails({
+      commit
+    }, showName) {
       var mixes = []
-      database.collection('shows').where('name' , '==' , showName).get().then(response => {
+      database.collection('shows').where('name', '==', showName).get().then(response => {
         const eventData = response.docs[0].data()
         eventData['sID'] = response.docs[0].id
         return eventData
-      }).then((response)=> {
-        database.collection('shows').doc(response.sID).collection('mixes').get().then(mixDocs =>{
+      }).then((response) => {
+        database.collection('shows').doc(response.sID).collection('mixes').get().then(mixDocs => {
           mixDocs.forEach(mixDoc => {
             mixes.push(mixDoc.data())
           })
@@ -286,25 +305,33 @@ export default new Vuex.Store({
           commit('setShowData', response)
         })
       })
-      
+
 
     },
 
-    actionDeleteMix({commit}, payload){
-     commit('deleteMix', payload)
+    actionDeleteMix({
+      commit
+    }, payload) {
+      commit('deleteMix', payload)
     },
 
-    actionSetPlayerCurrentTracks({commit}, tracks){
+    actionSetPlayerCurrentTracks({
+      commit
+    }, tracks) {
       commit('setCurrentPlayerTracks', tracks)
-     },
- 
-
-    actionCreatePlaylist({commit} , playlistName){
-      commit('createPlaylist' , playlistName)
     },
 
-    actionAddToPlaylist({commit} , payload){
-      commit('addToPlaylist' , payload)
+
+    actionCreatePlaylist({
+      commit
+    }, playlistName) {
+      commit('createPlaylist', playlistName)
+    },
+
+    actionAddToPlaylist({
+      commit
+    }, payload) {
+      commit('addToPlaylist', payload)
     },
 
     actionSetmID({
@@ -314,7 +341,9 @@ export default new Vuex.Store({
       commit(`setmID`, payload)
 
     },
-    actionSetStream({ commit }, payload) {
+    actionSetStream({
+      commit
+    }, payload) {
 
       commit('setStream', payload)
     },
@@ -328,8 +357,11 @@ export default new Vuex.Store({
     actionSetUser({
       commit
     }, payload) {
-      
-      commit('setUser', { user : payload.user , uID : payload.uID })
+
+      commit('setUser', {
+        user: payload.user,
+        uID: payload.uID
+      })
     }
 
 
@@ -341,7 +373,7 @@ export default new Vuex.Store({
       return state.selectedUser.doesFollow
     },
 
-    uIDWatcher(state){
+    uIDWatcher(state) {
       return state.uIDWatcher
     },
 
@@ -357,10 +389,10 @@ export default new Vuex.Store({
     clickedsID(state) {
       return state.clickedsID
     },
-    customer(state){
+    customer(state) {
       return state.customer
     },
-    
+
     uID(state) {
       return state.customer.uID
     },
@@ -380,7 +412,7 @@ export default new Vuex.Store({
       return state.stream
     },
     mixLoaded(state) {
-      return state.mixLoaded  
+      return state.mixLoaded
     },
     name(state) {
       return state.customer.name
@@ -393,34 +425,34 @@ export default new Vuex.Store({
     },
 
     playlists: (state) => (pName, passedUser) => {
-      if(pName && passedUser){
-        return (state[passedUser].playlists[pName])//+'.'+pName.stream)
-      }else{
+      if (pName && passedUser) {
+        return (state[passedUser].playlists[pName]) //+'.'+pName.stream)
+      } else {
         return false
       }
-    }, 
-    followingCount(state){
+    },
+    followingCount(state) {
       return state.customer.followingCount
     },
-    followerCount(state){
+    followerCount(state) {
       return state.customer.followerCount
     },
-    searchQuery(state){
+    searchQuery(state) {
       return state.searchQuery
     },
-    showSearch(state){
+    showSearch(state) {
       return state.showSearch
     },
-    trackData(state){
+    trackData(state) {
       return state.trackData
     },
-    event(state){
+    event(state) {
       return state.event
     },
-    show(state){
+    show(state) {
       return state.Show
     },
-    currentPlayerTracks(state){
+    currentPlayerTracks(state) {
       return state.currentPlayerTracks
     },
   },

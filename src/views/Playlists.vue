@@ -5,7 +5,7 @@
       <div class="header" style="color:black;">Playlists</div>
     </div>
 
-    <v-expansion-panel v-model="panel" expand>
+    <v-expansion-panel class='playlistPanel' v-model="panel" expand>
       <v-expansion-panel-content v-for="(playlist,i) in Object.keys(customer.playlists)" :key="i">
         <template v-slot:header v-if="playlist != 'timeline'">
           <div>{{playlist}}</div>
@@ -85,8 +85,16 @@ export default {
 }
 
 .playlistTileGrid {
-  margin-left: 20px;
+  margin-left: 15px;
+  padding-left: 15px;
   display: flex;
   grid-gap: 1rem;
 }
+
+.playlistPanel{
+  margin-left:15px;
+  width:95%;
+}
+
+
 </style>

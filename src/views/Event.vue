@@ -30,7 +30,7 @@
       </div>
     </v-hover>
     <div class="eventInfo">
-      <div class="header">{{selectedEvent.name}}</div>
+      <div class="eventHeader">{{selectedEvent.name}}</div>
 
       <div
         class="dateHeader"
@@ -38,7 +38,7 @@
       >{{selectedEvent.startDate}} - {{selectedEvent.endDate}}</div>
       <div
         v-else
-        class="noLocation dateHeader"
+        class="noLocation"
       >Dates are yet to be set for this event , please official dates if you have sufficient permissions</div>
 
       <div class="location dateHeader" v-if="selectedEvent.location">
@@ -54,7 +54,7 @@
     <v-hover>
       <div class="eventStream" slot-scope="{ hover }">
         <div class="headerandSearch">
-          <div class="header">Mixes</div>
+          <div class="mixHeader">Mixes</div>
           <div class="userMixSearch">
             <v-fade-transition>
               <v-text-field
@@ -86,7 +86,7 @@
       <div class="eventArtists" slot-scope="{hover }">
         <div class="eventProducersCards">
           <div class="headerandSearch" style="min-height:100px;">
-            <div class="header">Producers</div>
+            <div class="userHeader">Producers</div>
             <div class="userMixSearch">
               <v-fade-transition>
                 <v-text-field
@@ -287,7 +287,7 @@ export default {
   grid-template-rows: 1fr 1fr;
   height: 100%;
   width: 96.2vw;
-  background-color: #e0a99a;
+  background-color: white;
 }
 
 .eventInfo {
@@ -295,10 +295,19 @@ export default {
   overflow: auto;
   grid-column: 2/3;
   grid-row: 2/3;
-  background-color: blue;
-  color: #e0a99a;
+  background-color: #CFD8DC;
+  color: #8E24AA;
   margin-bottom: 5px;
 }
+
+
+.eventHeader {
+  margin-left: 15px;
+  font-size: 50px;
+  color : #8E24AA;
+  flex-basis: 100%;
+}
+
 
 .updateEventInfo {
   position: absolute;
@@ -325,6 +334,11 @@ export default {
   height: 11vh;
 }
 
+.noLocation{
+  margin-left:15px;
+  font-size: 20px;
+}
+
 .eventProducerInfo {
   margin-top: 2px;
   text-align: center !important;
@@ -342,7 +356,7 @@ export default {
   overflow: auto;
   grid-column: 1/2;
   grid-row: 1/3;
-  background-color: black;
+  background-color: #CFD8DC;
   color: #e0a99a;
 }
 
@@ -355,7 +369,7 @@ export default {
   overflow: auto;
   grid-column: 3/4;
   grid-row: 1/3;
-  background-color: green;
+  background-color: #CFD8DC;
   color: #e0a99a;
 }
 

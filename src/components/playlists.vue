@@ -3,7 +3,7 @@
         <div>
             <tr>
                 <td>
-                    <div class='header playlistHeader'>
+                    <div class='mixHeader playlistHeader'>
                         {{headerText}}
                     </div>
                 </td>

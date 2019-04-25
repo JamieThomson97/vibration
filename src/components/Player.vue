@@ -319,7 +319,7 @@ export default {
   left: 0;
   width: 100%;
   height: 11vh;
-  background: rgb(56, 157, 170);
+  background-color: #CFD8DC;
   display: flex;
   z-index: 99999;
   flex-direction: column;
@@ -340,7 +340,7 @@ export default {
   justify-content: center;
   font-weight: bold;
   font-size: 24px;
-  color: beige;
+  color: #b71c1c;
 }
 .playerTrackDetailsRight {
   position: absolute;
@@ -349,7 +349,7 @@ export default {
   height: 100%;
   font-weight: bold;
   font-size: 24px;
-  color: beige;
+  color: #b71c1c;
   margin-right: 20px;
 }
 
@@ -471,10 +471,11 @@ export default {
 }
 .currentTime {
   font-size: 16px;
-  color: white;
-}
+  color: #b71c1c;
+  }
+
 .durationTime {
   font-size: 16px;
-  color: white;
+  color: #b71c1c;
 }
 </style>

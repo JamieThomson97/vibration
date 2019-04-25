@@ -12,7 +12,7 @@
     </div>
     <div class="outline timeline">
       <div>
-        <div class="header">Timeline</div>
+        <div class="mixHeader">Timeline</div>
         <div class="timelineTiles homeTiles" v-if="customer.playlists.timeline.length > 0">
           <mixTile
             v-for="mix in customer.playlists.timeline"
@@ -25,14 +25,14 @@
       </div>
     </div>
     <div class="outline history">
-      <div class="headers" style="display:flex;">
+      <div class="mixHeader" style="display:flex;">
         <div
-          :class="{'subdued' : showLiked , 'showing' : !showLiked}"
+          :class="{'subdued' : showLiked , 'mixHeader' : !showLiked}"
           @click="showLiked = !showLiked"
         >History</div>
         <v-spacer></v-spacer>
         <div
-          :class="{'subdued' : !showLiked , 'showing' : showLiked}"
+          :class="{'subdued' : !showLiked , 'mixHeader' : showLiked}"
           @click="showLiked = !showLiked"
         >Liked</div>
       </div>
@@ -63,7 +63,7 @@
       <!-- <div v-else style="margin-left:15px;">Mixes you have listened to will appear here</div> -->
     </div>
     <div class="outline listenLater">
-      <div class="header">Listen Later</div>
+      <div class="mixHeader">Listen Later</div>
       <div class="listenLaterTiles homeTiles" v-if="customer.playlists.listenLater.length > 0">
         <mixTile
           v-for="mix in customer.playlists.listenLater"
@@ -84,7 +84,7 @@
         <playlists/>
       </div>
       <div v-else>
-        <div class="header playlistHeader">Playlists</div>
+        <div class="mixHeader">Playlists</div>
         <div style="margin-left:15px;">Create some playlists !</div>
       </div>
     </div>
@@ -117,7 +117,7 @@ export default {
     if (!storage) {
       next("/landing");
     } else {
-      if (storage.customer.uID == null) {
+      if (storage.customer == undefined ) {
         next("/landing");
       } else {
         next();
@@ -228,7 +228,7 @@ export default {
   grid-template-rows: repeat(13, 1fr);
   grid-gap: 1em;
   height: 100vh;
-  background-color: rgb(232, 225, 225);
+  background-color: white;
   padding-left: 1rem;
   padding-right: 1rem;
   max-width: 96%;
@@ -265,15 +265,23 @@ export default {
   flex-basis: 100%;
 }
 
+
+.mixHeader {
+  margin-left: 15px;
+  font-size: 50px;
+  color: #b71c1c;
+  flex-basis: 100%;
+}
+
 .timeline {
   grid-column: 1/2;
   grid-row: 2/12;
-  background-color: rgba(229, 192, 192, 0.8);
+  background-color: #CFD8DC;
   -webkit-box-shadow: 0 3px 8px rgba(0, 0, 0, 0.45);
 }
 
 .history {
-  background-color: rgb(192, 222, 229);
+  background-color: #CFD8DC;
   grid-column: 3/4;
   grid-row: 7/12;
   padding-right: 1rem;
@@ -283,7 +291,7 @@ export default {
 .listenLater {
   grid-column: 2/3;
   grid-row: 7/12;
-  background-color: rgb(192, 222, 229);
+  background-color: #CFD8DC;
   -webkit-box-shadow: 0 3px 8px rgba(0, 0, 0, 0.45);
 }
 
@@ -291,7 +299,7 @@ export default {
   padding-right: 1rem;
   grid-column: 2/4;
   grid-row: 2/7;
-  background-color: rgb(192, 222, 229);
+  background-color: #CFD8DC;
   -webkit-box-shadow: 0 3px 8px rgba(0, 0, 0, 0.45);
 }
 </style>

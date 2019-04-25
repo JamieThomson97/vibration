@@ -73,7 +73,6 @@ export default {
       drawer: true,
       items: [
         { title: "Home", icon: "dashboard", route: "/" },
-        { title: "Landing", icon: "question_answer", route: "/Landing" },
         { title: "Add a Mix", icon: "question_answer", route: "/addMix" },
         { title: "Playlists", icon: "playlist_add", route: "/playlists" }
       ],
