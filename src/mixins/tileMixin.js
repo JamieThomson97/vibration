@@ -238,24 +238,37 @@ export default {
                 })
             }
         },
-
+        
+        //function that creates a new playlist in Firestore and adds the new playlist in real time to the UI
         createPlaylist(playlistName) {
+        //takes the new playlist name as it's only argument
 
-            const playlistNames = this.customer.playlistNames
 
+            const playlistNames = this.customer.createdPlaylists
+            var isCreated = false
+            //loops through the logged-in user's already created playlists setting the 
+            //isCreated variable to true if a playlist with the same name already exists
+            console.log(isCreated)
             for (var a in playlistNames) {
                 var name = playlistNames[a]
                 if (name === playlistName) {
-                    return 'Playlist aready created'
+                    isCreated = true
                 }
             }
+            
+            // 
+            if(!isCreated){
+                database.collection('users').doc(this.uID).update({
+                    createdPlaylists: firebase.firestore.FieldValue.arrayUnion(playlistName)
+                }).then(() => {
+                    this.$store.commit('createPlaylist', playlistName)
+                    this.$noty.success(playlistName + ' created')
+                })
+            }else{
+                this.$noty.warning('playlist already created with that name')
+            }
 
-            database.collection('users').doc(this.uID).update({
-                createdPlaylists: firebase.firestore.FieldValue.arrayUnion(playlistName)
-            }).then(() => {
-                this.$store.commit('createPlaylist', playlistName)
-                this.$noty.success(playlistName + ' created')
-            })
+            
 
         },
 

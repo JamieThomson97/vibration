@@ -78,24 +78,27 @@ export default {
             
         // },
 
-        deletePlaylist(playlistName) {
-            
+        //function deletes the playlist passed as input from Firestore and locally 
+        deletePlaylist(playlistName) {            
             var promises = []
-            database.collection('users').doc(this.uID).collection(playlistName).get().then(response => {
-                
-                response.forEach(mix => {
-                    
+            //each mix in the subCollection must be looped through to delete the subCollection
+            //therefore, each mix the subcollection is looped through and deleted
+            database.collection('users').doc(this.uID).collection(playlistName).get().then(response => {                
+                response.forEach(mix => {                    
                     var promise = database.collection('users').doc(this.uID).collection(playlistName).doc(mix.data().mID).delete()
                     promises.push(promise)
                 })
             })
 
+            //a request to remove the name of the playlist from the "createdPlaylists" array on the user's document is made
             const arrayEntry = database.collection('users').doc(this.uID).update({
                 createdPlaylists: firebase.firestore.FieldValue.arrayRemove(playlistName)
             })
             promises.push(arrayEntry)
 
+            //the requests are sent
             Promise.all(promises).then(() => {
+                //finally, the playlist is removed from createdPlaylists locally, and the user is notified of the success
                 this.$store.commit('deletePlaylist', playlistName)
                 this.$noty.success(playlistName+' deleted')
             })

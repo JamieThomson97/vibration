@@ -1,18 +1,16 @@
 <template>
-    <div class="playlistsWrapper">
-        <div>
-            <tr>
-                <td>
+<v-hover>
+    <div class="playlistsWrapper" slot-scope="{ hover }">
+        <div class="playlistsWrapperHeader">
+           
                     <div class='mixHeader playlistHeader'>
                         {{headerText}}
                     </div>
-                </td>
-                <td>
+                
                     <div class='newPlaylist'>
-                        <v-text-field v-model='newPlaylistName'   v-if='!reset' box clearable type="text" v-on:keyup.enter="newPlaylist(newPlaylistName) ,newPlaylistName=''"  placeholder="Quick Add"></v-text-field>
+                        <v-text-field v-if='hover &&!reset' v-model='newPlaylistName' box clearable type="text" v-on:keyup.enter="createPlaylist(newPlaylistName) ,newPlaylistName=''"  placeholder="Quick Add"></v-text-field>
                     </div>
-                </td>
-            </tr>
+              
         </div>
         <div v-if='reset' class='showingPlaylist' >
                 
@@ -22,7 +20,8 @@
         </div>
         <div class="streamLoopWrapper" v-if='!reset'>
             <div class="playlistNames" v-for='x in customer.createdPlaylists.length' :key='x'>
-                <div >
+                <v-hover>
+                <div  slot-scope="{ hover }">
                     <v-avatar
                     size="140px"
                     style='cursor:pointer;'
@@ -33,7 +32,7 @@
                         :src="profileURL"
                         alt="Avatar"
                         >
-                    <i class="material-icons" style='position:absolute; top:0;right:0;' @click='deletePlaylist(customer.createdPlaylists[x-1])'>
+                    <i v-if='hover' class="material-icons" style='position:absolute; top:0;right:0;' @click='deletePlaylist(customer.createdPlaylists[x-1])'>
                         clear
                     </i>
                     </v-avatar>
@@ -41,6 +40,7 @@
                         {{customer.createdPlaylists[x-1]}}
                     </div>                
                 </div>
+                 </v-hover>
             </div>
         </div> <br />  
         <div v-if='reset' class="show"> 
@@ -50,6 +50,7 @@
         </div>
             
     </div>
+    </v-hover>
 </template>
 
 <script>
@@ -61,6 +62,7 @@ import mixTile from '@/components/mixTile.vue'
 import metadataPopulation from '../mixins/metadataPopulation.js'
 import createPlaylistMixin from '../mixins/createPlaylistMixin.js'
 import playlistMixin from '../mixins/playlistMixin.js'
+import tileMixin from '../mixins/tileMixin.js'
 
 import Vue from 'vue'
 
@@ -73,7 +75,8 @@ export default {
   mixins: [
         metadataPopulation,
         createPlaylistMixin,    
-        playlistMixin,    
+        playlistMixin,  
+        tileMixin,  
     ],
 
     data() {
@@ -171,12 +174,19 @@ export default {
     
 }
 
+.playlistsWrapperHeader{
+    height:80px;
+    width:50%;
+    display: flex;
+    flex-direction: row;
+}
+
 .playlistTitle{
 
-    background-color : rgb(192, 222, 229);
+    width: 85%;
     text-align: center;
     font-weight:bold;
-    color:rgb(252, 250, 250);
+    color:#B71C1C
 }
 
 .showingPlaylist{

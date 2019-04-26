@@ -79,9 +79,9 @@ export default {
           });
         });
 
-      //Set show mixes
-      var mixesObj = [];
-
+      
+    var mixesObj = [];
+    //queries the selectedShow's 'mixes' subCollection to gather the shows mixes
       database
         .collection("shows")
         .doc(sID)
@@ -90,11 +90,13 @@ export default {
         .then(response => {
           const mixes = response.docs;
           mixes.forEach(mix => {
+            //the mixes in the response are iterated through
             var mixData = mix.data();
             mixData["mID"] = mix.id;
+            //and added to the mixesObj
             mixesObj.push(mixData);
           });
-          //Set show mixes to state
+          //the set of mixes is saved to state
           this.$store.commit("setShowMixes", mixesObj);
         });
     },

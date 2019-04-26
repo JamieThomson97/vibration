@@ -132,7 +132,6 @@ export default {
             console.log('passsID')
             console.log(passsID)
         }
-
         this.getShowPageData(passsID)
         
     },

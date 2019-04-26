@@ -341,15 +341,16 @@ export default {
         },
 
         follow(following, follower, follow){
+
             this.$store.commit('doesFollow', { does : (!this.doesFollow.does) , index : this.doesFollow.index})
             
-            const callFunctions = functions.httpsCallable('followUser')
+            
             if(follow){
-                console.log('splicing')
                 this.selectedUser.followers.splice(this.doesFollow.index , 1)
                 this.selectedUser.followerCount --
             }
-            
+
+            const callFunctions = functions.httpsCallable('followUser')
             callFunctions({
                 'following' : following,
                 'follower' : follower,
