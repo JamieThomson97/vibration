@@ -56,12 +56,10 @@ export default {
                     }
                     //each result is pashed to the entried array
                     entries.push(info)
-
                 })
                 //the populated array is commited to the store
                 this.$store.commit(`set${type}`, entries)
             })
-
         },
 
         updateUserImage(user, image) {
