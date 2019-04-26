@@ -32,7 +32,7 @@
                         <div class='mixHeader' >Producer's Mixes</div>
                         <div class='userMixSearch'>
                             <v-fade-transition>
-                                <v-text-field v-if='hover' height='50%' v-model='mixSearch' class='userMixSearchbox' box clearable type="text" v-on:keyup.enter="s"  placeholder="Search"></v-text-field>
+                                <v-text-field v-if='hover' color='red darken-4' height='50%' v-model='mixSearch' class='userMixSearchbox' box clearable type="text" v-on:keyup.enter="s"  placeholder="Search"></v-text-field>
                             </v-fade-transition>
                         </div>
                     </div>
@@ -96,7 +96,7 @@
                     <div class='eventHeader' >Events</div>
                     <div class='userMixSearch'>
                         <v-fade-transition>
-                            <v-text-field v-if='hover' height='50%' v-model='eventSearch' class='userMixSearchbox' box clearable type="text" v-on:keyup.enter="s"  placeholder="Search"></v-text-field>
+                            <v-text-field v-if='hover' height='50%' v-model='eventSearch' color='purple darken-1' class='userMixSearchbox' box clearable type="text" v-on:keyup.enter="s"  placeholder="Search"></v-text-field>
                         </v-fade-transition>
                     </div>
                 </div>
@@ -111,7 +111,7 @@
                     <div class='showHeader' >Shows</div>
                     <div class='userMixSearch'>
                         <v-fade-transition>
-                            <v-text-field v-if='hover' height='50%' v-model='showSearch' class='userMixSearchbox' box clearable type="text" v-on:keyup.enter="s"  placeholder="Search"></v-text-field>
+                            <v-text-field v-if='hover' height='50%' color='cyan darken-2' v-model='showSearch' class='userMixSearchbox' box clearable type="text" v-on:keyup.enter="s"  placeholder="Search"></v-text-field>
                         </v-fade-transition>
                     </div>
                 </div>
@@ -168,8 +168,7 @@ export default {
             var passuID = this.selectedUser.uID
         }else{
             passuID  = JSON.parse(localStorage.getItem('vuex')).selectedUseruID
-            console.log('passuID')
-            console.log(passuID)
+           
         }
         
         this.fetchUserDetails(passuID)
@@ -385,7 +384,7 @@ export default {
         display: grid;
         grid-template-columns: repeat(3, 1fr);
         grid-template-rows: 4fr 4fr 1fr;
-        grid-gap: .5em;
+        grid-gap: 1em;
         height: 100vh;
         width: 97vw;
         background-color:  white;
@@ -405,6 +404,7 @@ export default {
         background-color: #CFD8DC;
         grid-row:2/3;
         grid-column:2/3;
+        -webkit-box-shadow: 0 3px 8px rgba(0, 0, 0, 0.45);
 
     }
 
@@ -445,6 +445,7 @@ export default {
         grid-row:2/3;
         grid-column:3/4;
         flex-wrap: wrap;
+        -webkit-box-shadow: 0 3px 8px rgba(0, 0, 0, 0.45);
     }
 
     .mixTiles{
@@ -464,6 +465,7 @@ export default {
         background-color: #CFD8DC;
         grid-row:2/3;
         grid-column:1/2; 
+        -webkit-box-shadow: 0 3px 8px rgba(0, 0, 0, 0.45);
     }
 
     .patronsGrid{
@@ -512,6 +514,7 @@ export default {
     .followButton{
         grid-row:1/1;
         grid-column:2/3; 
+        -webkit-box-shadow: 0 3px 8px rgba(0, 0, 0, 0.45);
         margin: auto;
     }
 
@@ -542,6 +545,7 @@ export default {
         max-height:100%;
         grid-column: 1/2;
         grid-row: 1/2;
+        -webkit-box-shadow: 0 3px 8px rgba(0, 0, 0, 0.45);
     }
     .userVImage{
         max-width:100%;
@@ -568,6 +572,7 @@ export default {
         grid-row:1/2;
         grid-column:2/4;
         flex-direction: column;
+        -webkit-box-shadow: 0 3px 8px rgba(0, 0, 0, 0.45);
 
     }
 

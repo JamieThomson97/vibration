@@ -39,8 +39,6 @@ export default {
 
         deleteMix(ID) {
             const passmID = ID
-            console.log('passmID')
-            console.log(passmID)
             var index = 0
             const mixes = this.selectedUser.playlists.mixes
             var gig = false
@@ -60,9 +58,6 @@ export default {
                     index = x
                 }
             }
-            console.log('gig')
-            console.log(gig)
-            console.log(gigName)
 
             if (gig) {
                 const callGigFunction = firebase.functions().httpsCallable('deleteFromShowEvent')
@@ -72,8 +67,6 @@ export default {
                     mID: passmID
                 }))
             }
-            console.log('index')
-            console.log(index)
             mixes.splice(index, 1)
             this.$store.dispatch('actionDeleteMix', {
                 'pName': this.collection,
@@ -84,10 +77,8 @@ export default {
                 mID: passmID,
                 uID: this.customer.uID
             }))
-            console.log('promises.length')
-            console.log(promises.length)
             return Promise.all(promises).then(() => {
-                console.log('done')
+                console.log('mix deleted')
             })
         },
 
@@ -294,9 +285,7 @@ export default {
 
         navigateMix(mID, title) {
             console.log('navigate Mix')
-            console.log(mID)
             this.fetchMixInfo(mID)
-            // this.$store.commit('setShowSearch', false)
             this.$store.dispatch('actionSetSelectedmID', mID).then(() => {
                 this.$router.push(`/mixes/${(title).split(' ').join('_')}`)
             })
@@ -308,7 +297,6 @@ export default {
             this.$store.commit('setShowSearch', false)
             this.$store.commit('setuIDWatcher', uID)
             this.$store.dispatch('actionSetSelecteduID', uID).then(() => {
-                console.log('pushing')
                 this.$router.push(`/users/${(name).split(' ').join('_')}`)
             })
 

@@ -15,6 +15,9 @@ export default {
   },
 
   getUserFollowX: (context, payload) => {
+
+    //the 'doesFollow' object in state is set to false
+    //this denotes it the logged in user follows the selectedUser
     context.commit('doesFollow', {
       does: false,
       index: -1

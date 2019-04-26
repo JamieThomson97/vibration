@@ -254,20 +254,17 @@ export default {
             var followeruIDs = response[2];
 
             var audioStorageRef = storage.ref("mixesAudio/" + NmID + ".mp3");
-            var artworkStorageRef = storage.ref(
-              "mixesArtwork/" + NmID + ".jpeg"
+            var artworkStorageRef = storage.ref("mixesArtwork/" + NmID + ".jpeg"
             );
 
             var putAudio = audioStorageRef.put(this.audio).then(() => {
-              return audioStorageRef.getDownloadURL().then(function(URL) {
-                // mixData['audioURL'] = URL
+              return audioStorageRef.getDownloadURL().then(function(URL) {              
                 return URL;
               });
             });
 
             var putArtwork = artworkStorageRef.put(this.artwork).then(() => {
-              return artworkStorageRef.getDownloadURL().then(function(URL) {
-                // mixData['audioURL'] = URL
+              return artworkStorageRef.getDownloadURL().then(function(URL) {               
                 return URL;
               });
             });
@@ -350,7 +347,7 @@ export default {
                     );
                   }
                 }
-                console.log("mixPLAYlists");
+              
                 mixPromises.push(
                   database
                     .collection("mixPlaylists")

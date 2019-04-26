@@ -244,25 +244,28 @@ export default new Vuex.Store({
     signUserIn({ // eslint-disable-next-line
       commit
     }, payload) {
-      console.log('email')
-      console.log(payload.email)
-      console.log('password')
-      console.log(payload.password)
+      //payload is the object that contains data passed to the action
+      //the Firebase function signInWithEmailAndPassword returns the user data if the authentication is successful, 
+      //and an error message if successful
       firebase.auth().signInWithEmailAndPassword(payload.email, payload.password)
         .then((user) => {
           const uID = user.user.uid
+          //the user object, returned from signInWithEmailAndPassword, is used to query the 'users' collection
+          //from the Firestore database, to retrieve data about the user
           const ref = firebase.firestore().collection('users').doc(user.user.uid)
           ref.get().then((snapshot) => {
+            //'actionSetUser' dispatches the mutution that saves the information returned from the query to state
             this.dispatch("actionSetUser", {
-
               user: snapshot.data(),
               uID: uID
+              //finally the user is pushed to the 'home' component
             }).then(() => {
               router.push({
                 name: 'home'
               })
             })
           })
+          //if the authentication fails, the user is notified of the error
         }).catch((error) => {
           this.noty.error(error)
         })
@@ -274,10 +277,7 @@ export default new Vuex.Store({
       console.log('sigin out')
       firebase.auth().signOut()
         .then(() => {
-
           commit('setNullUser')
-
-
         }).catch((error) => {
           this.noty.error(error)
         })

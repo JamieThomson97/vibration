@@ -5,6 +5,7 @@
         :class="{'mixSearch': divExpands[0]==0 , 'expandedDiv': divExpands[0]==1, 'hiddenDiv': divExpands[0]==-1 }"
       >
         <ais-instant-search :search-client="searchClient" index-name="mixes">
+          
           <ais-configure v-if="divExpands[0]==0" :hitsPerPage="10"/>
           <ais-configure v-if="divExpands[0]==1" :hitsPerPage="25"/>
           <ais-search-box
@@ -166,9 +167,9 @@ export default {
     },
 
     clickedProducer(uID, name) {
+
       this.$store.commit("setShowSearch", false);
       this.navigateUser(uID, name);
-
       this.searchQuery = "";
     },
 

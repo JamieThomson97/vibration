@@ -59,10 +59,6 @@ import firebase from 'firebase'
             if(this.trueshowLogin){
                 this.$store.dispatch('signUserIn', {email: this.email, password: this.password})
             }else{
-                console.log('email')
-                console.log(this.email)
-                console.log('password')
-                console.log(this.password)
                 this.$store.dispatch('createNewUser', {email: this.email, password: this.password, name: this.name})
             }
         },
