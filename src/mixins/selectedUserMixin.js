@@ -38,12 +38,15 @@ export default {
         },
 
         getUserShowsorEvents(uID, type) {
-            console.log()
-            var entries = []
+            //the uID of the selectedUser is passed
+            //the type EG show or event is passed
 
+            var entries = []
+            //the database is queried for that user's shows or events
             database.collection('users').doc(uID).collection(type).get().then(response => {
                 var docs = response.docs
                 docs.forEach(doc => {
+                    //the results are iterated through
                     var info = doc.data()
                     if (type == 'events') {
                         info['eID'] = doc.id
@@ -51,10 +54,11 @@ export default {
                     if (type == 'shows') {
                         info['sID'] = doc.id
                     }
-
+                    //each result is pashed to the entried array
                     entries.push(info)
 
                 })
+                //the populated array is commited to the store
                 this.$store.commit(`set${type}`, entries)
             })
 
