@@ -72,7 +72,7 @@
     </div>
 
     <div class="mixInfo">
-      <div class="mixHeader mixInfoTitle">{{trackData.title}} - {{trackData.show}} {{trackData.event}}</div>
+      <div class="mixHeader mixInfoTitle">{{trackData.title}}   {{trackData.show}} {{trackData.event}}</div>
       <div class="mixLikeButton">
         <v-btn style='color:white;' color='deep-orange darken-4' v-if="!doesLike" @click="likeMix(selectedMix.mID, true)">like</v-btn>
         <v-btn style='color:white;'  color='deep-orange darken-4' v-if="doesLike" @click="likeMix(selectedMix.mID, false)">unlike</v-btn>
@@ -277,9 +277,8 @@ export default {
     } else {
       passmID = JSON.parse(localStorage.getItem("vuex")).selectedMixmID;
       console.log("passmID");
-      console.log(passmID);
+     
     }
-    console.log(passmID);
     this.fetchMixInfo(passmID);
   },
 

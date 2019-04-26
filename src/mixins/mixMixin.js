@@ -68,17 +68,15 @@ export default {
                         })
                     })
                 }
+
                 //if the mix is part of a show
                 if (mixData.show) {
-
                     console.log('show')
                     var show = mixData.show
                     //get that show's details
                     this.$store.dispatch('getShowDetails', show).then(() => {
-
                         var mixes = this.getShowMixes(show)
                         mixes.then(response => {
-
                             //Dispatch to save in state
                             this.$store.commit("setShowMixes", response)
                         })
@@ -102,12 +100,12 @@ export default {
                         })
                     })
                 })
-                //when both loops are complete
+                //when both loops are complete  
                 //set suggested mixes to state
                 this.$store.commit('setSuggestedMixMixes', suggestedMixesObj)
             })
 
-            //query to return, at most, 10 users that have liked the mix
+            //the selectedMix' 'liked' subCollection is queried to return, at most, 10 users that have liked the mix
             database.collection('mixes').doc(mID).collection('liked').limit(10).get().then(response => {
 
                 const documents = response.docs

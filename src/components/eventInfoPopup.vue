@@ -1,14 +1,14 @@
 <template>
   <v-dialog max-width="900px">
-    <v-btn slot="activator" @click="updateEventInfo">Update Event Information</v-btn>
-    <v-card>
+    <v-btn slot="activator">Update Event Information</v-btn>
+    <v-card class='eventPopupCard' color='#CFD8DC'>
       <v-card-title>
-        <h2>Update Event Information</h2>
+        <h2 class='eventHeader'>Update Event Information</h2>
       </v-card-title>
 
       <v-layout row wrap>
         <v-flex xs12 sm6 md4>
-          <v-text-field v-model="location" label="Location" prepend-icon="field" v-on="on"></v-text-field>
+          <v-text-field v-model="location" label="Location" prepend-icon="field"></v-text-field>
         </v-flex>
         <v-flex xs12 sm6 md4>
           <v-menu
@@ -66,7 +66,7 @@
             </v-date-picker>
           </v-menu>
         </v-flex>
-        <v-btn flat class="success" @click="updateEventInfo()">Submit</v-btn>
+        <v-btn flat class="success"  @click="updateEventInfo">Submit</v-btn>
       </v-layout>
     </v-card>
   </v-dialog>
@@ -93,6 +93,8 @@ export default {
 
   data() {
     return {
+      startMenu: null,
+      endMenu: null,
       startDate: null,
       endDate: null,
       location: null
@@ -120,4 +122,24 @@ export default {
 </script>
 
 <style>
+
+
+.eventPopupCard{
+  height: 500px;
+  padding-left: 15px;
+  padding-right: 15px;
+  padding-top: 15px;
+  padding-bottom: 15px;
+  background-color: #CFD8DC;
+}
+
+
+
+.eventPopUpText {
+  padding-left: 15px;
+  font-size: 25px;
+  color: #b71c1c;
+  flex-basis: 100%;
+}
+
 </style>

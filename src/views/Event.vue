@@ -4,11 +4,13 @@
       <div class="eventImage" slot-scope="{ hover }">
         <v-img width="100%" height="100%" :src="selectedEvent.imageURL">
           <v-expand-transition>
+            
             <div
               v-if="hover"
               class="transition-fast-in-fast-out cyan darken-2 display-3 white--text"
               style="height:100%;opacity: .4;max-width:100%!important;"
             >
+           
               <div class="updateText">
                 Update Event Image
                 <br>
@@ -20,12 +22,14 @@
                   placeholder="Upload"
                   class="btn"
                 >
-              </div>
-              <div class="updateEventInfo">
+                 
+              </div>              
+            </div>
+            
+          </v-expand-transition>
+          <div class="updateEventInfo">
                 <eventInfoPopup/>
               </div>
-            </div>
-          </v-expand-transition>
         </v-img>
       </div>
     </v-hover>

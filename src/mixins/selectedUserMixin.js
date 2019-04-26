@@ -54,7 +54,7 @@ export default {
                     if (type == 'shows') {
                         info['sID'] = doc.id
                     }
-                    //each result is pashed to the entried array
+                    //each result is pashed to the entries array
                     entries.push(info)
                 })
                 //the populated array is commited to the store

@@ -1,16 +1,18 @@
 <template>
   <v-dialog max-width="900px">
     <v-btn slot="activator">Update Tracklist</v-btn>
-    <v-card>
+    <v-card color='#CFD8DC' class='tracklistPopupCard'>
       <v-card-title>
-        <h2>Update Tracklist</h2>
+        <h2 class='mixHeader'>Update Tracklist</h2>
       </v-card-title>
-      <div>Tracks</div>
-      <v-btn @click="numberSongs++" class="btn">+</v-btn>
+      <div class='tracklistText'>Tracks</div>
+      <v-btn @click="numberSongs++"  class="btn">+</v-btn>
+      <v-btn @click="numberSongs--" class="btn">-</v-btn>
       <v-text-field
         v-for="x in numberSongs"
         :key="x-1"
         outline
+        color='#b71c1c'
         type="text"
         v-model="songs[x-1]"
         placeholder
@@ -42,7 +44,7 @@ export default {
 
   data() {
     return {
-      numberSongs: 1,
+      numberSongs: 5,
       songs: []
     };
   },
@@ -60,10 +62,12 @@ export default {
 
   methods: {
     updateTracklist() {
+      //queries the 'mixes' collection using the selectedMixID
       database
         .collection("mixes")
         .doc(this.selectedMix.trackData.mID)
         .set(
+          //sets the tracklist object of the returned document to the 'songs' array, which is populated with user input
           {
             tracklist: this.songs
           },
@@ -75,4 +79,24 @@ export default {
 </script>
 
 <style>
+
+.tracklistPopupCard{
+  height: 1000px;
+  padding-left: 15px;
+  padding-right: 15px;
+  padding-top: 15px;
+  padding-bottom: 15px;
+  background-color: #CFD8DC;
+}
+
+
+
+.tracklistText {
+  padding-left: 15px;
+  font-size: 25px;
+  color: #b71c1c;
+  flex-basis: 100%;
+}
+
+
 </style>
