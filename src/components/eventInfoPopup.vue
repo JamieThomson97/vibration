@@ -103,10 +103,12 @@ export default {
 
   methods: {
     updateEventInfo() {
+      //queries the 'events' collection
       database
         .collection("events")
         .doc(this.selectedEvent.eID)
         .set(
+          //upates the document fields
           {
             startDate: this.startDate,
             endDate: this.endDate,

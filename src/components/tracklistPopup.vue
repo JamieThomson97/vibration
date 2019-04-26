@@ -1,5 +1,5 @@
 <template>
-  <v-dialog max-width="900px">
+  <v-dialog max-width="900px" color='#CFD8DC'>
     <v-btn slot="activator">Update Tracklist</v-btn>
     <v-card color='#CFD8DC' class='tracklistPopupCard'>
       <v-card-title>

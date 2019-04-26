@@ -45,7 +45,7 @@
         class="noLocation"
       >Dates are yet to be set for this event , please official dates if you have sufficient permissions</div>
 
-      <div class="location dateHeader" v-if="selectedEvent.location">
+      <div class="location eventHeader dateHeader" v-if="selectedEvent.location">
         {{selectedEvent.location}}
         <br>
       </div>
@@ -151,18 +151,7 @@ export default {
       console.log("eID");
       console.log(eID);
     }
-    this.$store
-      .dispatch("getEventDetailsID", eID)
-      .then(() => {})
-      .then(() => {
-        var mixes = this.getEventMixes(eID);
-        mixes.then(response => {
-          console.log("Mounted resonse");
-          console.log(response);
-          //Dispatch to save in state
-          this.$store.commit("setEventMixes", response);
-        });
-      });
+    this.$store.dispatch("getEventDetailsID", eID)
   },
 
   data() {
@@ -208,27 +197,6 @@ export default {
       trackData: "trackData",
       selectedEvent: "selectedEvent"
     }),
-
-    // inEvent(){
-
-    //     if(this.selectedEvent.mixes){
-    //         console.log('in')
-    //         var inEvent = false
-    //         console.log('in event')
-    //         console.log()
-    //         this.selectedEvent.mixes[0].producers.forEach(producer => {
-    //             console.log('producer')
-    //             console.log(producer)
-    //             if(producer.uID == this.uID){
-    //                 return true
-    //             }
-    //         })
-    //         return isEvent
-    //     }else{
-
-    //         return 'waiting'
-    //     }
-    // },
 
     startDate() {
       return new Date(
@@ -278,9 +246,6 @@ export default {
     }
   },
 
-  created: function() {}
-
-  //  return new Date(this.event.startDate.seconds * 1000).toLocaleDateString('en-UK', this.options)
 };
 </script>
 
