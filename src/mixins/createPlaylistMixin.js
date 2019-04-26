@@ -114,19 +114,18 @@ export default {
       return new Promise(resolve => {
         //ref is the database reference for the passed userIDs mixes 
         const ref = database.collection('users').doc(uID).collection('mixes')
-        var mixes = []
+        var mIDs = []
         //here, the database is queried, and the first 12 results are returned
         ref.orderBy("dateUploaded", "asc").limit(12).get().then((snapshot) => {
           const mixes = snapshot.docs
           mixes.forEach(mix => {
-            //each mix returned is pushed 
+            //each mix returned is looped through and each mix object is pushed to the array 'mIDs'
             const item = mix.data()
             item['mID'] = mix.id
-            mixes.push(item)
+            mIDs.push(item)
           })
-          // Adds the document to an array, that will be passed into the next function --- *** currently working on, is not yet designed correctly, may cause errors ***
-          // Must ensure that when new mix is added, the cloud function creates the entries elsewhere using the SAME DOCUMENT ID, otherwise this will fail
-          resolve(mixes)
+          //when the forloop is complete, the now populated 'mIDs' array is returned
+          resolve(mIDs)
 
 
         })
@@ -139,14 +138,18 @@ export default {
       var objects = []
 
       objects['mixes'] = {}
+      //getClickedMixes returns an array of mix objects
       mixIDs['mixes'] = await this.getClickedMixes(uID)
 
+      //if the array has atleast one mix
       if (Object.keys(mixIDs['mixes']).length > 0) {
-
+        //the setClickedPlaylist Vuex mutation is called 
+        //this sets the returned array of mixes to the selectedUser.mixes object in the in the store 
         await this.$store.commit("setClickedPlaylist", {
           object: mixIDs['mixes']
         })
       } else {
+        //if the user has no mixes uploaded, the user is notified
         this.$noty.error("Could not find any mixes in mixes")
       }
     },
