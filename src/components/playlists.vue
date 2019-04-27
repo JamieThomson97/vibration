@@ -29,8 +29,8 @@
                         <img
                         class = 'playlistImages'
                         @click='playlistClicked(x-1)'
-                        :src="profileURL"
-                        alt="Avatar"
+                        :src='playlistImages[x-1]'
+                        :alt="profileURL"
                         >
                     <i v-if='hover' class="material-icons" style='position:absolute; top:0;right:0;' @click='deletePlaylist(customer.createdPlaylists[x-1])'>
                         clear
@@ -105,6 +105,29 @@ export default {
             selectedUser : 'selectedUser',
             customer: 'customer',
         }),
+
+        playlistImages(){    
+            var index = []
+            console.log('this.customer.createdPlaylists')
+            console.log(this.customer.createdPlaylists)
+            this.customer.createdPlaylists.forEach(name => {
+                
+                console.log(this.customer.playlists[name])
+                if(this.customer.playlists[name].length > 0){
+                    var min=0; 
+                    var max=this.customer.playlists[name].length;  
+                    var random =Math.floor(Math.random() * (+max - +min)) + +min; 
+                    console.log(random)
+                    var imageURL = this.customer.playlists[name][random]['artworkURL']
+                    index.push(imageURL)
+                }else{
+                    index.push(this.profileURL)
+                }                
+                
+            })
+            
+            return index
+        }
     },
 
     watch:{

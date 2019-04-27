@@ -82,42 +82,35 @@ export default {
             })
         },
 
-
-        removeFromPlaylist(mID, collection) {
-            console.log(collection)
-            //database.collection('mixPlaylists').doc(mID).get()  // see commented below
-            database.collection('users').doc(this.uID).collection(collection).doc(mID).delete().then(() => {
+        //this function removes the passed mix of the passed mixID from the playlist that is passed
+        removeFromPlaylist(mID, playlist) {
+            //database request to delete the mix by mixID from the playlist's subcollection
+            database.playlist('users').doc(this.uID).collection(playlist).doc(mID).delete().then(() => {
+                //next the playlist is deleted locally
                 this.$store.commit('deleteFromPlaylist', {
                     mID: mID,
-                    playlist: collection
+                    playlist: playlist
                 })
-                this.$noty.success('Mix removed from : ' + collection)
+                //and the user is notified of success
+                this.$noty.success('Mix removed from : ' + playlist)
+            }).catch(error => {
+                this.$noty.warning(error)
             })
-
-            // .then(response => {
-            //     var playlistData = response.data().uIDs[this.uID] //start of removing playlist name from mixPlaylists collection
-            //     var index = playlistData.indexOf(collection)      // not sure about ROI so abandoning for now
-            //     playlistData.splice(index, 1)
-            //     return playlistData
-            // }).then(newArray => [
-
-            // ])
         },
 
+        //function that adds a passed mix to an array of passed playlists 
         addToPlaylist(mixData, playlists) {
-            console.log('mixData')
-            console.log(mixData)
-
+          
             this.playlistSelector = false
             this.playlistChoice = null
-            console.log(mixData)
-            console.log(playlists)
-            if (playlists == null) {
+            //check to make sure the array isn't empty
+            if (playlists.length < 1 ) {
+                //notifies the user that they must select atleast one playlist
                 this.$noty.warning('Please select atleast one playlist')
             } else {
 
+                //define the object to be added to the playlists
                 var mixDataPass = {
-
                     artworkURL: mixData.artworkURL,
                     audioURL: mixData.audioURL,
                     mID: mixData.mID,
@@ -126,13 +119,13 @@ export default {
                     // uID : mixData.uID,
                     dateUploaded: mixData.dateUploaded,
                     dateAdded: new Date()
-
                 }
                 const createdPlaylists = this.customer.createdPlaylists
-                //const customer = this.customer
-
+              
+                //for each playlist passed as input
                 playlists.forEach((playlistName) => {
                     var next = false
+                    //edits the playlist name if it is Listen Later or Liked Mixes for simplicity reasons
                     if (playlistName == 'Listen Later') {
                         playlistName = 'listenLater'
                     }
@@ -142,18 +135,19 @@ export default {
                     }
                     var playlistCreated = false
                     createdPlaylists.forEach(pName => {
-
                         if (pName == playlistName) {
                             playlistCreated = true
                         }
                     })
-                    console.log('this.customer.playlists[playlistName]')
-                    console.log(this.customer.playlists[playlistName])
-
+                    //if the playlist already exists
                     if (this.customer.playlists[playlistName]) {
+                        //iterate through each mix
                         this.customer.playlists[playlistName].forEach((mix) => {
+                            //to check if the mix has already been added
                             if (mix.mID == mixData.mID) {
-                                console.log('track already in ' + playlistName)
+                                //if it has, notify the user and break out of the this part of the loop 
+                                //I.E. skip to the next playlist passed as input
+                                this.$noty.warning('track already in ' + playlistName)
                                 next = true;
                                 return
                             }
@@ -164,18 +158,24 @@ export default {
                     }
 
 
-                    console.log('above DB Call')
+                    
                     const uID = this.uID
                     const mID = mixData.mID
+                    //add the to the playlist subCollection on the user document
+                    //Note : if this is the first mix of the playlist and the subCollection has yet to be created
+                    //Firebase creates the subCollection automatically upon adding its first document
                     database.collection('users').doc(uID).collection(playlistName).doc(mixDataPass.mID).set(mixDataPass).then(() => {
+                        //if the playlist is being created here
                         if (!playlistCreated) {
                             if (playlistName !== "listenLater" | "liked") {
-
+                                //add the playlist to the createdPlaylist array on the user document in Firestore
                                 database.collection('users').doc(uID).update({
                                     createdPlaylists: firebase.firestore.FieldValue.arrayUnion(playlistName)
                                 }).then(() => {
+                                    //then create the playlist locally
                                     this.$store.dispatch('actionCreatePlaylist', playlistName)
                                 }).then(() => {
+                                    //then add the mix to the playlist
                                     this.$store.commit('addToPlaylist', {
                                         mix: mixDataPass,
                                         playlistName: playlistName
@@ -183,51 +183,52 @@ export default {
                                     this.$noty.success(playlistName + ' created')
                                 })
                             }
+                            
                             this.$store.commit('addToPlaylist', {
                                 mix: mixDataPass,
                                 playlistName: playlistName
                             })
                         }
-                        // else{
-                        //     this.$store.commit('addToPlaylist' , {mix : mixDataPass , playlistName : playlistName})                                                                                                                                                                             
-                        // }
-
-
                     }).catch(error => {
                         console.log(error)
                     }).then(() => {
 
-
+                        //next the mix' document in the 'mixPlaylists' collection must be updated with the user and the new playlists
+                        //to service the possibility of deleting the mix later
                         const ref = database.collection('mixPlaylists').doc(mID)
                         return database.runTransaction(transaction => {
                             return transaction.get(ref).then(mixDoc => {
 
                                 const mixData = mixDoc.data()
-                                console.log(mixData)
                                 const uIDs = mixData.uIDs
                                 var isIn = false
 
+                                //checks if the user has already added this mix to a playlist
                                 Object.keys(uIDs).forEach(key => {
                                     if (key == uID) {
                                         isIn = true
                                     }
                                 })
 
+                                //if the user has not already added this mix to a playlist
                                 if (!isIn) {
 
+                                    //create an new object, based off of the documents current "uIDs", 
+                                    //this new object adds the current userID and the playlist name to the objct
                                     var addObject = [playlistName]
-                                    // //if not 
                                     uIDs[uID] = (addObject)
 
                                 } else {
+                                    //if the user has already added this mix to a playlist
+                                    //add has not already added this mix to the passed playlist
                                     if (!uIDs[uID].includes(playlistName)) {
+                                        //push the new playlist name onto the previous uIDs object
                                         uIDs[uID].push(playlistName)
                                     } else {
-                                        console.log('already in playlist')
+                                        this.$noty.warning('already in playlist')
                                     }
                                 }
-
-
+                                //update the document with the new uIDs object.
                                 return transaction.update(ref, {
                                     uIDs: uIDs
                                 })

@@ -330,7 +330,6 @@ export default {
   position: absolute;
   left: 0px;
   top: 0;
-
   height: 100%;
   width: 50%;
   display: grid;
@@ -448,7 +447,7 @@ export default {
 }
 .seekbarWrapper > .seekbar > .seek {
   height: 5px;
-  background: #00bc7e;
+  background: #b71c1c;
   position: absolute;
   left: 0;
   top: 0;
@@ -461,7 +460,7 @@ export default {
   width: 12px;
   height: 12px;
   border-radius: 8px;
-  background: #008e5c;
+  background:  #b71c1c;
   position: absolute;
   top: -3.25px;
   z-index: 3;

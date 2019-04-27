@@ -112,14 +112,15 @@ export default {
                 //for each user returned
                 for (var entry = 0; entry < documents.length; entry++) {
 
-                    //add them to the 'likers' array
-                    likers.push(item)
+                   
 
                     //here is a check to see if the logged in user is part of these 10 user
                     //if so their index in the likers array is saved so that if they unlike the mix, 
                     //that user can be spliced from the array and UI updated in real time
                     const item = documents[entry].data()
                     item['uID'] = documents[entry].id
+                    //add them to the 'likers' array
+                    likers.push(item)
                     if (documents[entry].id === this.uID) {
                         this.inLiked = entry
                     } else {

@@ -283,28 +283,44 @@ export default {
   },
 
   methods: {
+    //adds or removes the user to the local 'likers' and calls the server-side fuction 'likeMix' to 
+    //execute the database transaction
     likeMix(mID, like) {
+      //receives the liked mix' mID. "like" is Boolean denoting whether to like or un-like the mix
+
+      //defines the object that will be written to state
       const likersObj = {
         name: this.name,
         uID: this.uID,
         profileURL: this.profileURL
       };
+      //if the mix is being liked
       if (like) {
+        //increase the selectedMixes likeCount, this automatically updates the UI
         this.likeCount = this.likeCount + 1;
+        //if the currentMix' likers array has less than 10 entries
         if (this.trackData.likers.length < 10) {
+          //add the object to the array
           this.trackData.likers.push(likersObj);
+          //inLiked holds the index of the currentUser in the "likers" array
+          //this is so the array can be easily spliced of the user if they chose to unlike the mix
           this.inLiked = this.trackData.likers.length - 1;
         }
-      } else {
+        
+      }//if the mix is being unliked 
+      else {
         if (this.inLiked > -1) {
+          //remove the user from the likers array, if they are in it
           this.trackData.likers.splice(this.inLiked, 1);
         }
+        //update the local likeCount
         this.likeCount = this.likeCount - 1;
       }
-      // this.trackData.likers.push()
+      
       this.doesLike = !this.doesLike;
+      //call the server-side likeMix function, passing the requried information
       var callFunction = firebase.functions().httpsCallable("likeMix");
-      callFunction({
+      return callFunction({
         mID: mID,
         likeruID: this.uID,
         likerName: this.name,
