@@ -48,7 +48,17 @@
             <v-list-tile-title>{{ item.title }}</v-list-tile-title>
           </v-list-tile-content>
         </v-list-tile>
+        <v-list-tile key="Player" @click.stop="hover = !hover" @click.exact="changeShowPlayer">          
+          <v-list-tile-action>
+            <v-icon>play_arrow</v-icon>
+          </v-list-tile-action>
+
+          <v-list-tile-content>
+            <v-list-tile-title>Show Player</v-list-tile-title>
+          </v-list-tile-content>
+        </v-list-tile>
         <v-list-tile key="Log Out" @click.stop="hover = !hover" @click.exact="signOutUser">
+          
           <v-list-tile-action>
             <v-icon>check_box_outline_blank</v-icon>
           </v-list-tile-action>
@@ -83,13 +93,14 @@ export default {
   mixins: [tileMixin, selectedUserMixin],
 
   computed: {
-    ...mapGetters([
-      "uID",
-      "name",
-      "profileURL",
-      "customer"
+    ...mapGetters({
+      uID : "uID",
+      name : "name",
+      profileURL : "profileURL",
+      customer : "customer",
+      showShow: "showShow",
       // ...
-    ]),
+    }),
 
     storageuID() {
       return JSON.parse(localStorage.getItem("vuex")).uID;
@@ -97,7 +108,7 @@ export default {
   },
 
   methods: {
-    signOutUser() {
+    signOutUser() {     
       this.$store.dispatch("logUserOut");
     },
 

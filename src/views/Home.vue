@@ -56,8 +56,8 @@
           :key="mix.mID"
           :object="mix"
           deletable="1"
-          collection="history"
-          playerTracksReference="history"
+          collection="liked"
+          playerTracksReference="liked"
         ></mixTile>
       </div>
       <!-- <div v-else style="margin-left:15px;">Mixes you have listened to will appear here</div> -->
@@ -117,7 +117,7 @@ export default {
     if (!storage) {
       next("/landing");
     } else {
-      if (storage.customer == undefined ) {
+      if (storage.customer.uID == undefined || storage.customer.uID == null) {
         next("/landing");
       } else {
         next();
@@ -187,15 +187,14 @@ export default {
         name: "timeline"
       });
     });
-    console.log(this.allPlaylists);
+    
     this.allPlaylists.forEach(component => {
       if (component !== "timeline") {
         if (component == "Listen Later") {
           component = "listenLater";
         }
-        console.log(component);
 
-        var mixes = this.getPlaylist(component, 4); //for is limit for db return
+        var mixes = this.getPlaylist(component, 6); //for is limit for db return
         mixes.then(response => {
           //Dispatch to save in state
           this.$store.commit("setPlaylist", {

@@ -4,6 +4,8 @@
       <div
         :class="{'mixSearch': divExpands[0]==0 , 'expandedDiv': divExpands[0]==1, 'hiddenDiv': divExpands[0]==-1 }"
       >
+        <!-- link the ais-instant-search HTML tag witht eh client defined in the script
+        and define the 'mixes' index to search in -->
         <ais-instant-search :search-client="searchClient" index-name="mixes">
           
           <ais-configure v-if="divExpands[0]==0" :hitsPerPage="10"/>
@@ -20,6 +22,7 @@
             Mixes
             <v-icon @click="expandDiv(0)">expand_more</v-icon>
           </div>
+          <!-- code inside the ais-hits tag displays the results data -->
           <ais-hits>
             <template slot="item" slot-scope="{ item }">
               <transition name="slide-fade">
@@ -143,9 +146,10 @@ export default {
 
   data() {
     return {
+      //defining the AlgoliaClient API Key and Application ID
       searchClient: algoliasearch(
-        "A86V2VQNIW",
-        "61c79176d7f5afdda01825fd663f521b"
+        "0UBNS47P35",
+        "47d27516679e6ab59c4b1d987af494dd"
       ),
       stream: [],
       divExpands: [0, 0, 0, 0]
@@ -234,7 +238,7 @@ export default {
 .expandedDiv {
   margin-left: 3px;
   margin-top: 35px;
-  background-color: rgba(197, 6, 6, 0.8);
+  background-color: rgba(229, 192, 192, 0.8);
   grid-row: 1/-1;
   grid-column: 1/-1;
   max-height: 100%;

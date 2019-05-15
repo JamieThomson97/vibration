@@ -198,7 +198,7 @@ import producerTile from "@/components/producerTile.vue";
 
 import { mapGetters } from "vuex";
 
-import firebase from "firebase";
+// import firebase from "firebase";
 
 export default {
   components: {
@@ -253,7 +253,7 @@ export default {
 
   watch: {
     selectedMix: function(newValue) {
-      console.log("watcher");
+      console.log(newValue);
       // this.fetchMixInfo(newValue);
     },
     trackData: function(newValue) {
@@ -283,58 +283,8 @@ export default {
   },
 
   methods: {
-    //adds or removes the user to the local 'likers' and calls the server-side fuction 'likeMix' to 
-    //execute the database transaction
-    likeMix(mID, like) {
-      //receives the liked mix' mID. "like" is Boolean denoting whether to like or un-like the mix
-
-      //defines the object that will be written to state
-      const likersObj = {
-        name: this.name,
-        uID: this.uID,
-        profileURL: this.profileURL
-      };
-      //if the mix is being liked
-      if (like) {
-        //increase the selectedMixes likeCount, this automatically updates the UI
-        this.likeCount = this.likeCount + 1;
-        //if the currentMix' likers array has less than 10 entries
-        if (this.trackData.likers.length < 10) {
-          //add the object to the array
-          this.trackData.likers.push(likersObj);
-          //inLiked holds the index of the currentUser in the "likers" array
-          //this is so the array can be easily spliced of the user if they chose to unlike the mix
-          this.inLiked = this.trackData.likers.length - 1;
-        }
-        
-      }//if the mix is being unliked 
-      else {
-        if (this.inLiked > -1) {
-          //remove the user from the likers array, if they are in it
-          this.trackData.likers.splice(this.inLiked, 1);
-        }
-        //update the local likeCount
-        this.likeCount = this.likeCount - 1;
-      }
-      
-      this.doesLike = !this.doesLike;
-      //call the server-side likeMix function, passing the requried information
-      var callFunction = firebase.functions().httpsCallable("likeMix");
-      return callFunction({
-        mID: mID,
-        likeruID: this.uID,
-        likerName: this.name,
-        mixName: this.trackData.title,
-        liked: like,
-        profileURL: this.profileURL,
-        producers: this.trackData.producers,
-        artworkURL: this.trackData.artworkURL,
-        likeCount: this.trackData.likeCount,
-        playCount: this.trackData.playCount
-      }).catch(error => {
-        this.$noty.warning(error);
-      });
-    }
+    
+    
   }
 };
 </script>
@@ -353,12 +303,14 @@ export default {
   grid-column: 1/2;
   grid-row: 1/4;
   background-color: #CFD8DC;
+  -webkit-box-shadow: 0 3px 8px rgba(0, 0, 0, 0.45);
 }
 
 .mixProducers {
   grid-column: 1/2;
   grid-row: 4/5;
   background-color: #CFD8DC;
+  -webkit-box-shadow: 0 3px 8px rgba(0, 0, 0, 0.45);
 }
 
 .mixTracklistTable {
@@ -414,6 +366,7 @@ export default {
   display: grid;
   grid-template-rows: 1fr 1fr 1fr;
   grid-template-columns: 1fr 1fr;
+  -webkit-box-shadow: 0 3px 8px rgba(0, 0, 0, 0.45);
 }
 
 .mixInfoTitle {
@@ -462,6 +415,7 @@ export default {
   background-color: #CFD8DC;
   grid-template-rows: 0.5fr 1fr 1fr;
   grid-template-columns: 1fr 1fr;
+  -webkit-box-shadow: 0 3px 8px rgba(0, 0, 0, 0.45);
 }
 
 .mixFollowNumbers {
@@ -506,6 +460,7 @@ export default {
   display: grid;
   grid-template-columns: 1fr 1fr;
   grid-template-rows: 1fr;
+  -webkit-box-shadow: 0 3px 8px rgba(0, 0, 0, 0.45);
 }
 
 .mixEvent {
@@ -524,5 +479,6 @@ export default {
   grid-column: 2/4;
   grid-row: 3/5;
   background-color: #CFD8DC;
+  -webkit-box-shadow: 0 3px 8px rgba(0, 0, 0, 0.45);
 }
 </style>

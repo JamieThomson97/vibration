@@ -20,4 +20,5 @@ export default {
   SET_PLAYER_SEEKING: (state, seeking) => {
     state.playerSeeking = seeking;
   },
+
 };

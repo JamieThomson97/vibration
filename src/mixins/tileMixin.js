@@ -78,14 +78,36 @@ export default {
                 uID: this.customer.uID
             }))
             return Promise.all(promises).then(() => {
-                console.log('mix deleted')
+                this.$noty.success('mix deleted')
             })
         },
 
         //this function removes the passed mix of the passed mixID from the playlist that is passed
-        removeFromPlaylist(mID, playlist) {
+        removeFromPlaylist(mixData, playlist) {
+            const mID = mixData.mID
+            if(playlist == 'liked'){
+                console.log('IN FFFF')
+                var callFunction = firebase.functions().httpsCallable("likeMix");
+                        return callFunction({
+                            mID: mID,
+                            dateUploaded: mixData.dateUploaded,
+                            likeruID: this.uID,
+                            likerName: this.name,
+                            mixName: mixData.title,
+                            liked: false,
+                            profileURL: this.profileURL,
+                            producers: mixData.producers,
+                            artworkURL: mixData.artworkURL,
+                            likeCount: mixData.likeCount,
+                            playCount: mixData.playCount
+                        }).then(() =>{
+                            this.$noty.success('mix removed from likes, refresh to page to update');
+                        }).catch(error => {
+                        this.$noty.warning(error);
+                        });
+            }
             //database request to delete the mix by mixID from the playlist's subcollection
-            database.playlist('users').doc(this.uID).collection(playlist).doc(mID).delete().then(() => {
+            database.collection('users').doc(this.uID).collection(playlist).doc(mID).delete().then(() => {
                 //next the playlist is deleted locally
                 this.$store.commit('deleteFromPlaylist', {
                     mID: mID,
@@ -129,9 +151,25 @@ export default {
                     if (playlistName == 'Listen Later') {
                         playlistName = 'listenLater'
                     }
-                    if (playlistName == 'Liked Mixes') {
-
+                    if (playlistName == 'Liked Mixes') {                        
                         playlistName = 'liked'
+                        //calling the likedMix server side function if the playlist selected was liked mixes
+                        var callFunction = firebase.functions().httpsCallable("likeMix");
+                        return callFunction({
+                            mID: mixData.mID,
+                            dateUploaded: mixData.dateUploaded,
+                            likeruID: this.uID,
+                            likerName: this.name,
+                            mixName: mixData.title,
+                            liked: true,
+                            profileURL: this.profileURL,
+                            producers: mixData.producers,
+                            artworkURL: mixData.artworkURL,
+                            likeCount: mixData.likeCount,
+                            playCount: mixData.playCount
+                        }).catch(error => {
+                        this.$noty.warning(error);
+                        });
                     }
                     var playlistCreated = false
                     createdPlaylists.forEach(pName => {
@@ -268,9 +306,6 @@ export default {
             }else{
                 this.$noty.warning('playlist already created with that name')
             }
-
-            
-
         },
 
         addToHistory(trackData) {
@@ -298,7 +333,8 @@ export default {
         },
 
         navigateMix(mID, title) {
-            console.log('navigate Mix')
+            //hide search
+            this.$store.commit('setShowSearch' , false)
             this.fetchMixInfo(mID)
             this.$store.dispatch('actionSetSelectedmID', mID).then(() => {
                 this.$router.push(`/mixes/${(title).split(' ').join('_')}`)
@@ -333,16 +369,14 @@ export default {
             })
         },
 
+
+        //function that plays the given mix that is clicked on
         handleClickTrack(trackData, reference) {
-            console.log('trackData')
-            console.log(trackData)
-            console.log('reference')
-            console.log(reference)
             if (this.playerCurrentTrack && this.playerCurrentTrack.mID === trackData.mID) {
                 this.$store.dispatch('setPlayerCurrentTrack', null);
             } else {
-                this.$store.dispatch('setPlayerCurrentTrack', trackData);
 
+                this.$store.dispatch('setPlayerCurrentTrack', trackData);
                 switch (reference) {
                     case 'show.mixes':
                         console.log('in showixes')
@@ -367,6 +401,7 @@ export default {
                     default:
                         this.$store.dispatch('setPlayerTracks', this.customer.playlists[reference])
                 }
+                this.$store.commit('SET_SHOW', {value : true})
                 this.addToHistory(trackData)
                 this.addPlay(trackData)
             }

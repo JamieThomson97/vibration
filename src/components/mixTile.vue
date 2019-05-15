@@ -23,7 +23,7 @@
                       v-if="deletable"
                       class="material-icons"
                       style="position:absolute; top:0;right:0;"
-                      @click="removeFromPlaylist(object.mID , collection)"
+                      @click="removeFromPlaylist(object , collection)"
                     >clear</v-icon>
                     <v-icon
                       v-if="mixDeletable"
@@ -164,16 +164,21 @@ export default {
     }),
 
     readableDate() {
-      if (this.object.dateUploaded) {
-        var seconds = this.object.dateUploaded.seconds;
-        var date = new Date(seconds * 1000).toLocaleDateString(
-          "en-UK",
-          this.options
-        );
-        return date;
-      } else {
-        return "not sure";
+      if(this.object.search==true){
+        return this.object.dateUploaded2
+      }else{
+        if (this.object.dateUploaded) {
+          var seconds = this.object.dateUploaded.seconds;
+          var date = new Date(seconds * 1000).toLocaleDateString(
+            "en-UK",
+            this.options
+          );
+          return date;
+        } else {
+          return "not sure";
+        }
       }
+      
     },
 
     playlistOptions() {

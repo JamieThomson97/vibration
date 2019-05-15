@@ -182,36 +182,45 @@ export default {
       }
     },
 
+    //function to return the logged in user's timeline 
     getTimeline() {
-      console.log('getTimeline')
-
+    
       var mixesArray = []
       return new Promise(resolve => {
+        //query the user's "timeline" subCollection
         database.collection('users').doc(this.uID).collection('timeline').orderBy('dateUploaded', 'asc').limit(12).get().then(response => {
           var mixes = response.docs
+          //loop through each mix in the returned results
           mixes.forEach(mix => {
 
+            //add each mixes data to the "mixeArray"
             var mixInfo = mix.data()
-            console.log(mixInfo)
             mixInfo['mID'] = mix.id
             mixesArray.push(mixInfo)
           })
+          //when the loop is complete, return the array
           resolve(mixesArray)
         })
       })
     },
 
+    //function that receives a playlist name and a limit on the number of mixes to return
+    //and returns at maximum, that many mixes from the passed playlist
     getPlaylist(playlistName, limit) {
 
       var mixesArray = []
       return new Promise(resolve => {
+        //query playlistName passed subCollection for the logged in user. Limited by the limit passed
         database.collection('users').doc(this.uID).collection(playlistName).orderBy('dateAdded', 'asc').limit(limit).get().then(response => {
           var mixes = response.docs
+          //loop through each mix in the results
           mixes.forEach(mix => {
             var mixInfo = mix.data()
             mixInfo['mID'] = mix.id
+            //add the mix to the array "mixesArray"
             mixesArray.push(mixInfo)
           })
+          //when the loop is complete, return the array
           resolve(mixesArray)
         })
       })

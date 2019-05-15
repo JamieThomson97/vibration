@@ -1,5 +1,8 @@
 <template>
-  <div class="playerWrapper" v-if="!!playerCurrentTrack">
+  <div class="playerWrapper" v-if="!!playerCurrentTrack && showShow">
+
+    <v-icon style='position:absolute;top:0;right:0;' @click='changeShowPlayer'>clear</v-icon>
+
     <div class="playerTrackDetails">
       <div class="playerMixArtwork">
         <v-img
@@ -93,6 +96,7 @@ export default {
       playerDuration: "playerDuration",
       playerTracks: "playerTracks",
       playerCurrentTrack: "playerCurrentTrack",
+      showShow: "showShow",
       playerSeeking: "playerSeeking"
     }),
 
@@ -178,6 +182,7 @@ export default {
         });
       }
     },
+   
 
     playerCurrentTrack(nextCurrentTrack, prevCurrentTrack) {
       if (nextCurrentTrack && !_.isEqual(nextCurrentTrack, prevCurrentTrack)) {
@@ -233,6 +238,9 @@ export default {
     }
   },
   methods: {
+
+    
+
     handlePlayPause() {
       if (this.isPlay) {
         if (
@@ -283,9 +291,6 @@ export default {
       });
     },
 
-    // setSelectedmID(mID){
-    //   this.$store.dispatch('actionSetSelectedmID', mID)
-    // },
 
     calculateSeekOnClick(e) {
       const element = e.target;

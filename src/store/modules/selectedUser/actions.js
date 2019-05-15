@@ -3,15 +3,17 @@ const database = firebase.firestore()
 
 export default {
 
+  //function retrieves ans saves the basic info about the selected user
   getUserProfile: (context, uID) => {
 
+    //uses received uID to query the 'users' collection
     database.collection('users').doc(uID).get().then(response => {
       const profile = response.data()
       profile['uID'] = uID
+      //saves the returned data to state with the GET_USER_PROFILE_SUCCESS mutation
       context.commit('GET_USER_PROFILE_SUCCESS', profile)
       return profile
     })
-
   },
 
   getUserFollowX: (context, payload) => {

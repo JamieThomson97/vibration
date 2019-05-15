@@ -11,6 +11,7 @@
     setPlayerDuration: (context, time) => {
       context.commit('SET_PLAYER_DURATION', time);
     },
+    //Example Vuex Actions
     setPlayerTracks: (context, tracks) => {
       context.commit('SET_PLAYER_TRACKS', tracks);
     },

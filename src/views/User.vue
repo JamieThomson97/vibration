@@ -443,6 +443,7 @@ export default {
     .userShows{
 
         background-color: #CFD8DC;
+        
         grid-row:2/3;
         grid-column:3/4;
         flex-wrap: wrap;
@@ -525,7 +526,7 @@ export default {
     }
 
     .userPatrons{
-       
+      
         padding-top:10px;
         padding-left:10px;
         background-color: #CFD8DC;

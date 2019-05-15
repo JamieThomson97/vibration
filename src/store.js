@@ -50,7 +50,7 @@ export default new Vuex.Store({
       followingCount: 0,
       playlists: {},
     },
-
+    showShow : true,
     playerCurrentTracks: {},
     showSearch: false,
     searchQuery: '',
@@ -65,6 +65,12 @@ export default new Vuex.Store({
   },
 
   mutations: {
+
+    
+  SET_SHOW: (state, value) => {
+    console.log(value)
+    state.showShow = value.value;
+  },
 
     setPlaylist(state, payload) {
       if (payload.name == "Listen Later") {
@@ -111,8 +117,8 @@ export default new Vuex.Store({
     },
 
     setNullUser(state) {
-
-      Vue.delete(state, ['customer'])
+     
+      Vue.set(state.customer, 'uID', null)
 
     },
 
@@ -278,8 +284,10 @@ export default new Vuex.Store({
       firebase.auth().signOut()
         .then(() => {
           commit('setNullUser')
+        }).then(() => {
+          router.push('/landing')
         }).catch((error) => {
-          this.noty.error(error)
+          console.log(error)
         })
     },
 
@@ -452,6 +460,9 @@ export default new Vuex.Store({
     show(state) {
       return state.Show
     },
+
+    showShow: state => state.showShow,
+
     currentPlayerTracks(state) {
       return state.currentPlayerTracks
     },

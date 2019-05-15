@@ -1,8 +1,9 @@
 export default {
+  //getters for the user object in state
   isPlay: state => state.isPlay,
   playerCurrentTime: state => state.playerCurrentTime,
   playerDuration: state => state.playerDuration,
   playerTracks: state => state.playerTracks,
   playerCurrentTrack: state => state.playerCurrentTrack,
-  playerSeeking: state => state.playerSeeking,
+  playerSeeking: state => state.playerSeeking, 
 };

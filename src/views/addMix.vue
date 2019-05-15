@@ -2,16 +2,18 @@
   <div class="wrapper">
     <form @submit.prevent="addMix" class="pt-3">
       <div class="fields">
-        <div>Title</div>
+        <div class='addMixText'>Title</div>
         <v-text-field outline type="text" v-model="title" placeholder></v-text-field>
         <v-btn @click="eventBool = false , showBool = true" class="btn">Show</v-btn>
         <v-btn @click="eventBool = true , showBool = false" class="btn">Event</v-btn>
         <v-btn @click="eventBool = false , showBool = false" class="btn">None</v-btn>
-        <div v-if="showBool">Show</div>
+        <div v-if="showBool" class='addMixText'>Show</div>
         <v-text-field outline type="text" v-if="showBool" v-model="show" placeholder></v-text-field>
-        <div v-if="eventBool">Event</div>
-        <div>Producers</div>
+        <div v-if="eventBool" class='addMixText'>Event</div>
+        <v-text-field outline type="text" v-if="eventBool" v-model="event" placeholder></v-text-field>
+        <div class='addMixText'>Producers</div>
         <v-btn @click="numberProducers++" class="btn">+</v-btn>
+        <v-btn @click="numberProducers--" class="btn">-</v-btn>
         <v-text-field
           v-for="y in numberProducers"
           :key="y"
@@ -21,7 +23,7 @@
           placeholder
         ></v-text-field>
         <v-text-field v-if="eventBool" outline type="text" v-model="event" placeholder></v-text-field>
-        <div>Producers</div>
+        <!-- <div>Producers</div>
         <v-btn @click="numberProducers++" class="btn">+</v-btn>
         <v-text-field
           v-for="x in numberProducers"
@@ -30,9 +32,8 @@
           type="text"
           v-model="firstProducers[x-1]"
           placeholder
-        ></v-text-field>
-        <div>Description</div>
-        <v-text-field outline type="text" v-model="description" placeholder></v-text-field>
+        ></v-text-field> -->
+        
       </div>
       <input type="file" @change="storeFile" placeholder="Audio File" class="btn"> Left Audio File
       <input
@@ -511,11 +512,14 @@ export default {
 
 <style>
 .wrapper {
+  padding-left: 1em;
+  padding-right: 1em;
   display: grid;
   grid-template-columns: 1fr;
   grid-template-rows: repeat(12, 1fr);
   grid-gap: 1em;
   height: 100%;
+  width: 96vw;
 }
 
 .stream {
@@ -546,11 +550,18 @@ export default {
   border: 1px solid #333;
 }
 
-.player {
-  margin: 1rem;
-  grid-column: 1/-1;
-  grid-row: 11/13;
-  border: 1px solid #333;
+.fields{
+  
+  padding-left: 1em;
+  padding-top: 1em;
+  padding-right: 1em;
+  background-color: #CFD8DC;
+}
+
+.addMixText{
+  color: #b71c1c;
+  font-size: 20px;
+  font-weight:bold;
 }
 </style>
 
