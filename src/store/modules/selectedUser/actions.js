@@ -16,6 +16,12 @@ export default {
     })
   },
 
+  destroyUser: (context, payload) => {
+    //deletes everything from the selectedUser object
+    console.log('destroy ACtion')
+    context.commit('DESTROY_USER', 'payload')
+  },
+
   getUserFollowX: (context, payload) => {
 
     //the 'doesFollow' object in state is set to false

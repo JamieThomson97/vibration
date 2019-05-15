@@ -498,8 +498,10 @@ export default {
               })
               .then(() => {
                 console.log("done");
+                
               })
               .catch(error => {
+                
                 console.log(error);
                 this.$noty.error(error);
               });

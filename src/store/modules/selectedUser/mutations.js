@@ -19,6 +19,21 @@ export default {
     })
   },
 
+  setUserProfileURL: (state, data) => {
+    Vue.set(state, 'profileURL', data)
+  },
+
+  DESTROY_USER: (state, data) => {
+    console.log('destroy Mutation')
+    Object.keys(state).forEach(key => {
+      if (key != 'uID') {
+        Vue.delete(state, key)
+      }
+      
+    })
+    console.log(state)
+  },
+
   GET_USER_FOLLOWINGS_SUCCESS: (state, data) => {
     state.getUserFollowingsLoading = false;
     state.userFollowingsData = data;

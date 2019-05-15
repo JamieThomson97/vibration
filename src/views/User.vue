@@ -317,7 +317,11 @@ export default {
         selectedUserMixin
     ],
 
-
+    beforeDestroy(){
+        //remove data from clickedUser
+        console.log('before destory')
+        this.$store.dispatch('destroyUser')
+    },
 
     created: function () {
 

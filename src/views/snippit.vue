@@ -9,7 +9,7 @@
 
 signUserIn({ // eslint-disable-next-line
       commit
-    }, payload) {
+    }, payload){
       //payload is the object that contains data passed to the action
       //the Firebase function signInWithEmailAndPassword returns the user data if the authentication is successful, 
       //and an error message if successful

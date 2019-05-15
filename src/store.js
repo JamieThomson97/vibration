@@ -107,7 +107,7 @@ export default new Vuex.Store({
       state.customer.name = payload
     },
     setProfileURL(state, payload) {
-      state.customer.profileURL = payload
+      Vue.set(state.customer, 'profileURL', payload)
     },
     setFollowersCounts(state, payload) {
       state.customer.followersCount = payload
@@ -224,7 +224,7 @@ export default new Vuex.Store({
           name: payload.name,
           followingCount: 0,
           followerCount: 0,
-          prePlaylists: ['timeline', 'Listen Later', 'history', 'likes'],
+          prePlaylists: ['timeline', 'Listen Later', 'history', 'liked'],
           createdPlaylists: [],
         }).then(() => {
           const indexUserFunction = firebase.functions().httpsCallable('indexUser')

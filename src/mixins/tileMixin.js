@@ -345,6 +345,7 @@ export default {
         navigateUser(uID, name) {
 
             this.$store.commit('setShowSearch', false)
+            this.$store.dispatch('destroyUser')
             this.$store.commit('setuIDWatcher', uID)
             this.$store.dispatch('actionSetSelecteduID', uID).then(() => {
                 this.$router.push(`/users/${(name).split(' ').join('_')}`)

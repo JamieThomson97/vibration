@@ -188,6 +188,11 @@ export default {
                         })
                     }).then(() => {
                         return Promise.all(updatePromises).then(() => {
+                            //updateProfileURLs
+                            //Nav
+                            this.$store.commit('setProfileURL', response)
+                            //User Page
+                            this.$store.commit('setUserProfileURL', response)
                             const indexNewProfile = firebase.functions().httpsCallable('updateUserProfile')
                             return indexNewProfile({
                                 profileURL: response,
